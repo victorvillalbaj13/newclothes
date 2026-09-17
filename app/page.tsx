@@ -70,9 +70,9 @@ export default function Home() {
   const [loadingOffers, setLoadingOffers] = useState(true);
 
   /*
-  |--------------------------------------------------------------------------
+  |--------------------------------------------------------------------------|
   | HERO / SLIDES
-  |--------------------------------------------------------------------------
+  |--------------------------------------------------------------------------|
   */
 
   useEffect(() => {
@@ -128,9 +128,9 @@ export default function Home() {
   }, []);
 
   /*
-  |--------------------------------------------------------------------------
+  |--------------------------------------------------------------------------|
   | PRODUCTS
-  |--------------------------------------------------------------------------
+  |--------------------------------------------------------------------------|
   */
 
   useEffect(() => {
@@ -201,9 +201,9 @@ export default function Home() {
   }, []);
 
   /*
-  |--------------------------------------------------------------------------
+  |--------------------------------------------------------------------------|
   | OFFERS
-  |--------------------------------------------------------------------------
+  |--------------------------------------------------------------------------|
   */
 
   useEffect(() => {
@@ -260,15 +260,10 @@ export default function Home() {
             id: offer.id,
             name: offer.name,
             description: offer.description,
-
-            // Corrección TypeScript:
-            // mantenemos el tipo como unión literal
-            // "fixed" | "percentage".
             type:
               offer.type === "fixed"
                 ? ("fixed" as const)
                 : ("percentage" as const),
-
             value: Number(offer.value),
             start_date: offer.start_date,
             end_date: offer.end_date,
@@ -351,9 +346,9 @@ export default function Home() {
   }, [products, loadingProducts]);
 
   /*
-  |--------------------------------------------------------------------------
+  |--------------------------------------------------------------------------|
   | DROPS
-  |--------------------------------------------------------------------------
+  |--------------------------------------------------------------------------|
   */
 
   useEffect(() => {
@@ -393,9 +388,9 @@ export default function Home() {
   }, []);
 
   /*
-  |--------------------------------------------------------------------------
+  |--------------------------------------------------------------------------|
   | AUTO SLIDER
-  |--------------------------------------------------------------------------
+  |--------------------------------------------------------------------------|
   */
 
   useEffect(() => {
@@ -413,9 +408,9 @@ export default function Home() {
   const activeSlide = slides[currentSlide];
 
   /*
-  |--------------------------------------------------------------------------
+  |--------------------------------------------------------------------------|
   | HELPERS
-  |--------------------------------------------------------------------------
+  |--------------------------------------------------------------------------|
   */
 
   const formatPrice = (value: number) => {
@@ -437,9 +432,9 @@ export default function Home() {
   };
 
   /*
-  |--------------------------------------------------------------------------
+  |--------------------------------------------------------------------------|
   | DATE FORMAT
-  |--------------------------------------------------------------------------
+  |--------------------------------------------------------------------------|
   */
 
   const formatDate = (date: string | null) => {
@@ -462,9 +457,9 @@ export default function Home() {
   };
 
   /*
-  |--------------------------------------------------------------------------
+  |--------------------------------------------------------------------------|
   | HOME
-  |--------------------------------------------------------------------------
+  |--------------------------------------------------------------------------|
   */
 
   return (
@@ -719,7 +714,7 @@ export default function Home() {
       </section>
 
       {/* ================================================================
-          SCROLL / MARQUEE
+          MARQUEE
       ================================================================= */}
 
       <section className="overflow-hidden border-y border-white/10 bg-white py-3 text-black">
@@ -1447,41 +1442,253 @@ export default function Home() {
       </section>
 
       {/* ================================================================
-          ABOUT
+          ABOUT — NEW IDENTITY EXPERIENCE
       ================================================================= */}
 
       <section
         id="about"
-        className="border-t border-white/10 bg-white px-5 py-24 text-black md:px-8 md:py-32"
+        className="relative overflow-hidden border-t border-black/10 bg-white text-black"
       >
 
-        <div className="mx-auto max-w-[1500px]">
+        {/* Decorative oversized background word */}
 
-          <div className="grid gap-12 md:grid-cols-2">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-8 top-8 select-none text-[22vw] font-black uppercase leading-none tracking-[-0.1em] text-black/[0.035] md:-right-16 md:top-0"
+        >
+          IDENTITY
+        </div>
+
+        <div className="relative mx-auto max-w-[1500px] px-5 py-24 md:px-8 md:py-36">
+
+          {/* Top information */}
+
+          <div className="mb-20 flex flex-col justify-between gap-8 md:flex-row md:items-start">
 
             <div>
 
-              <p className="mb-5 text-[9px] font-black tracking-[0.4em] text-black/35">
-                ABOUT NEWCLOTHES
+              <p className="text-[9px] font-black tracking-[0.45em] text-black/35">
+                004 / ABOUT NEWCLOTHES
               </p>
 
-              <h2 className="text-4xl font-black uppercase leading-[0.88] tracking-[-0.06em] md:text-6xl">
-                WEAR
-                <br />
-                YOUR
-                <br />
-                IDENTITY.
-              </h2>
+              <div className="mt-5 flex items-center gap-3">
+
+                <span className="h-1.5 w-1.5 rounded-full bg-black" />
+
+                <span className="text-[8px] font-black tracking-[0.3em] text-black/40">
+                  STREETWEAR / IDENTITY / CULTURE
+                </span>
+
+              </div>
 
             </div>
 
-            <div className="flex items-end">
+            <p className="max-w-xs text-[9px] font-black uppercase leading-5 tracking-[0.18em] text-black/35 md:text-right">
+              NO RULES.
+              <br />
+              NO UNIFORM.
+              <br />
+              JUST YOUR IDENTITY.
+            </p>
 
-              <p className="max-w-md text-sm leading-7 text-black/55">
-                NEWCLOTHES representa una nueva forma de entender
-                el streetwear. Diseños con carácter, piezas pensadas
-                para destacar y una identidad que comienza contigo.
+          </div>
+
+          {/* Main statement */}
+
+          <div className="relative">
+
+            <p className="mb-6 text-[10px] font-black tracking-[0.35em] text-black/35">
+              THE BRAND STATEMENT
+            </p>
+
+            <h2 className="max-w-[1250px] text-[15vw] font-black uppercase leading-[0.76] tracking-[-0.1em] md:text-[10.5rem]">
+
+              VISTE
+              <br />
+
+              <span className="relative inline-block">
+
+                TU
+
+                <span
+                  aria-hidden="true"
+                  className="absolute -bottom-1 left-0 h-[0.045em] w-full bg-black md:-bottom-3"
+                />
+
+              </span>
+
+              <br />
+
+              IDENTIDAD.
+
+            </h2>
+
+          </div>
+
+          {/* Divider */}
+
+          <div className="my-16 h-px w-full bg-black/10 md:my-24" />
+
+          {/* Brand explanation */}
+
+          <div className="grid gap-12 md:grid-cols-[0.35fr_0.65fr]">
+
+            <div>
+
+              <p className="text-[9px] font-black tracking-[0.35em] text-black/35">
+                01 / WHO WE ARE
               </p>
+
+            </div>
+
+            <div className="grid gap-12 md:grid-cols-[1fr_0.7fr]">
+
+              <div>
+
+                <p className="text-xl font-bold uppercase leading-[1.15] tracking-[-0.03em] md:text-3xl">
+
+                  NEWCLOTHES no nace para decirte
+                  cómo vestir.
+
+                  <br />
+
+                  Nace para darte una forma de
+                  expresar quién eres.
+
+                </p>
+
+                <p className="mt-8 max-w-xl text-sm leading-7 text-black/50">
+
+                  Diseñamos streetwear para personas que
+                  entienden la ropa como una extensión de
+                  su personalidad. Piezas con carácter,
+                  cultura y actitud para construir un estilo
+                  propio.
+
+                </p>
+
+              </div>
+
+              <div className="flex flex-col justify-between">
+
+                <div className="border-l border-black/15 pl-5">
+
+                  <p className="text-[8px] font-black tracking-[0.3em] text-black/35">
+                    OUR APPROACH
+                  </p>
+
+                  <p className="mt-4 text-sm font-bold uppercase leading-6">
+                    DISEÑO
+                    <br />
+                    ACTITUD
+                    <br />
+                    IDENTIDAD
+                  </p>
+
+                </div>
+
+                <a
+                  href="#shop"
+                  className="group mt-10 inline-flex w-fit items-center gap-4 rounded-full bg-black px-6 py-4 text-[9px] font-black tracking-[0.2em] text-white transition duration-300 hover:scale-[1.03] hover:bg-black/85"
+                >
+                  DESCUBRIR LA COLECCIÓN
+
+                  <span className="transition-transform duration-300 group-hover:translate-x-1">
+                    →
+                  </span>
+
+                </a>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Identity cards */}
+
+          <div className="mt-20 grid gap-3 md:mt-28 md:grid-cols-3">
+
+            {[
+              {
+                number: "01",
+                title: "IDENTIDAD",
+                text: "Tu estilo comienza contigo.",
+              },
+              {
+                number: "02",
+                title: "ACTITUD",
+                text: "La forma de llevarlo también comunica.",
+              },
+              {
+                number: "03",
+                title: "CULTURA",
+                text: "Vestimos lo que nos representa.",
+              },
+            ].map((item) => (
+
+              <div
+                key={item.number}
+                className="group relative min-h-[230px] overflow-hidden rounded-[1.5rem] border border-black/10 bg-[#f5f5f5] p-6 transition duration-500 hover:bg-black hover:text-white md:min-h-[280px]"
+              >
+
+                <div className="flex items-start justify-between">
+
+                  <span className="text-[8px] font-black tracking-[0.25em] opacity-35">
+                    {item.number}
+                  </span>
+
+                  <span className="text-lg transition-transform duration-500 group-hover:rotate-45">
+                    +
+                  </span>
+
+                </div>
+
+                <div className="absolute bottom-6 left-6 right-6">
+
+                  <h3 className="text-2xl font-black uppercase tracking-[-0.05em] md:text-3xl">
+                    {item.title}
+                  </h3>
+
+                  <p className="mt-3 max-w-xs text-xs leading-5 opacity-45">
+                    {item.text}
+                  </p>
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
+          {/* Final brand line */}
+
+          <div className="mt-20 overflow-hidden border-y border-black/10 py-5 md:mt-28">
+
+            <div className="flex min-w-max items-center gap-8">
+
+              <span className="text-[9px] font-black tracking-[0.35em]">
+                NEWCLOTHES
+              </span>
+
+              <span className="h-1 w-1 rounded-full bg-black/30" />
+
+              <span className="text-[9px] font-black tracking-[0.35em]">
+                VISTE TU IDENTIDAD
+              </span>
+
+              <span className="h-1 w-1 rounded-full bg-black/30" />
+
+              <span className="text-[9px] font-black tracking-[0.35em]">
+                STREETWEAR
+              </span>
+
+              <span className="h-1 w-1 rounded-full bg-black/30" />
+
+              <span className="text-[9px] font-black tracking-[0.35em]">
+                NEWCLOTHES
+              </span>
 
             </div>
 
