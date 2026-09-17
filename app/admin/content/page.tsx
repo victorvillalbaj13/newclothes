@@ -1,6 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import {
+  ChangeEvent,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { createClient } from "@/lib/supabase/client";
 
 type ContentItem = {
   id: number;
@@ -11,6 +17,25 @@ type ContentItem = {
   type: "HERO" | "BANNER" | "CAMPAÑA" | "DROP";
   active: boolean;
 };
+
+type AboutContent = {
+  id: string;
+  image_url: string | null;
+  eyebrow: string;
+  title: string;
+  intro: string;
+  description: string;
+  custom_description: string;
+  active: boolean;
+};
+
+type ContentTab =
+  | "ALL"
+  | "HERO"
+  | "BANNER"
+  | "CAMPAÑA"
+  | "DROP"
+  | "ABOUT";
 
 const initialContent: ContentItem[] = [
   {
@@ -51,20 +76,138 @@ const initialContent: ContentItem[] = [
   },
 ];
 
+const defaultAbout: AboutContent = {
+  id: "",
+  image_url: null,
+  eyebrow: "QUIÉNES SOMOS",
+  title: "VISTE TU IDENTIDAD.",
+  intro:
+    "ROPA STREETWEAR TOTALMENTE PREMIUM. HECHA PARA TI.",
+  description:
+    "En NEWCLOTHES creamos y seleccionamos prendas streetwear premium para quienes buscan vestir diferente. Nos enfocamos en diseños con carácter, calidad y una estética que se adapta a cada persona.",
+  custom_description:
+    "También hacemos ropa personalizada, llevando tus ideas a prendas creadas totalmente a tu estilo. Tú imaginas el diseño. Nosotros lo convertimos en una pieza que representa quién eres.",
+  active: true,
+};
+
 export default function ContentPage() {
+  const supabase = useMemo(() => createClient(), []);
+
+  /*
+  |--------------------------------------------------------------------------
+  | CONTENT STATE
+  |--------------------------------------------------------------------------
+  */
+
   const [content, setContent] =
     useState<ContentItem[]>(initialContent);
 
+  const [activeTab, setActiveTab] =
+    useState<ContentTab>("ALL");
+
   const [showForm, setShowForm] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] =
+    useState<number | null>(null);
 
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [image, setImage] = useState("");
   const [buttonText, setButtonText] = useState("");
+
   const [type, setType] =
     useState<ContentItem["type"]>("BANNER");
+
   const [active, setActive] = useState(true);
+
+  /*
+  |--------------------------------------------------------------------------
+  | ABOUT STATE
+  |--------------------------------------------------------------------------
+  */
+
+  const [about, setAbout] =
+    useState<AboutContent>(defaultAbout);
+
+  const [aboutLoading, setAboutLoading] =
+    useState(true);
+
+  const [aboutSaving, setAboutSaving] =
+    useState(false);
+
+  const [aboutUploading, setAboutUploading] =
+    useState(false);
+
+  const [aboutMessage, setAboutMessage] =
+    useState("");
+
+  /*
+  |--------------------------------------------------------------------------
+  | LOAD ABOUT
+  |--------------------------------------------------------------------------
+  */
+
+  useEffect(() => {
+    const loadAbout = async () => {
+      setAboutLoading(true);
+      setAboutMessage("");
+
+      const { data, error } = await supabase
+        .from("about_content")
+        .select(`
+          id,
+          image_url,
+          eyebrow,
+          title,
+          intro,
+          description,
+          custom_description,
+          active
+        `)
+        .order("updated_at", {
+          ascending: false,
+        })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        console.error(
+          "Error cargando About:",
+          error
+        );
+
+        setAboutMessage(
+          "No se pudo cargar la información de About."
+        );
+
+        setAboutLoading(false);
+        return;
+      }
+
+      if (data) {
+        setAbout({
+          id: data.id,
+          image_url: data.image_url,
+          eyebrow: data.eyebrow,
+          title: data.title,
+          intro: data.intro,
+          description: data.description,
+          custom_description:
+            data.custom_description,
+          active: data.active,
+        });
+      }
+
+      setAboutLoading(false);
+    };
+
+    loadAbout();
+  }, [supabase]);
+
+  /*
+  |--------------------------------------------------------------------------
+  | CONTENT FUNCTIONS
+  |--------------------------------------------------------------------------
+  */
 
   const resetForm = () => {
     setTitle("");
@@ -82,7 +225,9 @@ export default function ContentPage() {
     setShowForm(true);
   };
 
-  const editContent = (item: ContentItem) => {
+  const editContent = (
+    item: ContentItem
+  ) => {
     setTitle(item.title);
     setSubtitle(item.subtitle);
     setImage(item.image);
@@ -126,17 +271,28 @@ export default function ContentPage() {
         active,
       };
 
-      setContent((current) => [newItem, ...current]);
+      setContent((current) => [
+        newItem,
+        ...current,
+      ]);
     }
 
     resetForm();
   };
 
   const deleteContent = (id: number) => {
-    if (!window.confirm("¿Eliminar este contenido?")) return;
+    if (
+      !window.confirm(
+        "¿Eliminar este contenido?"
+      )
+    ) {
+      return;
+    }
 
     setContent((current) =>
-      current.filter((item) => item.id !== id)
+      current.filter(
+        (item) => item.id !== id
+      )
     );
   };
 
@@ -144,46 +300,407 @@ export default function ContentPage() {
     setContent((current) =>
       current.map((item) =>
         item.id === id
-          ? { ...item, active: !item.active }
+          ? {
+              ...item,
+              active: !item.active,
+            }
           : item
       )
     );
   };
 
-  return (
-    <main className="min-h-screen bg-[#070707] text-white">
+  /*
+  |--------------------------------------------------------------------------
+  | FILTERED CONTENT
+  |--------------------------------------------------------------------------
+  */
 
-      {/* HEADER */}
-      <header className="h-20 border-b border-white/10 bg-black flex items-center justify-between px-8">
+  const filteredContent = content.filter(
+    (item) => {
+      if (activeTab === "ALL") {
+        return true;
+      }
+
+      if (activeTab === "ABOUT") {
+        return false;
+      }
+
+      return item.type === activeTab;
+    }
+  );
+
+  /*
+  |--------------------------------------------------------------------------
+  | ABOUT FUNCTIONS
+  |--------------------------------------------------------------------------
+  */
+
+  const updateAboutField = (
+    field: keyof AboutContent,
+    value:
+      | string
+      | boolean
+      | null
+  ) => {
+    setAbout((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | UPLOAD ABOUT IMAGE
+  |--------------------------------------------------------------------------
+  */
+
+  const handleAboutImageUpload = async (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    const file =
+      event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    setAboutUploading(true);
+    setAboutMessage("");
+
+    try {
+      if (
+        !file.type.startsWith("image/")
+      ) {
+        throw new Error(
+          "Selecciona un archivo de imagen válido."
+        );
+      }
+
+      const maxSize =
+        10 * 1024 * 1024;
+
+      if (file.size > maxSize) {
+        throw new Error(
+          "La imagen no puede superar los 10 MB."
+        );
+      }
+
+      const extension =
+        file.name
+          .split(".")
+          .pop()
+          ?.toLowerCase() || "jpg";
+
+      const fileName =
+        `about-${Date.now()}.${extension}`;
+
+      const { error: uploadError } =
+        await supabase.storage
+          .from("about")
+          .upload(
+            fileName,
+            file,
+            {
+              cacheControl: "3600",
+              upsert: true,
+            }
+          );
+
+      if (uploadError) {
+        throw new Error(
+          uploadError.message
+        );
+      }
+
+      const {
+        data: publicUrlData,
+      } = supabase.storage
+        .from("about")
+        .getPublicUrl(fileName);
+
+      const publicUrl =
+        publicUrlData.publicUrl;
+
+      setAbout((current) => ({
+        ...current,
+        image_url: publicUrl,
+      }));
+
+      setAboutMessage(
+        "Imagen cargada correctamente. Presiona GUARDAR ABOUT."
+      );
+    } catch (error) {
+      console.error(
+        "Error subiendo imagen:",
+        error
+      );
+
+      setAboutMessage(
+        error instanceof Error
+          ? error.message
+          : "No se pudo subir la imagen."
+      );
+    } finally {
+      setAboutUploading(false);
+
+      event.target.value = "";
+    }
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | REMOVE ABOUT IMAGE
+  |--------------------------------------------------------------------------
+  */
+
+  const removeAboutImage = async () => {
+    if (!about.image_url) {
+      return;
+    }
+
+    const confirmed =
+      window.confirm(
+        "¿Quieres eliminar la imagen de About?"
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setAboutUploading(true);
+    setAboutMessage("");
+
+    try {
+      const url =
+        about.image_url;
+
+      const marker =
+        "/storage/v1/object/public/about/";
+
+      const markerIndex =
+        url.indexOf(marker);
+
+      if (markerIndex !== -1) {
+        const filePath =
+          url.substring(
+            markerIndex +
+              marker.length
+          );
+
+        if (filePath) {
+          const { error } =
+            await supabase.storage
+              .from("about")
+              .remove([
+                filePath,
+              ]);
+
+          if (error) {
+            console.warn(
+              "No se pudo eliminar físicamente la imagen:",
+              error
+            );
+          }
+        }
+      }
+
+      setAbout((current) => ({
+        ...current,
+        image_url: null,
+      }));
+
+      setAboutMessage(
+        "Imagen eliminada. Presiona GUARDAR ABOUT para confirmar."
+      );
+    } catch (error) {
+      console.error(error);
+
+      setAboutMessage(
+        "No se pudo eliminar la imagen."
+      );
+    } finally {
+      setAboutUploading(false);
+    }
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | SAVE ABOUT
+  |--------------------------------------------------------------------------
+  */
+
+  const saveAbout = async () => {
+    setAboutSaving(true);
+    setAboutMessage("");
+
+    try {
+      const payload = {
+        image_url:
+          about.image_url,
+        eyebrow:
+          about.eyebrow.trim(),
+        title:
+          about.title.trim(),
+        intro:
+          about.intro.trim(),
+        description:
+          about.description.trim(),
+        custom_description:
+          about.custom_description.trim(),
+        active:
+          about.active,
+        updated_at:
+          new Date().toISOString(),
+      };
+
+      let error;
+
+      if (about.id) {
+        const response =
+          await supabase
+            .from("about_content")
+            .update(payload)
+            .eq(
+              "id",
+              about.id
+            );
+
+        error =
+          response.error;
+      } else {
+        const response =
+          await supabase
+            .from("about_content")
+            .insert(
+              payload
+            )
+            .select()
+            .single();
+
+        error =
+          response.error;
+
+        if (response.data) {
+          setAbout(
+            (current) => ({
+              ...current,
+              id:
+                response.data.id,
+            })
+          );
+        }
+      }
+
+      if (error) {
+        throw new Error(
+          error.message
+        );
+      }
+
+      setAboutMessage(
+        "✓ Sección About guardada correctamente."
+      );
+    } catch (error) {
+      console.error(
+        "Error guardando About:",
+        error
+      );
+
+      setAboutMessage(
+        error instanceof Error
+          ? error.message
+          : "No se pudo guardar la sección About."
+      );
+    } finally {
+      setAboutSaving(false);
+    }
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | STATS
+  |--------------------------------------------------------------------------
+  */
+
+  const activeCount =
+    content.filter(
+      (item) => item.active
+    ).length;
+
+  const featuredCount =
+    content.filter(
+      (item) =>
+        item.type === "HERO" ||
+        item.type === "DROP"
+    ).length;
+
+  /*
+  |--------------------------------------------------------------------------
+  | TAB BUTTON
+  |--------------------------------------------------------------------------
+  */
+
+  const tabClass = (
+    tab: ContentTab
+  ) =>
+    `whitespace-nowrap border px-4 py-2.5 text-[9px] font-black tracking-[0.18em] transition ${
+      activeTab === tab
+        ? "border-white bg-white text-black"
+        : "border-white/10 bg-black text-white/40 hover:border-white/30 hover:text-white"
+    }`;
+
+  return (
+    <main className="min-h-screen bg-[#050505] text-white">
+
+      {/* ================================================================
+          HEADER
+      ================================================================= */}
+
+      <header className="sticky top-0 z-40 flex min-h-[76px] items-center justify-between border-b border-white/10 bg-black/95 px-5 backdrop-blur-xl md:px-8">
 
         <div>
-          <h1 className="text-xl font-bold tracking-[0.25em]">
+          <h1 className="text-lg font-black tracking-[0.25em] md:text-xl">
             NEWCLOTHES
           </h1>
 
-          <p className="text-[10px] tracking-[0.3em] text-white/40 mt-1">
+          <p className="mt-1 text-[8px] font-bold tracking-[0.35em] text-white/30">
             ADMINISTRATION
           </p>
         </div>
 
         <button
           onClick={() =>
-            (window.location.href = "/admin/login")
+            (window.location.href =
+              "/admin/login")
           }
-          className="border border-white/20 px-5 py-2 text-xs tracking-widest hover:bg-white hover:text-black transition"
+          className="border border-white/10 px-4 py-2.5 text-[8px] font-black tracking-[0.18em] text-white/50 transition hover:border-white/30 hover:bg-white hover:text-black md:px-5"
         >
           CERRAR SESIÓN
         </button>
 
       </header>
 
+      <div className="flex min-h-[calc(100vh-76px)]">
 
-      <div className="flex min-h-[calc(100vh-80px)]">
+        {/* ================================================================
+            SIDEBAR
+        ================================================================= */}
 
-        {/* SIDEBAR */}
-        <aside className="w-64 border-r border-white/10 bg-[#090909] p-6">
+        <aside className="hidden w-60 shrink-0 border-r border-white/10 bg-[#080808] p-5 lg:block">
 
-          <p className="text-[10px] text-white/30 tracking-[0.3em] mb-5">
+          <div className="mb-7 border-b border-white/10 pb-5">
+
+            <p className="text-[8px] font-black tracking-[0.35em] text-white/25">
+              CONTROL PANEL
+            </p>
+
+            <p className="mt-2 text-xs font-semibold text-white/70">
+              Gestión de tienda
+            </p>
+
+          </div>
+
+          <p className="mb-4 px-3 text-[8px] font-black tracking-[0.3em] text-white/25">
             ADMIN
           </p>
 
@@ -191,460 +708,1120 @@ export default function ContentPage() {
 
             <a
               href="/admin/dashboard"
-              className="block px-4 py-3 text-sm text-white/50 hover:text-white hover:bg-white/5 transition"
+              className="block border-l-2 border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
             >
               Dashboard
             </a>
 
             <a
               href="/admin/products"
-              className="block px-4 py-3 text-sm text-white/50 hover:text-white hover:bg-white/5 transition"
+              className="block border-l-2 border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
             >
               Productos
             </a>
 
             <a
               href="/admin/inventory"
-              className="block px-4 py-3 text-sm text-white/50 hover:text-white hover:bg-white/5 transition"
+              className="block border-l-2 border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
             >
               Inventario
             </a>
 
             <a
               href="/admin/content"
-              className="block px-4 py-3 text-sm bg-white/10 text-white border-l-2 border-white"
+              className="block border-l-2 border-white bg-white/[0.07] px-3 py-3 text-xs font-semibold text-white"
             >
-              Contenido / Banners
+              Contenido
             </a>
 
-            <button className="w-full text-left px-4 py-3 text-sm text-white/50 hover:text-white hover:bg-white/5 transition">
-              Secciones de la web
-            </button>
+            <a
+              href="/admin/drops"
+              className="block border-l-2 border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
+            >
+              Drops
+            </a>
 
-            <button className="w-full text-left px-4 py-3 text-sm text-white/50 hover:text-white hover:bg-white/5 transition">
-              Estadísticas
-            </button>
+            <a
+              href="/admin/offers"
+              className="block border-l-2 border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
+            >
+              Ofertas
+            </a>
 
-            <button className="w-full text-left px-4 py-3 text-sm text-white/50 hover:text-white hover:bg-white/5 transition">
-              Usuarios
-            </button>
-
-            <button className="w-full text-left px-4 py-3 text-sm text-white/50 hover:text-white hover:bg-white/5 transition">
-              Configuración
-            </button>
+            <a
+              href="/admin/sales"
+              className="block border-l-2 border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
+            >
+              Ventas
+            </a>
 
           </nav>
 
+          <div className="mt-10 border-t border-white/10 pt-6">
+
+            <p className="px-3 text-[8px] font-black tracking-[0.3em] text-white/20">
+              WEB
+            </p>
+
+            <a
+              href="/"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-2 block px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
+            >
+              Ver tienda ↗
+            </a>
+
+          </div>
+
         </aside>
 
+        {/* ================================================================
+            MAIN
+        ================================================================= */}
 
-        {/* MAIN */}
-        <section className="flex-1 p-10">
+        <section className="min-w-0 flex-1">
 
-          {/* TITLE */}
-          <div className="flex items-end justify-between mb-10">
+          <div className="mx-auto max-w-[1600px] px-5 py-7 md:px-8 md:py-10">
 
-            <div>
+            {/* ============================================================
+                PAGE HEADER
+            ============================================================= */}
 
-              <p className="text-[10px] tracking-[0.3em] text-white/30 mb-3">
-                CONTENIDO VISUAL
-              </p>
+            <div className="flex flex-col gap-6 border-b border-white/10 pb-7 xl:flex-row xl:items-end xl:justify-between">
 
-              <h2 className="text-4xl font-bold tracking-tight">
-                Contenido / Banners
-              </h2>
+              <div>
 
-              <p className="text-sm text-white/40 mt-2">
-                Controla los elementos visuales que aparecen en
-                la web.
-              </p>
+                <p className="text-[8px] font-black tracking-[0.4em] text-white/25">
+                  01 / CONTENIDO
+                </p>
 
-            </div>
+                <h2 className="mt-3 text-3xl font-black tracking-[-0.04em] md:text-5xl">
+                  Contenido
+                </h2>
 
-
-            <button
-              onClick={openNew}
-              className="bg-white text-black px-6 py-3 text-xs font-bold tracking-[0.15em] hover:bg-white/80 transition"
-            >
-              + NUEVO CONTENIDO
-            </button>
-
-          </div>
-
-
-          {/* STATS */}
-          <div className="grid grid-cols-3 gap-5 mb-10">
-
-            <div className="border border-white/10 bg-[#0c0c0c] p-6">
-
-              <p className="text-[10px] tracking-[0.25em] text-white/30">
-                CONTENIDOS
-              </p>
-
-              <p className="text-3xl font-semibold mt-3">
-                {content.length}
-              </p>
-
-            </div>
-
-
-            <div className="border border-white/10 bg-[#0c0c0c] p-6">
-
-              <p className="text-[10px] tracking-[0.25em] text-white/30">
-                ACTIVOS
-              </p>
-
-              <p className="text-3xl font-semibold mt-3">
-                {
-                  content.filter((item) => item.active)
-                    .length
-                }
-              </p>
-
-            </div>
-
-
-            <div className="border border-white/10 bg-[#0c0c0c] p-6">
-
-              <p className="text-[10px] tracking-[0.25em] text-white/30">
-                DESTACADOS
-              </p>
-
-              <p className="text-3xl font-semibold mt-3">
-                {
-                  content.filter(
-                    (item) =>
-                      item.type === "HERO" ||
-                      item.type === "DROP"
-                  ).length
-                }
-              </p>
-
-            </div>
-
-          </div>
-
-
-          {/* FORM */}
-          {showForm && (
-
-            <div className="border border-white/10 bg-[#0b0b0b] p-8 mb-8">
-
-              <div className="flex justify-between items-center mb-8">
-
-                <div>
-
-                  <p className="text-[10px] tracking-[0.25em] text-white/30">
-                    {editingId !== null
-                      ? "EDITAR CONTENIDO"
-                      : "NUEVO CONTENIDO"}
-                  </p>
-
-                  <h3 className="text-2xl font-semibold mt-2">
-                    {editingId !== null
-                      ? "Editar elemento"
-                      : "Crear elemento"}
-                  </h3>
-
-                </div>
-
-                <button
-                  onClick={resetForm}
-                  className="text-white/40 hover:text-white text-xl"
-                >
-                  ×
-                </button>
+                <p className="mt-3 max-w-xl text-xs leading-6 text-white/35 md:text-sm">
+                  Administra los elementos visuales
+                  y las secciones editables de
+                  NEWCLOTHES.
+                </p>
 
               </div>
 
+              {activeTab !== "ABOUT" && (
+                <button
+                  onClick={openNew}
+                  className="w-full bg-white px-6 py-3.5 text-[9px] font-black tracking-[0.18em] text-black transition hover:bg-white/85 sm:w-auto"
+                >
+                  + NUEVO CONTENIDO
+                </button>
+              )}
 
-              <div className="grid grid-cols-2 gap-6">
+            </div>
 
-                {/* TITLE */}
-                <div>
+            {/* ============================================================
+                MOBILE NAV
+            ============================================================= */}
 
-                  <label className="text-[10px] tracking-widest text-white/40">
-                    TÍTULO
-                  </label>
+            <div className="mt-6 overflow-x-auto pb-1 lg:hidden">
 
-                  <input
-                    value={title}
-                    onChange={(e) =>
-                      setTitle(e.target.value)
-                    }
-                    placeholder="THE LAST DANCE"
-                    className="w-full mt-2 bg-black border border-white/10 px-4 py-3 text-sm outline-none focus:border-white/40"
-                  />
+              <div className="flex min-w-max gap-2">
 
-                </div>
+                <a
+                  href="/admin/dashboard"
+                  className="border border-white/10 px-4 py-2.5 text-[9px] font-black tracking-[0.15em] text-white/40"
+                >
+                  DASHBOARD
+                </a>
 
+                <a
+                  href="/admin/products"
+                  className="border border-white/10 px-4 py-2.5 text-[9px] font-black tracking-[0.15em] text-white/40"
+                >
+                  PRODUCTOS
+                </a>
 
-                {/* SUBTITLE */}
-                <div>
+                <a
+                  href="/admin/inventory"
+                  className="border border-white/10 px-4 py-2.5 text-[9px] font-black tracking-[0.15em] text-white/40"
+                >
+                  INVENTARIO
+                </a>
 
-                  <label className="text-[10px] tracking-widest text-white/40">
-                    SUBTÍTULO
-                  </label>
-
-                  <input
-                    value={subtitle}
-                    onChange={(e) =>
-                      setSubtitle(e.target.value)
-                    }
-                    placeholder="LIMITED EDITION"
-                    className="w-full mt-2 bg-black border border-white/10 px-4 py-3 text-sm outline-none focus:border-white/40"
-                  />
-
-                </div>
-
-
-                {/* IMAGE */}
-                <div className="col-span-2">
-
-                  <label className="text-[10px] tracking-widest text-white/40">
-                    URL DE IMAGEN
-                  </label>
-
-                  <input
-                    value={image}
-                    onChange={(e) =>
-                      setImage(e.target.value)
-                    }
-                    placeholder="https://..."
-                    className="w-full mt-2 bg-black border border-white/10 px-4 py-3 text-sm outline-none focus:border-white/40"
-                  />
-
-                  <p className="text-[10px] text-white/25 mt-2">
-                    Posteriormente podremos cargar imágenes
-                    directamente desde el administrador.
-                  </p>
-
-                </div>
-
-
-                {/* BUTTON */}
-                <div>
-
-                  <label className="text-[10px] tracking-widest text-white/40">
-                    TEXTO DEL BOTÓN
-                  </label>
-
-                  <input
-                    value={buttonText}
-                    onChange={(e) =>
-                      setButtonText(e.target.value)
-                    }
-                    placeholder="VER DROP"
-                    className="w-full mt-2 bg-black border border-white/10 px-4 py-3 text-sm outline-none focus:border-white/40"
-                  />
-
-                </div>
-
-
-                {/* TYPE */}
-                <div>
-
-                  <label className="text-[10px] tracking-widest text-white/40">
-                    TIPO DE CONTENIDO
-                  </label>
-
-                  <select
-                    value={type}
-                    onChange={(e) =>
-                      setType(
-                        e.target.value as ContentItem["type"]
-                      )
-                    }
-                    className="w-full mt-2 bg-black border border-white/10 px-4 py-3 text-sm outline-none focus:border-white/40"
-                  >
-
-                    <option value="HERO">
-                      HERO PRINCIPAL
-                    </option>
-
-                    <option value="BANNER">
-                      BANNER
-                    </option>
-
-                    <option value="CAMPAÑA">
-                      CAMPAÑA
-                    </option>
-
-                    <option value="DROP">
-                      DROP
-                    </option>
-
-                  </select>
-
-                </div>
-
-
-                {/* ACTIVE */}
-                <div className="col-span-2 flex items-center gap-3">
-
-                  <input
-                    id="active"
-                    type="checkbox"
-                    checked={active}
-                    onChange={(e) =>
-                      setActive(e.target.checked)
-                    }
-                    className="w-4 h-4"
-                  />
-
-                  <label
-                    htmlFor="active"
-                    className="text-sm text-white/70"
-                  >
-                    Mostrar este contenido en la web
-                  </label>
-
-                </div>
+                <a
+                  href="/admin/drops"
+                  className="border border-white/10 px-4 py-2.5 text-[9px] font-black tracking-[0.15em] text-white/40"
+                >
+                  DROPS
+                </a>
 
               </div>
 
+            </div>
 
-              {/* ACTIONS */}
-              <div className="flex justify-end gap-3 mt-8">
+            {/* ============================================================
+                CONTENT TABS
+            ============================================================= */}
+
+            <div className="mt-8">
+
+              <div className="flex gap-2 overflow-x-auto pb-2">
 
                 <button
-                  onClick={resetForm}
-                  className="border border-white/10 px-6 py-3 text-xs tracking-widest text-white/50 hover:text-white hover:border-white/30 transition"
+                  onClick={() =>
+                    setActiveTab("ALL")
+                  }
+                  className={tabClass(
+                    "ALL"
+                  )}
                 >
-                  CANCELAR
+                  TODO
                 </button>
 
                 <button
-                  onClick={saveContent}
-                  className="bg-white text-black px-7 py-3 text-xs font-bold tracking-widest hover:bg-white/80 transition"
+                  onClick={() =>
+                    setActiveTab("HERO")
+                  }
+                  className={tabClass(
+                    "HERO"
+                  )}
                 >
-                  GUARDAR CONTENIDO
+                  HERO
+                </button>
+
+                <button
+                  onClick={() =>
+                    setActiveTab("BANNER")
+                  }
+                  className={tabClass(
+                    "BANNER"
+                  )}
+                >
+                  BANNERS
+                </button>
+
+                <button
+                  onClick={() =>
+                    setActiveTab(
+                      "CAMPAÑA"
+                    )
+                  }
+                  className={tabClass(
+                    "CAMPAÑA"
+                  )}
+                >
+                  CAMPAÑAS
+                </button>
+
+                <button
+                  onClick={() =>
+                    setActiveTab("DROP")
+                  }
+                  className={tabClass(
+                    "DROP"
+                  )}
+                >
+                  DROPS
+                </button>
+
+                <button
+                  onClick={() =>
+                    setActiveTab("ABOUT")
+                  }
+                  className={tabClass(
+                    "ABOUT"
+                  )}
+                >
+                  ABOUT
                 </button>
 
               </div>
 
             </div>
 
-          )}
+            {/* ============================================================
+                ABOUT ACTIVE
+            ============================================================= */}
 
+            {activeTab === "ABOUT" ? (
 
-          {/* CONTENT LIST */}
-          <div className="border border-white/10 bg-[#0b0b0b]">
+              <div className="mt-7">
 
-            <div className="px-7 py-5 border-b border-white/10">
+                {/* ABOUT TOP BAR */}
 
-              <p className="text-[10px] tracking-[0.25em] text-white/30">
-                ELEMENTOS VISUALES
-              </p>
+                <div className="border-b border-white/10 pb-6">
 
-            </div>
+                  <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
 
+                    <div>
 
-            <div className="divide-y divide-white/10">
+                      <p className="text-[8px] font-black tracking-[0.4em] text-white/25">
+                        06 / SECCIÓN EDITABLE
+                      </p>
 
-              {content.map((item) => (
-
-                <div
-                  key={item.id}
-                  className="px-7 py-6 flex items-center gap-6"
-                >
-
-                  {/* IMAGE */}
-                  <div className="w-40 h-24 bg-[#111] border border-white/10 flex items-center justify-center shrink-0 overflow-hidden">
-
-                    {item.image ? (
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-[9px] tracking-widest text-white/20">
-                        SIN IMAGEN
-                      </span>
-                    )}
-
-                  </div>
-
-
-                  {/* INFO */}
-                  <div className="flex-1 min-w-0">
-
-                    <div className="flex items-center gap-3 flex-wrap">
-
-                      <h3 className="font-semibold tracking-wide">
-                        {item.title}
+                      <h3 className="mt-3 text-2xl font-black tracking-[-0.03em] md:text-4xl">
+                        About / Quiénes somos
                       </h3>
 
-                      <span className="border border-white/10 px-2 py-1 text-[8px] tracking-widest text-white/40">
-                        {item.type}
-                      </span>
-
-                      <span
-                        className={`border px-2 py-1 text-[8px] tracking-widest ${
-                          item.active
-                            ? "border-white/20 text-white/60"
-                            : "border-white/10 text-white/25"
-                        }`}
-                      >
-                        {item.active
-                          ? "ACTIVO"
-                          : "OCULTO"}
-                      </span>
+                      <p className="mt-2 max-w-2xl text-xs leading-6 text-white/35">
+                        Edita la imagen y el contenido
+                        que aparece en la sección
+                        About de la página principal.
+                      </p>
 
                     </div>
 
-
-                    <p className="text-xs text-white/40 mt-2">
-                      {item.subtitle}
-                    </p>
-
-
-                    <p className="text-[9px] tracking-widest text-white/25 mt-3">
-                      BOTÓN:{" "}
-                      {item.buttonText || "SIN BOTÓN"}
-                    </p>
-
-                  </div>
-
-
-                  {/* ACTIONS */}
-                  <div className="flex items-center gap-2">
-
-                    <button
-                      onClick={() =>
-                        toggleActive(item.id)
-                      }
-                      className="border border-white/10 px-4 py-2 text-[9px] tracking-widest text-white/50 hover:text-white hover:border-white/30 transition"
+                    <div
+                      className={`inline-flex w-fit items-center gap-2 border px-3 py-2 text-[8px] font-black tracking-[0.18em] ${
+                        about.active
+                          ? "border-white/20 text-white/60"
+                          : "border-white/10 text-white/25"
+                      }`}
                     >
-                      {item.active
-                        ? "OCULTAR"
-                        : "MOSTRAR"}
-                    </button>
 
-                    <button
-                      onClick={() => editContent(item)}
-                      className="border border-white/10 px-4 py-2 text-[9px] tracking-widest text-white/50 hover:text-white hover:border-white/30 transition"
-                    >
-                      EDITAR
-                    </button>
+                      <span
+                        className={`h-1.5 w-1.5 rounded-full ${
+                          about.active
+                            ? "bg-white"
+                            : "bg-white/20"
+                        }`}
+                      />
 
-                    <button
-                      onClick={() =>
-                        deleteContent(item.id)
-                      }
-                      className="border border-white/10 px-4 py-2 text-[9px] tracking-widest text-white/50 hover:text-white hover:border-white/30 transition"
-                    >
-                      ELIMINAR
-                    </button>
+                      {about.active
+                        ? "VISIBLE EN LA WEB"
+                        : "OCULTO"}
+
+                    </div>
 
                   </div>
 
                 </div>
 
-              ))}
+                {aboutLoading ? (
 
-            </div>
+                  <div className="flex min-h-[500px] items-center justify-center border-b border-white/10">
+
+                    <div className="text-center">
+
+                      <div className="mx-auto h-8 w-8 animate-spin rounded-full border border-white/10 border-t-white" />
+
+                      <p className="mt-5 text-[8px] font-black tracking-[0.3em] text-white/25">
+                        CARGANDO ABOUT
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                ) : (
+
+                  <div className="mt-7">
+
+                    <div className="grid gap-8 xl:grid-cols-[0.85fr_1.15fr]">
+
+                      {/* ==================================================
+                          IMAGE
+                      ================================================== */}
+
+                      <div>
+
+                        <div className="mb-3 flex items-center justify-between">
+
+                          <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
+                            IMAGEN PRINCIPAL
+                          </label>
+
+                          <span className="text-[8px] tracking-[0.15em] text-white/20">
+                            4 : 5
+                          </span>
+
+                        </div>
+
+                        <div className="relative aspect-[4/5] overflow-hidden border border-white/10 bg-[#090909]">
+
+                          {about.image_url ? (
+
+                            <img
+                              src={
+                                about.image_url
+                              }
+                              alt="About NEWCLOTHES"
+                              className="h-full w-full object-cover"
+                            />
+
+                          ) : (
+
+                            <div className="absolute inset-0 flex items-center justify-center">
+
+                              <div className="text-center">
+
+                                <p className="text-[11px] font-black tracking-[0.5em] text-white/15">
+                                  NEWCLOTHES
+                                </p>
+
+                                <p className="mt-3 text-[8px] font-bold tracking-[0.3em] text-white/10">
+                                  SIN IMAGEN
+                                </p>
+
+                              </div>
+
+                            </div>
+
+                          )}
+
+                          {aboutUploading && (
+
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+
+                              <div className="text-center">
+
+                                <div className="mx-auto h-8 w-8 animate-spin rounded-full border border-white/10 border-t-white" />
+
+                                <p className="mt-4 text-[8px] font-black tracking-[0.25em] text-white/60">
+                                  SUBIENDO IMAGEN
+                                </p>
+
+                              </div>
+
+                            </div>
+
+                          )}
+
+                        </div>
+
+                        <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+
+                          <label className="flex cursor-pointer items-center justify-center bg-white px-5 py-3 text-[8px] font-black tracking-[0.18em] text-black transition hover:bg-white/85">
+
+                            {about.image_url
+                              ? "CAMBIAR IMAGEN"
+                              : "SUBIR IMAGEN"}
+
+                            <input
+                              type="file"
+                              accept="image/png,image/jpeg,image/webp"
+                              onChange={
+                                handleAboutImageUpload
+                              }
+                              disabled={
+                                aboutUploading
+                              }
+                              className="hidden"
+                            />
+
+                          </label>
+
+                          {about.image_url && (
+
+                            <button
+                              type="button"
+                              onClick={
+                                removeAboutImage
+                              }
+                              disabled={
+                                aboutUploading
+                              }
+                              className="border border-white/10 px-5 py-3 text-[8px] font-black tracking-[0.18em] text-white/40 transition hover:border-white/30 hover:text-white disabled:opacity-40"
+                            >
+                              ELIMINAR
+                            </button>
+
+                          )}
+
+                        </div>
+
+                        <p className="mt-3 text-[8px] leading-5 text-white/20">
+                          JPG, PNG o WEBP · Máximo
+                          10 MB
+                        </p>
+
+                      </div>
+
+                      {/* ==================================================
+                          TEXT
+                      ================================================== */}
+
+                      <div className="min-w-0">
+
+                        <div className="grid gap-6">
+
+                          {/* EYEBROW */}
+
+                          <div>
+
+                            <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
+                              ETIQUETA
+                            </label>
+
+                            <input
+                              value={
+                                about.eyebrow
+                              }
+                              onChange={(e) =>
+                                updateAboutField(
+                                  "eyebrow",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="QUIÉNES SOMOS"
+                              className="mt-2 w-full border border-white/10 bg-[#090909] px-4 py-3.5 text-xs text-white outline-none transition placeholder:text-white/15 focus:border-white/30"
+                            />
+
+                          </div>
+
+                          {/* TITLE */}
+
+                          <div>
+
+                            <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
+                              TÍTULO PRINCIPAL
+                            </label>
+
+                            <input
+                              value={
+                                about.title
+                              }
+                              onChange={(e) =>
+                                updateAboutField(
+                                  "title",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="VISTE TU IDENTIDAD."
+                              className="mt-2 w-full border border-white/10 bg-[#090909] px-4 py-3.5 text-xs font-bold text-white outline-none transition placeholder:text-white/15 focus:border-white/30"
+                            />
+
+                          </div>
+
+                          {/* INTRO */}
+
+                          <div>
+
+                            <div className="flex items-center justify-between">
+
+                              <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
+                                FRASE DESTACADA
+                              </label>
+
+                              <span className="text-[8px] text-white/15">
+                                TEXTO CORTO
+                              </span>
+
+                            </div>
+
+                            <textarea
+                              value={
+                                about.intro
+                              }
+                              onChange={(e) =>
+                                updateAboutField(
+                                  "intro",
+                                  e.target.value
+                                )
+                              }
+                              rows={3}
+                              placeholder="ROPA STREETWEAR TOTALMENTE PREMIUM. HECHA PARA TI."
+                              className="mt-2 w-full resize-none border border-white/10 bg-[#090909] px-4 py-3.5 text-xs leading-6 text-white outline-none transition placeholder:text-white/15 focus:border-white/30"
+                            />
+
+                          </div>
+
+                          {/* DESCRIPTION */}
+
+                          <div>
+
+                            <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
+                              DESCRIPCIÓN DE NEWCLOTHES
+                            </label>
+
+                            <textarea
+                              value={
+                                about.description
+                              }
+                              onChange={(e) =>
+                                updateAboutField(
+                                  "description",
+                                  e.target.value
+                                )
+                              }
+                              rows={6}
+                              placeholder="Describe quiénes son..."
+                              className="mt-2 w-full resize-none border border-white/10 bg-[#090909] px-4 py-3.5 text-xs leading-6 text-white outline-none transition placeholder:text-white/15 focus:border-white/30"
+                            />
+
+                          </div>
+
+                          {/* CUSTOM */}
+
+                          <div>
+
+                            <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
+                              ROPA PERSONALIZADA
+                            </label>
+
+                            <textarea
+                              value={
+                                about.custom_description
+                              }
+                              onChange={(e) =>
+                                updateAboutField(
+                                  "custom_description",
+                                  e.target.value
+                                )
+                              }
+                              rows={6}
+                              placeholder="Explica el servicio de ropa personalizada..."
+                              className="mt-2 w-full resize-none border border-white/10 bg-[#090909] px-4 py-3.5 text-xs leading-6 text-white outline-none transition placeholder:text-white/15 focus:border-white/30"
+                            />
+
+                          </div>
+
+                          {/* ACTIVE */}
+
+                          <div className="flex items-center justify-between border-y border-white/10 py-5">
+
+                            <div>
+
+                              <p className="text-[9px] font-black tracking-[0.18em] text-white/70">
+                                PUBLICACIÓN
+                              </p>
+
+                              <p className="mt-1 text-[8px] text-white/25">
+                                Controla si About aparece
+                                en la página.
+                              </p>
+
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                updateAboutField(
+                                  "active",
+                                  !about.active
+                                )
+                              }
+                              className={`relative h-6 w-11 rounded-full border transition ${
+                                about.active
+                                  ? "border-white bg-white"
+                                  : "border-white/20 bg-black"
+                              }`}
+                              aria-label="Cambiar visibilidad de About"
+                            >
+
+                              <span
+                                className={`absolute top-1 h-4 w-4 rounded-full transition ${
+                                  about.active
+                                    ? "left-6 bg-black"
+                                    : "left-1 bg-white/30"
+                                }`}
+                              />
+
+                            </button>
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                    {/* ABOUT FOOTER */}
+
+                    <div className="mt-8 flex flex-col gap-5 border-t border-white/10 pt-6 md:flex-row md:items-center md:justify-between">
+
+                      <div className="min-h-[18px]">
+
+                        {aboutMessage && (
+
+                          <p
+                            className={`text-[8px] font-bold tracking-[0.12em] ${
+                              aboutMessage.startsWith(
+                                "✓"
+                              )
+                                ? "text-white/70"
+                                : "text-white/40"
+                            }`}
+                          >
+                            {aboutMessage}
+                          </p>
+
+                        )}
+
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={saveAbout}
+                        disabled={
+                          aboutSaving ||
+                          aboutUploading
+                        }
+                        className="bg-white px-8 py-3.5 text-[8px] font-black tracking-[0.2em] text-black transition hover:bg-white/85 disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        {aboutSaving
+                          ? "GUARDANDO..."
+                          : "GUARDAR ABOUT"}
+                      </button>
+
+                    </div>
+
+                  </div>
+
+                )}
+
+              </div>
+
+            ) : (
+
+              /* ==========================================================
+                 CONTENT AREA
+              =========================================================== */
+
+              <div className="mt-7">
+
+                {/* STATS */}
+
+                <div className="grid grid-cols-1 gap-px border border-white/10 bg-white/10 sm:grid-cols-3">
+
+                  <div className="bg-[#080808] p-5 md:p-6">
+
+                    <p className="text-[8px] font-black tracking-[0.25em] text-white/25">
+                      CONTENIDOS
+                    </p>
+
+                    <p className="mt-3 text-3xl font-black tracking-tight">
+                      {content.length}
+                    </p>
+
+                  </div>
+
+                  <div className="bg-[#080808] p-5 md:p-6">
+
+                    <p className="text-[8px] font-black tracking-[0.25em] text-white/25">
+                      ACTIVOS
+                    </p>
+
+                    <p className="mt-3 text-3xl font-black tracking-tight">
+                      {activeCount}
+                    </p>
+
+                  </div>
+
+                  <div className="bg-[#080808] p-5 md:p-6">
+
+                    <p className="text-[8px] font-black tracking-[0.25em] text-white/25">
+                      DESTACADOS
+                    </p>
+
+                    <p className="mt-3 text-3xl font-black tracking-tight">
+                      {featuredCount}
+                    </p>
+
+                  </div>
+
+                </div>
+
+                {/* FORM */}
+
+                {showForm && (
+
+                  <div className="mt-7 border border-white/10 bg-[#080808]">
+
+                    <div className="flex items-center justify-between border-b border-white/10 px-5 py-5 md:px-7">
+
+                      <div>
+
+                        <p className="text-[8px] font-black tracking-[0.3em] text-white/25">
+                          {editingId !== null
+                            ? "EDITAR CONTENIDO"
+                            : "NUEVO CONTENIDO"}
+                        </p>
+
+                        <h3 className="mt-2 text-xl font-black">
+                          {editingId !== null
+                            ? "Editar elemento"
+                            : "Crear elemento"}
+                        </h3>
+
+                      </div>
+
+                      <button
+                        onClick={
+                          resetForm
+                        }
+                        className="flex h-8 w-8 items-center justify-center border border-white/10 text-lg text-white/30 transition hover:border-white/30 hover:text-white"
+                      >
+                        ×
+                      </button>
+
+                    </div>
+
+                    <div className="p-5 md:p-7">
+
+                      <div className="grid gap-5 md:grid-cols-2">
+
+                        <div>
+
+                          <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
+                            TÍTULO
+                          </label>
+
+                          <input
+                            value={title}
+                            onChange={(e) =>
+                              setTitle(
+                                e.target.value
+                              )
+                            }
+                            placeholder="THE LAST DANCE"
+                            className="mt-2 w-full border border-white/10 bg-black px-4 py-3.5 text-xs outline-none focus:border-white/30"
+                          />
+
+                        </div>
+
+                        <div>
+
+                          <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
+                            SUBTÍTULO
+                          </label>
+
+                          <input
+                            value={subtitle}
+                            onChange={(e) =>
+                              setSubtitle(
+                                e.target.value
+                              )
+                            }
+                            placeholder="LIMITED EDITION"
+                            className="mt-2 w-full border border-white/10 bg-black px-4 py-3.5 text-xs outline-none focus:border-white/30"
+                          />
+
+                        </div>
+
+                        <div className="md:col-span-2">
+
+                          <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
+                            URL DE IMAGEN
+                          </label>
+
+                          <input
+                            value={image}
+                            onChange={(e) =>
+                              setImage(
+                                e.target.value
+                              )
+                            }
+                            placeholder="https://..."
+                            className="mt-2 w-full border border-white/10 bg-black px-4 py-3.5 text-xs outline-none focus:border-white/30"
+                          />
+
+                        </div>
+
+                        <div>
+
+                          <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
+                            TEXTO DEL BOTÓN
+                          </label>
+
+                          <input
+                            value={buttonText}
+                            onChange={(e) =>
+                              setButtonText(
+                                e.target.value
+                              )
+                            }
+                            placeholder="VER DROP"
+                            className="mt-2 w-full border border-white/10 bg-black px-4 py-3.5 text-xs outline-none focus:border-white/30"
+                          />
+
+                        </div>
+
+                        <div>
+
+                          <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
+                            TIPO
+                          </label>
+
+                          <select
+                            value={type}
+                            onChange={(e) =>
+                              setType(
+                                e.target
+                                  .value as ContentItem["type"]
+                              )
+                            }
+                            className="mt-2 w-full border border-white/10 bg-black px-4 py-3.5 text-xs outline-none focus:border-white/30"
+                          >
+
+                            <option value="HERO">
+                              HERO PRINCIPAL
+                            </option>
+
+                            <option value="BANNER">
+                              BANNER
+                            </option>
+
+                            <option value="CAMPAÑA">
+                              CAMPAÑA
+                            </option>
+
+                            <option value="DROP">
+                              DROP
+                            </option>
+
+                          </select>
+
+                        </div>
+
+                        <div className="flex items-center gap-3 md:col-span-2">
+
+                          <input
+                            id="content-active"
+                            type="checkbox"
+                            checked={
+                              active
+                            }
+                            onChange={(e) =>
+                              setActive(
+                                e.target
+                                  .checked
+                              )
+                            }
+                            className="h-4 w-4"
+                          />
+
+                          <label
+                            htmlFor="content-active"
+                            className="text-xs text-white/60"
+                          >
+                            Mostrar este contenido
+                            en la web
+                          </label>
+
+                        </div>
+
+                      </div>
+
+                      <div className="mt-7 flex flex-col justify-end gap-2 border-t border-white/10 pt-6 sm:flex-row">
+
+                        <button
+                          onClick={
+                            resetForm
+                          }
+                          className="border border-white/10 px-6 py-3 text-[8px] font-black tracking-[0.18em] text-white/40 transition hover:border-white/30 hover:text-white"
+                        >
+                          CANCELAR
+                        </button>
+
+                        <button
+                          onClick={
+                            saveContent
+                          }
+                          className="bg-white px-7 py-3 text-[8px] font-black tracking-[0.18em] text-black transition hover:bg-white/85"
+                        >
+                          GUARDAR CONTENIDO
+                        </button>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                )}
+
+                {/* CONTENT LIST */}
+
+                <div className="mt-7 border border-white/10 bg-[#080808]">
+
+                  <div className="flex items-center justify-between border-b border-white/10 px-5 py-5 md:px-7">
+
+                    <div>
+
+                      <p className="text-[8px] font-black tracking-[0.3em] text-white/25">
+                        ELEMENTOS VISUALES
+                      </p>
+
+                      <h3 className="mt-2 text-lg font-black">
+                        {activeTab === "ALL"
+                          ? "Todos los contenidos"
+                          : activeTab}
+                      </h3>
+
+                    </div>
+
+                    <span className="text-[8px] font-black tracking-[0.15em] text-white/20">
+                      {filteredContent.length}{" "}
+                      ELEMENTOS
+                    </span>
+
+                  </div>
+
+                  {filteredContent.length ===
+                  0 ? (
+
+                    <div className="flex min-h-[250px] items-center justify-center">
+
+                      <div className="text-center">
+
+                        <p className="text-[9px] font-black tracking-[0.3em] text-white/20">
+                          SIN CONTENIDO
+                        </p>
+
+                        <p className="mt-3 text-xs text-white/20">
+                          No hay elementos en
+                          esta categoría.
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                  ) : (
+
+                    <div className="divide-y divide-white/10">
+
+                      {filteredContent.map(
+                        (item) => (
+
+                          <div
+                            key={item.id}
+                            className="flex flex-col gap-5 p-5 md:flex-row md:items-center md:p-7"
+                          >
+
+                            {/* IMAGE */}
+
+                            <div className="h-40 w-full shrink-0 overflow-hidden border border-white/10 bg-[#050505] md:h-24 md:w-40">
+
+                              {item.image ? (
+
+                                <img
+                                  src={
+                                    item.image
+                                  }
+                                  alt={
+                                    item.title
+                                  }
+                                  className="h-full w-full object-cover"
+                                />
+
+                              ) : (
+
+                                <div className="flex h-full items-center justify-center">
+
+                                  <span className="text-[8px] font-black tracking-[0.2em] text-white/15">
+                                    SIN IMAGEN
+                                  </span>
+
+                                </div>
+
+                              )}
+
+                            </div>
+
+                            {/* INFO */}
+
+                            <div className="min-w-0 flex-1">
+
+                              <div className="flex flex-wrap items-center gap-2">
+
+                                <h3 className="text-sm font-black tracking-wide">
+                                  {
+                                    item.title
+                                  }
+                                </h3>
+
+                                <span className="border border-white/10 px-2 py-1 text-[7px] font-black tracking-[0.15em] text-white/35">
+                                  {
+                                    item.type
+                                  }
+                                </span>
+
+                                <span
+                                  className={`border px-2 py-1 text-[7px] font-black tracking-[0.15em] ${
+                                    item.active
+                                      ? "border-white/20 text-white/60"
+                                      : "border-white/10 text-white/20"
+                                  }`}
+                                >
+                                  {item.active
+                                    ? "ACTIVO"
+                                    : "OCULTO"}
+                                </span>
+
+                              </div>
+
+                              <p className="mt-2 text-xs text-white/35">
+                                {
+                                  item.subtitle
+                                }
+                              </p>
+
+                              <p className="mt-3 text-[8px] tracking-[0.15em] text-white/20">
+                                BOTÓN:{" "}
+                                {item.buttonText ||
+                                  "SIN BOTÓN"}
+                              </p>
+
+                            </div>
+
+                            {/* ACTIONS */}
+
+                            <div className="flex flex-wrap gap-2">
+
+                              <button
+                                onClick={() =>
+                                  toggleActive(
+                                    item.id
+                                  )
+                                }
+                                className="border border-white/10 px-4 py-2.5 text-[7px] font-black tracking-[0.15em] text-white/40 transition hover:border-white/30 hover:text-white"
+                              >
+                                {item.active
+                                  ? "OCULTAR"
+                                  : "MOSTRAR"}
+                              </button>
+
+                              <button
+                                onClick={() =>
+                                  editContent(
+                                    item
+                                  )
+                                }
+                                className="border border-white/10 px-4 py-2.5 text-[7px] font-black tracking-[0.15em] text-white/40 transition hover:border-white/30 hover:text-white"
+                              >
+                                EDITAR
+                              </button>
+
+                              <button
+                                onClick={() =>
+                                  deleteContent(
+                                    item.id
+                                  )
+                                }
+                                className="border border-white/10 px-4 py-2.5 text-[7px] font-black tracking-[0.15em] text-white/40 transition hover:border-white/30 hover:text-white"
+                              >
+                                ELIMINAR
+                              </button>
+
+                            </div>
+
+                          </div>
+
+                        )
+                      )}
+
+                    </div>
+
+                  )}
+
+                </div>
+
+              </div>
+
+            )}
 
           </div>
 

@@ -56,11 +56,23 @@ type ProductOffer = {
   finalPrice: number;
 };
 
+type AboutContent = {
+  id: string;
+  image_url: string | null;
+  eyebrow: string | null;
+  title: string | null;
+  intro: string | null;
+  description: string | null;
+  custom_description: string | null;
+  active: boolean;
+};
+
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [slides, setSlides] = useState<HeroSlide[]>([]);
   const [drops, setDrops] = useState<Drop[]>([]);
   const [offers, setOffers] = useState<ProductOffer[]>([]);
+  const [about, setAbout] = useState<AboutContent | null>(null);
 
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -68,6 +80,7 @@ export default function Home() {
   const [loadingSlides, setLoadingSlides] = useState(true);
   const [loadingDrops, setLoadingDrops] = useState(true);
   const [loadingOffers, setLoadingOffers] = useState(true);
+  const [loadingAbout, setLoadingAbout] = useState(true);
 
   /*
   |--------------------------------------------------------------------------
@@ -385,6 +398,49 @@ export default function Home() {
     };
 
     loadDrops();
+  }, []);
+
+  /*
+  |--------------------------------------------------------------------------
+  | ABOUT
+  |--------------------------------------------------------------------------
+  */
+
+  useEffect(() => {
+    const loadAbout = async () => {
+      setLoadingAbout(true);
+
+      const supabase = createClient();
+
+      const { data, error } = await supabase
+        .from("about_content")
+        .select(`
+          id,
+          image_url,
+          eyebrow,
+          title,
+          intro,
+          description,
+          custom_description,
+          active
+        `)
+        .eq("active", true)
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error cargando About:", error);
+        setAbout(null);
+        setLoadingAbout(false);
+        return;
+      }
+
+      setAbout(data as AboutContent | null);
+      setLoadingAbout(false);
+    };
+
+    loadAbout();
   }, []);
 
   /*
@@ -1479,30 +1535,47 @@ export default function Home() {
 
           <div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20 lg:items-center">
 
-            {/* Image placeholder */}
+            {/* ==========================================================
+                ABOUT IMAGE
+            ========================================================== */}
 
             <div className="group relative aspect-[4/5] overflow-hidden rounded-[2rem] bg-[#e9e9e9]">
 
-              {/* 
-                ESPACIO RESERVADO PARA IMAGEN
-                Posteriormente puedes colocar aquí una imagen de NEWCLOTHES.
-              */}
+              {loadingAbout ? (
 
-              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center justify-center">
 
-                <div className="text-center">
-
-                  <p className="text-[9px] font-black tracking-[0.4em] text-black/25">
-                    NEWCLOTHES
-                  </p>
-
-                  <p className="mt-3 text-[8px] font-black tracking-[0.3em] text-black/15">
-                    IMAGE / BRAND
-                  </p>
+                  <div className="h-8 w-8 animate-spin rounded-full border border-black/10 border-t-black" />
 
                 </div>
 
-              </div>
+              ) : about?.image_url ? (
+
+                <img
+                  src={about.image_url}
+                  alt={about.title || "NEWCLOTHES"}
+                  className="h-full w-full object-cover transition duration-1000 ease-out group-hover:scale-[1.03]"
+                />
+
+              ) : (
+
+                <div className="absolute inset-0 flex items-center justify-center">
+
+                  <div className="text-center">
+
+                    <p className="text-[9px] font-black tracking-[0.4em] text-black/25">
+                      NEWCLOTHES
+                    </p>
+
+                    <p className="mt-3 text-[8px] font-black tracking-[0.3em] text-black/15">
+                      ABOUT / BRAND
+                    </p>
+
+                  </div>
+
+                </div>
+
+              )}
 
               <div className="absolute left-5 top-5">
 
@@ -1526,53 +1599,81 @@ export default function Home() {
 
             </div>
 
-            {/* Text */}
+            {/* ==========================================================
+                ABOUT TEXT
+            ========================================================== */}
 
             <div>
 
               <p className="mb-6 text-[9px] font-black tracking-[0.4em] text-black/35">
-                QUIÉNES SOMOS
+                {about?.eyebrow || "QUIÉNES SOMOS"}
               </p>
 
               <h2 className="max-w-3xl text-6xl font-black uppercase leading-[0.8] tracking-[-0.09em] md:text-8xl">
 
-                VISTE
-                <br />
-                TU
-                <br />
-                IDENTIDAD.
+                {(about?.title || "VISTE TU IDENTIDAD.")
+                  .split("\n")
+                  .map((line, index) => (
+                    <span key={index} className="block">
+                      {line}
+                    </span>
+                  ))}
 
               </h2>
 
               <div className="mt-10 h-px w-16 bg-black/20" />
 
-              <p className="mt-8 max-w-lg text-lg font-bold uppercase leading-[1.2] tracking-[-0.03em] md:text-2xl">
+              {about?.intro ? (
 
-                ROPA STREETWEAR
-                <br />
-                TOTALMENTE PREMIUM.
-                <br />
-                HECHA PARA TI.
+                <p className="mt-8 max-w-lg text-lg font-bold uppercase leading-[1.2] tracking-[-0.03em] md:text-2xl whitespace-pre-line">
+                  {about.intro}
+                </p>
 
-              </p>
+              ) : (
 
-              <p className="mt-7 max-w-lg text-sm leading-7 text-black/50">
+                <p className="mt-8 max-w-lg text-lg font-bold uppercase leading-[1.2] tracking-[-0.03em] md:text-2xl">
+                  ROPA STREETWEAR
+                  <br />
+                  TOTALMENTE PREMIUM.
+                  <br />
+                  HECHA PARA TI.
+                </p>
 
-                En NEWCLOTHES creamos y seleccionamos prendas
-                streetwear premium para quienes buscan vestir
-                diferente. Nos enfocamos en diseños con carácter,
-                calidad y una estética que se adapta a cada persona.
+              )}
 
-              </p>
+              {about?.description ? (
 
-              <p className="mt-5 max-w-lg text-sm leading-7 text-black/50">
+                <p className="mt-7 max-w-lg text-sm leading-7 text-black/50 whitespace-pre-line">
+                  {about.description}
+                </p>
 
-                También hacemos ropa personalizada, llevando
-                tus ideas a prendas creadas totalmente a tu estilo.
-                Tú imaginas el diseño. Nosotros lo convertimos
-                en una pieza que representa quién eres.
+              ) : (
 
-              </p>
+                <p className="mt-7 max-w-lg text-sm leading-7 text-black/50">
+                  En NEWCLOTHES creamos y seleccionamos prendas
+                  streetwear premium para quienes buscan vestir
+                  diferente. Nos enfocamos en diseños con carácter,
+                  calidad y una estética que se adapta a cada persona.
+                </p>
+
+              )}
+
+              {about?.custom_description ? (
+
+                <p className="mt-5 max-w-lg text-sm leading-7 text-black/50 whitespace-pre-line">
+                  {about.custom_description}
+                </p>
+
+              ) : (
+
+                <p className="mt-5 max-w-lg text-sm leading-7 text-black/50">
+                  También hacemos ropa personalizada, llevando
+                  tus ideas a prendas creadas totalmente a tu estilo.
+                  Tú imaginas el diseño. Nosotros lo convertimos
+                  en una pieza que representa quién eres.
+                </p>
+
+              )}
 
               <a
                 href="#shop"
