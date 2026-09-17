@@ -46,6 +46,11 @@ const contentItems = [
     href: "/admin/hero",
     icon: "▧",
   },
+  {
+    label: "Contenidos",
+    href: "/admin/content",
+    icon: "▤",
+  },
 ];
 
 export default function AdminSidebar() {
