@@ -47,6 +47,13 @@ type ProductData = {
   name: string;
 };
 
+type CreatedOrder = {
+  id: string;
+  order_number: number;
+  status: string;
+  created_at: string;
+};
+
 const supabase = createClient();
 
 function getTodayString() {
@@ -663,15 +670,6 @@ export default function CartPage() {
       /*
        * ========================================================
        * 2. PREPARAR PRODUCTOS
-       *
-       * IMPORTANTE:
-       *
-       * original_price = precio antes de descuento
-       * price         = precio final
-       * offer_id      = oferta aplicada
-       * offer_name    = nombre de la oferta
-       *
-       * Estos datos ahora SE GUARDAN en order_items.
        * ========================================================
        */
 
@@ -810,21 +808,12 @@ export default function CartPage() {
               quantity:
                 item.quantity,
 
-              /*
-               * PRECIO FINAL
-               */
               price:
                 item.price,
 
-              /*
-               * PRECIO ORIGINAL
-               */
               original_price:
                 item.original_price,
 
-              /*
-               * OFERTA
-               */
               offer_id:
                 item.offer_id,
 
@@ -845,42 +834,47 @@ export default function CartPage() {
 
       /*
        * ========================================================
-       * 5. CREAR VENTA
+       * 5. CREAR ORDEN
+       *
+       * CORRECCIÓN RLS
+       *
+       * Ya NO usamos:
+       *
+       * .from("orders")
+       * .insert(...)
+       * .select(...)
+       *
+       * Usamos la función segura de Supabase:
+       *
+       * create_checkout_order
+       *
+       * Esto permite crear la orden desde un visitante
+       * sin darle acceso público para leer las órdenes.
        * ========================================================
        */
 
       const {
-        data: order,
+        data: createdOrderData,
         error: orderError,
-      } = await supabase
-        .from("orders")
-        .insert({
-          customer_name:
-            "Venta desde tienda",
+      } = await supabase.rpc(
+        "create_checkout_order",
+        {
+          p_customer_name:
+            customerName.trim(),
 
-          email:
-            null,
-
-          phone:
-            null,
-
-          status:
-            "PENDING",
-
-          payment:
+          p_payment:
             paymentText,
 
-          shipping:
+          p_shipping:
             deliveryText,
-        })
-        .select(
-          "id, order_number, status, created_at"
-        )
-        .single();
+        }
+      );
 
       if (
         orderError ||
-        !order
+        !createdOrderData ||
+        !Array.isArray(createdOrderData) ||
+        createdOrderData.length === 0
       ) {
         console.error(
           "Error creando venta:",
@@ -893,22 +887,12 @@ export default function CartPage() {
         );
       }
 
+      const order =
+        createdOrderData[0] as CreatedOrder;
+
       /*
        * ========================================================
        * 6. INSERTAR ORDER ITEMS
-       *
-       * AQUÍ ESTÁ LA CORRECCIÓN PRINCIPAL.
-       *
-       * Antes:
-       * solamente se guardaba price.
-       *
-       * Ahora:
-       * - price
-       * - original_price
-       * - offer_id
-       * - offer_name
-       *
-       * quedan almacenados.
        * ========================================================
        */
 
@@ -970,8 +954,8 @@ export default function CartPage() {
         );
 
         /*
-         * Si falla order_items,
-         * eliminamos la orden creada.
+         * Intentamos eliminar la orden si
+         * la creación de items falla.
          */
         await supabase
           .from("orders")
@@ -2145,7 +2129,7 @@ Quedo atento para coordinar el pago y la entrega.`;
                           <p className="mt-2 text-[7px] font-black tracking-[0.15em] text-white/30">
                             PRECIO CON 12% DESCUENTO
                           </p>
-                          )}
+                        )}
 
                       </div>
 
