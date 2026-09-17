@@ -70,9 +70,9 @@ export default function Home() {
   const [loadingOffers, setLoadingOffers] = useState(true);
 
   /*
-  |--------------------------------------------------------------------------|
+  |--------------------------------------------------------------------------
   | HERO / SLIDES
-  |--------------------------------------------------------------------------|
+  |--------------------------------------------------------------------------
   */
 
   useEffect(() => {
@@ -128,9 +128,9 @@ export default function Home() {
   }, []);
 
   /*
-  |--------------------------------------------------------------------------|
+  |--------------------------------------------------------------------------
   | PRODUCTS
-  |--------------------------------------------------------------------------|
+  |--------------------------------------------------------------------------
   */
 
   useEffect(() => {
@@ -201,9 +201,9 @@ export default function Home() {
   }, []);
 
   /*
-  |--------------------------------------------------------------------------|
+  |--------------------------------------------------------------------------
   | OFFERS
-  |--------------------------------------------------------------------------|
+  |--------------------------------------------------------------------------
   */
 
   useEffect(() => {
@@ -346,9 +346,9 @@ export default function Home() {
   }, [products, loadingProducts]);
 
   /*
-  |--------------------------------------------------------------------------|
+  |--------------------------------------------------------------------------
   | DROPS
-  |--------------------------------------------------------------------------|
+  |--------------------------------------------------------------------------
   */
 
   useEffect(() => {
@@ -388,9 +388,9 @@ export default function Home() {
   }, []);
 
   /*
-  |--------------------------------------------------------------------------|
+  |--------------------------------------------------------------------------
   | AUTO SLIDER
-  |--------------------------------------------------------------------------|
+  |--------------------------------------------------------------------------
   */
 
   useEffect(() => {
@@ -408,9 +408,9 @@ export default function Home() {
   const activeSlide = slides[currentSlide];
 
   /*
-  |--------------------------------------------------------------------------|
+  |--------------------------------------------------------------------------
   | HELPERS
-  |--------------------------------------------------------------------------|
+  |--------------------------------------------------------------------------
   */
 
   const formatPrice = (value: number) => {
@@ -432,9 +432,9 @@ export default function Home() {
   };
 
   /*
-  |--------------------------------------------------------------------------|
+  |--------------------------------------------------------------------------
   | DATE FORMAT
-  |--------------------------------------------------------------------------|
+  |--------------------------------------------------------------------------
   */
 
   const formatDate = (date: string | null) => {
@@ -457,9 +457,9 @@ export default function Home() {
   };
 
   /*
-  |--------------------------------------------------------------------------|
+  |--------------------------------------------------------------------------
   | HOME
-  |--------------------------------------------------------------------------|
+  |--------------------------------------------------------------------------
   */
 
   return (
@@ -1442,7 +1442,7 @@ export default function Home() {
       </section>
 
       {/* ================================================================
-          ABOUT — NEW IDENTITY EXPERIENCE
+          ABOUT — WHO WE ARE
       ================================================================= */}
 
       <section
@@ -1450,245 +1450,160 @@ export default function Home() {
         className="relative overflow-hidden border-t border-black/10 bg-white text-black"
       >
 
-        {/* Decorative oversized background word */}
+        {/* Decorative background number */}
 
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -right-8 top-8 select-none text-[22vw] font-black uppercase leading-none tracking-[-0.1em] text-black/[0.035] md:-right-16 md:top-0"
+          className="pointer-events-none absolute -right-10 top-0 select-none text-[32vw] font-black leading-none tracking-[-0.12em] text-black/[0.035] md:-right-20 md:text-[24rem]"
         >
-          IDENTITY
+          004
         </div>
 
-        <div className="relative mx-auto max-w-[1500px] px-5 py-24 md:px-8 md:py-36">
+        <div className="relative mx-auto max-w-[1500px] px-5 py-24 md:px-8 md:py-32">
 
-          {/* Top information */}
+          {/* Header */}
 
-          <div className="mb-20 flex flex-col justify-between gap-8 md:flex-row md:items-start">
+          <div className="mb-16 flex items-start justify-between border-b border-black/10 pb-5 md:mb-20">
 
-            <div>
+            <p className="text-[9px] font-black tracking-[0.45em] text-black/35">
+              004 / ABOUT NEWCLOTHES
+            </p>
 
-              <p className="text-[9px] font-black tracking-[0.45em] text-black/35">
-                004 / ABOUT NEWCLOTHES
-              </p>
+            <p className="hidden text-[8px] font-black tracking-[0.3em] text-black/30 sm:block">
+              STREETWEAR / VALENCIA / VENEZUELA
+            </p>
 
-              <div className="mt-5 flex items-center gap-3">
+          </div>
 
-                <span className="h-1.5 w-1.5 rounded-full bg-black" />
+          {/* Main content */}
 
-                <span className="text-[8px] font-black tracking-[0.3em] text-black/40">
-                  STREETWEAR / IDENTITY / CULTURE
+          <div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20 lg:items-center">
+
+            {/* Image placeholder */}
+
+            <div className="group relative aspect-[4/5] overflow-hidden rounded-[2rem] bg-[#e9e9e9]">
+
+              {/* 
+                ESPACIO RESERVADO PARA IMAGEN
+                Posteriormente puedes colocar aquí una imagen de NEWCLOTHES.
+              */}
+
+              <div className="absolute inset-0 flex items-center justify-center">
+
+                <div className="text-center">
+
+                  <p className="text-[9px] font-black tracking-[0.4em] text-black/25">
+                    NEWCLOTHES
+                  </p>
+
+                  <p className="mt-3 text-[8px] font-black tracking-[0.3em] text-black/15">
+                    IMAGE / BRAND
+                  </p>
+
+                </div>
+
+              </div>
+
+              <div className="absolute left-5 top-5">
+
+                <span className="rounded-full border border-black/10 bg-white/70 px-4 py-2 text-[8px] font-black tracking-[0.2em] backdrop-blur-md">
+                  004
+                </span>
+
+              </div>
+
+              <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between">
+
+                <span className="text-[8px] font-black tracking-[0.25em] text-black/30">
+                  PREMIUM STREETWEAR
+                </span>
+
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition duration-500 group-hover:rotate-45">
+                  ↗
                 </span>
 
               </div>
 
             </div>
 
-            <p className="max-w-xs text-[9px] font-black uppercase leading-5 tracking-[0.18em] text-black/35 md:text-right">
-              NO RULES.
-              <br />
-              NO UNIFORM.
-              <br />
-              JUST YOUR IDENTITY.
-            </p>
-
-          </div>
-
-          {/* Main statement */}
-
-          <div className="relative">
-
-            <p className="mb-6 text-[10px] font-black tracking-[0.35em] text-black/35">
-              THE BRAND STATEMENT
-            </p>
-
-            <h2 className="max-w-[1250px] text-[15vw] font-black uppercase leading-[0.76] tracking-[-0.1em] md:text-[10.5rem]">
-
-              VISTE
-              <br />
-
-              <span className="relative inline-block">
-
-                TU
-
-                <span
-                  aria-hidden="true"
-                  className="absolute -bottom-1 left-0 h-[0.045em] w-full bg-black md:-bottom-3"
-                />
-
-              </span>
-
-              <br />
-
-              IDENTIDAD.
-
-            </h2>
-
-          </div>
-
-          {/* Divider */}
-
-          <div className="my-16 h-px w-full bg-black/10 md:my-24" />
-
-          {/* Brand explanation */}
-
-          <div className="grid gap-12 md:grid-cols-[0.35fr_0.65fr]">
+            {/* Text */}
 
             <div>
 
-              <p className="text-[9px] font-black tracking-[0.35em] text-black/35">
-                01 / WHO WE ARE
+              <p className="mb-6 text-[9px] font-black tracking-[0.4em] text-black/35">
+                QUIÉNES SOMOS
               </p>
 
-            </div>
+              <h2 className="max-w-3xl text-6xl font-black uppercase leading-[0.8] tracking-[-0.09em] md:text-8xl">
 
-            <div className="grid gap-12 md:grid-cols-[1fr_0.7fr]">
+                VISTE
+                <br />
+                TU
+                <br />
+                IDENTIDAD.
 
-              <div>
+              </h2>
 
-                <p className="text-xl font-bold uppercase leading-[1.15] tracking-[-0.03em] md:text-3xl">
+              <div className="mt-10 h-px w-16 bg-black/20" />
 
-                  NEWCLOTHES no nace para decirte
-                  cómo vestir.
+              <p className="mt-8 max-w-lg text-lg font-bold uppercase leading-[1.2] tracking-[-0.03em] md:text-2xl">
 
-                  <br />
+                ROPA STREETWEAR
+                <br />
+                TOTALMENTE PREMIUM.
+                <br />
+                HECHA PARA TI.
 
-                  Nace para darte una forma de
-                  expresar quién eres.
+              </p>
 
-                </p>
+              <p className="mt-7 max-w-lg text-sm leading-7 text-black/50">
 
-                <p className="mt-8 max-w-xl text-sm leading-7 text-black/50">
+                En NEWCLOTHES creamos y seleccionamos prendas
+                streetwear premium para quienes buscan vestir
+                diferente. Nos enfocamos en diseños con carácter,
+                calidad y una estética que se adapta a cada persona.
 
-                  Diseñamos streetwear para personas que
-                  entienden la ropa como una extensión de
-                  su personalidad. Piezas con carácter,
-                  cultura y actitud para construir un estilo
-                  propio.
+              </p>
 
-                </p>
+              <p className="mt-5 max-w-lg text-sm leading-7 text-black/50">
 
-              </div>
+                También hacemos ropa personalizada, llevando
+                tus ideas a prendas creadas totalmente a tu estilo.
+                Tú imaginas el diseño. Nosotros lo convertimos
+                en una pieza que representa quién eres.
 
-              <div className="flex flex-col justify-between">
+              </p>
 
-                <div className="border-l border-black/15 pl-5">
-
-                  <p className="text-[8px] font-black tracking-[0.3em] text-black/35">
-                    OUR APPROACH
-                  </p>
-
-                  <p className="mt-4 text-sm font-bold uppercase leading-6">
-                    DISEÑO
-                    <br />
-                    ACTITUD
-                    <br />
-                    IDENTIDAD
-                  </p>
-
-                </div>
-
-                <a
-                  href="#shop"
-                  className="group mt-10 inline-flex w-fit items-center gap-4 rounded-full bg-black px-6 py-4 text-[9px] font-black tracking-[0.2em] text-white transition duration-300 hover:scale-[1.03] hover:bg-black/85"
-                >
-                  DESCUBRIR LA COLECCIÓN
-
-                  <span className="transition-transform duration-300 group-hover:translate-x-1">
-                    →
-                  </span>
-
-                </a>
-
-              </div>
-
-            </div>
-
-          </div>
-
-          {/* Identity cards */}
-
-          <div className="mt-20 grid gap-3 md:mt-28 md:grid-cols-3">
-
-            {[
-              {
-                number: "01",
-                title: "IDENTIDAD",
-                text: "Tu estilo comienza contigo.",
-              },
-              {
-                number: "02",
-                title: "ACTITUD",
-                text: "La forma de llevarlo también comunica.",
-              },
-              {
-                number: "03",
-                title: "CULTURA",
-                text: "Vestimos lo que nos representa.",
-              },
-            ].map((item) => (
-
-              <div
-                key={item.number}
-                className="group relative min-h-[230px] overflow-hidden rounded-[1.5rem] border border-black/10 bg-[#f5f5f5] p-6 transition duration-500 hover:bg-black hover:text-white md:min-h-[280px]"
+              <a
+                href="#shop"
+                className="group mt-9 inline-flex items-center gap-4 rounded-full bg-black px-7 py-4 text-[9px] font-black tracking-[0.2em] text-white transition duration-300 hover:scale-[1.03] hover:bg-black/85"
               >
 
-                <div className="flex items-start justify-between">
+                DESCUBRIR NEWCLOTHES
 
-                  <span className="text-[8px] font-black tracking-[0.25em] opacity-35">
-                    {item.number}
-                  </span>
+                <span className="transition-transform duration-300 group-hover:translate-x-1">
+                  →
+                </span>
 
-                  <span className="text-lg transition-transform duration-500 group-hover:rotate-45">
-                    +
-                  </span>
+              </a>
 
-                </div>
-
-                <div className="absolute bottom-6 left-6 right-6">
-
-                  <h3 className="text-2xl font-black uppercase tracking-[-0.05em] md:text-3xl">
-                    {item.title}
-                  </h3>
-
-                  <p className="mt-3 max-w-xs text-xs leading-5 opacity-45">
-                    {item.text}
-                  </p>
-
-                </div>
-
-              </div>
-
-            ))}
+            </div>
 
           </div>
 
-          {/* Final brand line */}
+          {/* Bottom statement */}
 
-          <div className="mt-20 overflow-hidden border-y border-black/10 py-5 md:mt-28">
+          <div className="mt-20 border-t border-black/10 pt-6 md:mt-28">
 
-            <div className="flex min-w-max items-center gap-8">
+            <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center">
 
-              <span className="text-[9px] font-black tracking-[0.35em]">
-                NEWCLOTHES
-              </span>
+              <p className="text-[8px] font-black tracking-[0.3em] text-black/30">
+                PREMIUM STREETWEAR / CUSTOM DESIGN
+              </p>
 
-              <span className="h-1 w-1 rounded-full bg-black/30" />
-
-              <span className="text-[9px] font-black tracking-[0.35em]">
+              <p className="text-[8px] font-black tracking-[0.3em] text-black/30 md:text-right">
                 VISTE TU IDENTIDAD
-              </span>
-
-              <span className="h-1 w-1 rounded-full bg-black/30" />
-
-              <span className="text-[9px] font-black tracking-[0.35em]">
-                STREETWEAR
-              </span>
-
-              <span className="h-1 w-1 rounded-full bg-black/30" />
-
-              <span className="text-[9px] font-black tracking-[0.35em]">
-                NEWCLOTHES
-              </span>
+              </p>
 
             </div>
 
