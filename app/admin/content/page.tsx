@@ -14,7 +14,7 @@ type ContentItem = {
   subtitle: string;
   image: string;
   buttonText: string;
-  type: "HERO" | "BANNER" | "CAMPAÑA" | "DROP";
+  type: "HERO" | "BANNER";
   active: boolean;
 };
 
@@ -33,8 +33,6 @@ type ContentTab =
   | "ALL"
   | "HERO"
   | "BANNER"
-  | "CAMPAÑA"
-  | "DROP"
   | "ABOUT";
 
 const initialContent: ContentItem[] = [
@@ -55,24 +53,6 @@ const initialContent: ContentItem[] = [
     buttonText: "VER PRODUCTOS",
     type: "BANNER",
     active: true,
-  },
-  {
-    id: 3,
-    title: "STREETWEAR",
-    subtitle: "WEAR YOUR STORY",
-    image: "",
-    buttonText: "DESCUBRIR",
-    type: "CAMPAÑA",
-    active: true,
-  },
-  {
-    id: 4,
-    title: "LIMITED DROP",
-    subtitle: "ONLY FOR A FEW",
-    image: "",
-    buttonText: "VER DROP",
-    type: "DROP",
-    active: false,
   },
 ];
 
@@ -442,7 +422,6 @@ export default function ContentPage() {
       );
     } finally {
       setAboutUploading(false);
-
       event.target.value = "";
     }
   };
@@ -629,9 +608,7 @@ export default function ContentPage() {
 
   const featuredCount =
     content.filter(
-      (item) =>
-        item.type === "HERO" ||
-        item.type === "DROP"
+      (item) => item.type === "HERO"
     ).length;
 
   /*
@@ -643,18 +620,28 @@ export default function ContentPage() {
   const tabClass = (
     tab: ContentTab
   ) =>
-    `whitespace-nowrap border px-4 py-2.5 text-[9px] font-black tracking-[0.18em] transition ${
+    `whitespace-nowrap rounded-full border px-5 py-2.5 text-[9px] font-black tracking-[0.18em] transition ${
       activeTab === tab
         ? "border-white bg-white text-black"
         : "border-white/10 bg-black text-white/40 hover:border-white/30 hover:text-white"
     }`;
 
+  /*
+  |--------------------------------------------------------------------------
+  | INPUT CLASS
+  |--------------------------------------------------------------------------
+  */
+
+  const inputClass =
+    "mt-2 w-full rounded-xl border border-white/10 bg-[#090909] px-4 py-3.5 text-xs text-white outline-none transition placeholder:text-white/15 focus:border-white/30";
+
+  const buttonSecondaryClass =
+    "rounded-xl border border-white/10 px-5 py-3 text-[8px] font-black tracking-[0.18em] text-white/40 transition hover:border-white/30 hover:bg-white/[0.04] hover:text-white";
+
   return (
     <main className="min-h-screen bg-[#050505] text-white">
 
-      {/* ================================================================
-          HEADER
-      ================================================================= */}
+      {/* HEADER */}
 
       <header className="sticky top-0 z-40 flex min-h-[76px] items-center justify-between border-b border-white/10 bg-black/95 px-5 backdrop-blur-xl md:px-8">
 
@@ -673,7 +660,7 @@ export default function ContentPage() {
             (window.location.href =
               "/admin/login")
           }
-          className="border border-white/10 px-4 py-2.5 text-[8px] font-black tracking-[0.18em] text-white/50 transition hover:border-white/30 hover:bg-white hover:text-black md:px-5"
+          className="rounded-xl border border-white/10 px-4 py-2.5 text-[8px] font-black tracking-[0.18em] text-white/50 transition hover:border-white/30 hover:bg-white hover:text-black md:px-5"
         >
           CERRAR SESIÓN
         </button>
@@ -682,13 +669,11 @@ export default function ContentPage() {
 
       <div className="flex min-h-[calc(100vh-76px)]">
 
-        {/* ================================================================
-            SIDEBAR
-        ================================================================= */}
+        {/* SIDEBAR */}
 
         <aside className="hidden w-60 shrink-0 border-r border-white/10 bg-[#080808] p-5 lg:block">
 
-          <div className="mb-7 border-b border-white/10 pb-5">
+          <div className="mb-7 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
 
             <p className="text-[8px] font-black tracking-[0.35em] text-white/25">
               CONTROL PANEL
@@ -704,62 +689,62 @@ export default function ContentPage() {
             ADMIN
           </p>
 
-          <nav className="space-y-1">
+          <nav className="space-y-1.5">
 
             <a
               href="/admin/dashboard"
-              className="block border-l-2 border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
+              className="block rounded-xl border border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
             >
               Dashboard
             </a>
 
             <a
               href="/admin/products"
-              className="block border-l-2 border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
+              className="block rounded-xl border border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
             >
               Productos
             </a>
 
             <a
               href="/admin/inventory"
-              className="block border-l-2 border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
+              className="block rounded-xl border border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
             >
               Inventario
             </a>
 
             <a
               href="/admin/content"
-              className="block border-l-2 border-white bg-white/[0.07] px-3 py-3 text-xs font-semibold text-white"
+              className="block rounded-xl border border-white/10 bg-white/[0.07] px-3 py-3 text-xs font-semibold text-white"
             >
               Contenido
             </a>
 
             <a
               href="/admin/drops"
-              className="block border-l-2 border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
+              className="block rounded-xl border border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
             >
               Drops
             </a>
 
             <a
               href="/admin/offers"
-              className="block border-l-2 border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
+              className="block rounded-xl border border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
             >
               Ofertas
             </a>
 
             <a
               href="/admin/sales"
-              className="block border-l-2 border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
+              className="block rounded-xl border border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
             >
               Ventas
             </a>
 
           </nav>
 
-          <div className="mt-10 border-t border-white/10 pt-6">
+          <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
 
-            <p className="px-3 text-[8px] font-black tracking-[0.3em] text-white/20">
+            <p className="px-1 text-[8px] font-black tracking-[0.3em] text-white/20">
               WEB
             </p>
 
@@ -767,7 +752,7 @@ export default function ContentPage() {
               href="/"
               target="_blank"
               rel="noreferrer"
-              className="mt-2 block px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
+              className="mt-2 block rounded-xl px-2 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
             >
               Ver tienda ↗
             </a>
@@ -776,17 +761,13 @@ export default function ContentPage() {
 
         </aside>
 
-        {/* ================================================================
-            MAIN
-        ================================================================= */}
+        {/* MAIN */}
 
         <section className="min-w-0 flex-1">
 
           <div className="mx-auto max-w-[1600px] px-5 py-7 md:px-8 md:py-10">
 
-            {/* ============================================================
-                PAGE HEADER
-            ============================================================= */}
+            {/* PAGE HEADER */}
 
             <div className="flex flex-col gap-6 border-b border-white/10 pb-7 xl:flex-row xl:items-end xl:justify-between">
 
@@ -801,9 +782,9 @@ export default function ContentPage() {
                 </h2>
 
                 <p className="mt-3 max-w-xl text-xs leading-6 text-white/35 md:text-sm">
-                  Administra los elementos visuales
-                  y las secciones editables de
-                  NEWCLOTHES.
+                  Administra los elementos
+                  visuales y las secciones
+                  editables de NEWCLOTHES.
                 </p>
 
               </div>
@@ -811,7 +792,7 @@ export default function ContentPage() {
               {activeTab !== "ABOUT" && (
                 <button
                   onClick={openNew}
-                  className="w-full bg-white px-6 py-3.5 text-[9px] font-black tracking-[0.18em] text-black transition hover:bg-white/85 sm:w-auto"
+                  className="w-full rounded-xl bg-white px-6 py-3.5 text-[9px] font-black tracking-[0.18em] text-black transition hover:bg-white/85 sm:w-auto"
                 >
                   + NUEVO CONTENIDO
                 </button>
@@ -819,9 +800,7 @@ export default function ContentPage() {
 
             </div>
 
-            {/* ============================================================
-                MOBILE NAV
-            ============================================================= */}
+            {/* MOBILE NAV */}
 
             <div className="mt-6 overflow-x-auto pb-1 lg:hidden">
 
@@ -829,28 +808,28 @@ export default function ContentPage() {
 
                 <a
                   href="/admin/dashboard"
-                  className="border border-white/10 px-4 py-2.5 text-[9px] font-black tracking-[0.15em] text-white/40"
+                  className="rounded-full border border-white/10 px-4 py-2.5 text-[9px] font-black tracking-[0.15em] text-white/40"
                 >
                   DASHBOARD
                 </a>
 
                 <a
                   href="/admin/products"
-                  className="border border-white/10 px-4 py-2.5 text-[9px] font-black tracking-[0.15em] text-white/40"
+                  className="rounded-full border border-white/10 px-4 py-2.5 text-[9px] font-black tracking-[0.15em] text-white/40"
                 >
                   PRODUCTOS
                 </a>
 
                 <a
                   href="/admin/inventory"
-                  className="border border-white/10 px-4 py-2.5 text-[9px] font-black tracking-[0.15em] text-white/40"
+                  className="rounded-full border border-white/10 px-4 py-2.5 text-[9px] font-black tracking-[0.15em] text-white/40"
                 >
                   INVENTARIO
                 </a>
 
                 <a
                   href="/admin/drops"
-                  className="border border-white/10 px-4 py-2.5 text-[9px] font-black tracking-[0.15em] text-white/40"
+                  className="rounded-full border border-white/10 px-4 py-2.5 text-[9px] font-black tracking-[0.15em] text-white/40"
                 >
                   DROPS
                 </a>
@@ -859,9 +838,7 @@ export default function ContentPage() {
 
             </div>
 
-            {/* ============================================================
-                CONTENT TABS
-            ============================================================= */}
+            {/* CONTENT TABS */}
 
             <div className="mt-8">
 
@@ -871,9 +848,7 @@ export default function ContentPage() {
                   onClick={() =>
                     setActiveTab("ALL")
                   }
-                  className={tabClass(
-                    "ALL"
-                  )}
+                  className={tabClass("ALL")}
                 >
                   TODO
                 </button>
@@ -882,9 +857,7 @@ export default function ContentPage() {
                   onClick={() =>
                     setActiveTab("HERO")
                   }
-                  className={tabClass(
-                    "HERO"
-                  )}
+                  className={tabClass("HERO")}
                 >
                   HERO
                 </button>
@@ -893,44 +866,16 @@ export default function ContentPage() {
                   onClick={() =>
                     setActiveTab("BANNER")
                   }
-                  className={tabClass(
-                    "BANNER"
-                  )}
+                  className={tabClass("BANNER")}
                 >
                   BANNERS
                 </button>
 
                 <button
                   onClick={() =>
-                    setActiveTab(
-                      "CAMPAÑA"
-                    )
-                  }
-                  className={tabClass(
-                    "CAMPAÑA"
-                  )}
-                >
-                  CAMPAÑAS
-                </button>
-
-                <button
-                  onClick={() =>
-                    setActiveTab("DROP")
-                  }
-                  className={tabClass(
-                    "DROP"
-                  )}
-                >
-                  DROPS
-                </button>
-
-                <button
-                  onClick={() =>
                     setActiveTab("ABOUT")
                   }
-                  className={tabClass(
-                    "ABOUT"
-                  )}
+                  className={tabClass("ABOUT")}
                 >
                   ABOUT
                 </button>
@@ -939,15 +884,11 @@ export default function ContentPage() {
 
             </div>
 
-            {/* ============================================================
-                ABOUT ACTIVE
-            ============================================================= */}
+            {/* ABOUT */}
 
             {activeTab === "ABOUT" ? (
 
-              <div className="mt-7">
-
-                {/* ABOUT TOP BAR */}
+              <div className="mt-7 rounded-2xl border border-white/10 bg-[#080808] p-5 md:p-7">
 
                 <div className="border-b border-white/10 pb-6">
 
@@ -956,7 +897,7 @@ export default function ContentPage() {
                     <div>
 
                       <p className="text-[8px] font-black tracking-[0.4em] text-white/25">
-                        06 / SECCIÓN EDITABLE
+                        SECCIÓN EDITABLE
                       </p>
 
                       <h3 className="mt-3 text-2xl font-black tracking-[-0.03em] md:text-4xl">
@@ -972,7 +913,7 @@ export default function ContentPage() {
                     </div>
 
                     <div
-                      className={`inline-flex w-fit items-center gap-2 border px-3 py-2 text-[8px] font-black tracking-[0.18em] ${
+                      className={`inline-flex w-fit items-center gap-2 rounded-full border px-3 py-2 text-[8px] font-black tracking-[0.18em] ${
                         about.active
                           ? "border-white/20 text-white/60"
                           : "border-white/10 text-white/25"
@@ -999,7 +940,7 @@ export default function ContentPage() {
 
                 {aboutLoading ? (
 
-                  <div className="flex min-h-[500px] items-center justify-center border-b border-white/10">
+                  <div className="flex min-h-[500px] items-center justify-center">
 
                     <div className="text-center">
 
@@ -1019,9 +960,7 @@ export default function ContentPage() {
 
                     <div className="grid gap-8 xl:grid-cols-[0.85fr_1.15fr]">
 
-                      {/* ==================================================
-                          IMAGE
-                      ================================================== */}
+                      {/* IMAGE */}
 
                       <div>
 
@@ -1037,7 +976,7 @@ export default function ContentPage() {
 
                         </div>
 
-                        <div className="relative aspect-[4/5] overflow-hidden border border-white/10 bg-[#090909]">
+                        <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 bg-[#090909]">
 
                           {about.image_url ? (
 
@@ -1091,7 +1030,7 @@ export default function ContentPage() {
 
                         <div className="mt-4 flex flex-col gap-2 sm:flex-row">
 
-                          <label className="flex cursor-pointer items-center justify-center bg-white px-5 py-3 text-[8px] font-black tracking-[0.18em] text-black transition hover:bg-white/85">
+                          <label className="flex cursor-pointer items-center justify-center rounded-xl bg-white px-5 py-3 text-[8px] font-black tracking-[0.18em] text-black transition hover:bg-white/85">
 
                             {about.image_url
                               ? "CAMBIAR IMAGEN"
@@ -1121,7 +1060,7 @@ export default function ContentPage() {
                               disabled={
                                 aboutUploading
                               }
-                              className="border border-white/10 px-5 py-3 text-[8px] font-black tracking-[0.18em] text-white/40 transition hover:border-white/30 hover:text-white disabled:opacity-40"
+                              className={buttonSecondaryClass}
                             >
                               ELIMINAR
                             </button>
@@ -1137,15 +1076,11 @@ export default function ContentPage() {
 
                       </div>
 
-                      {/* ==================================================
-                          TEXT
-                      ================================================== */}
+                      {/* TEXT */}
 
                       <div className="min-w-0">
 
                         <div className="grid gap-6">
-
-                          {/* EYEBROW */}
 
                           <div>
 
@@ -1164,12 +1099,10 @@ export default function ContentPage() {
                                 )
                               }
                               placeholder="QUIÉNES SOMOS"
-                              className="mt-2 w-full border border-white/10 bg-[#090909] px-4 py-3.5 text-xs text-white outline-none transition placeholder:text-white/15 focus:border-white/30"
+                              className={inputClass}
                             />
 
                           </div>
-
-                          {/* TITLE */}
 
                           <div>
 
@@ -1188,12 +1121,10 @@ export default function ContentPage() {
                                 )
                               }
                               placeholder="VISTE TU IDENTIDAD."
-                              className="mt-2 w-full border border-white/10 bg-[#090909] px-4 py-3.5 text-xs font-bold text-white outline-none transition placeholder:text-white/15 focus:border-white/30"
+                              className={`${inputClass} font-bold`}
                             />
 
                           </div>
-
-                          {/* INTRO */}
 
                           <div>
 
@@ -1221,12 +1152,10 @@ export default function ContentPage() {
                               }
                               rows={3}
                               placeholder="ROPA STREETWEAR TOTALMENTE PREMIUM. HECHA PARA TI."
-                              className="mt-2 w-full resize-none border border-white/10 bg-[#090909] px-4 py-3.5 text-xs leading-6 text-white outline-none transition placeholder:text-white/15 focus:border-white/30"
+                              className={`${inputClass} resize-none leading-6`}
                             />
 
                           </div>
-
-                          {/* DESCRIPTION */}
 
                           <div>
 
@@ -1246,12 +1175,10 @@ export default function ContentPage() {
                               }
                               rows={6}
                               placeholder="Describe quiénes son..."
-                              className="mt-2 w-full resize-none border border-white/10 bg-[#090909] px-4 py-3.5 text-xs leading-6 text-white outline-none transition placeholder:text-white/15 focus:border-white/30"
+                              className={`${inputClass} resize-none leading-6`}
                             />
 
                           </div>
-
-                          {/* CUSTOM */}
 
                           <div>
 
@@ -1271,14 +1198,12 @@ export default function ContentPage() {
                               }
                               rows={6}
                               placeholder="Explica el servicio de ropa personalizada..."
-                              className="mt-2 w-full resize-none border border-white/10 bg-[#090909] px-4 py-3.5 text-xs leading-6 text-white outline-none transition placeholder:text-white/15 focus:border-white/30"
+                              className={`${inputClass} resize-none leading-6`}
                             />
 
                           </div>
 
-                          {/* ACTIVE */}
-
-                          <div className="flex items-center justify-between border-y border-white/10 py-5">
+                          <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4">
 
                             <div>
 
@@ -1327,8 +1252,6 @@ export default function ContentPage() {
 
                     </div>
 
-                    {/* ABOUT FOOTER */}
-
                     <div className="mt-8 flex flex-col gap-5 border-t border-white/10 pt-6 md:flex-row md:items-center md:justify-between">
 
                       <div className="min-h-[18px]">
@@ -1358,7 +1281,7 @@ export default function ContentPage() {
                           aboutSaving ||
                           aboutUploading
                         }
-                        className="bg-white px-8 py-3.5 text-[8px] font-black tracking-[0.2em] text-black transition hover:bg-white/85 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="rounded-xl bg-white px-8 py-3.5 text-[8px] font-black tracking-[0.2em] text-black transition hover:bg-white/85 disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         {aboutSaving
                           ? "GUARDANDO..."
@@ -1375,17 +1298,15 @@ export default function ContentPage() {
 
             ) : (
 
-              /* ==========================================================
-                 CONTENT AREA
-              =========================================================== */
+              /* CONTENT AREA */
 
               <div className="mt-7">
 
                 {/* STATS */}
 
-                <div className="grid grid-cols-1 gap-px border border-white/10 bg-white/10 sm:grid-cols-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
 
-                  <div className="bg-[#080808] p-5 md:p-6">
+                  <div className="rounded-2xl border border-white/10 bg-[#080808] p-5 md:p-6">
 
                     <p className="text-[8px] font-black tracking-[0.25em] text-white/25">
                       CONTENIDOS
@@ -1397,7 +1318,7 @@ export default function ContentPage() {
 
                   </div>
 
-                  <div className="bg-[#080808] p-5 md:p-6">
+                  <div className="rounded-2xl border border-white/10 bg-[#080808] p-5 md:p-6">
 
                     <p className="text-[8px] font-black tracking-[0.25em] text-white/25">
                       ACTIVOS
@@ -1409,10 +1330,10 @@ export default function ContentPage() {
 
                   </div>
 
-                  <div className="bg-[#080808] p-5 md:p-6">
+                  <div className="rounded-2xl border border-white/10 bg-[#080808] p-5 md:p-6">
 
                     <p className="text-[8px] font-black tracking-[0.25em] text-white/25">
-                      DESTACADOS
+                      HERO
                     </p>
 
                     <p className="mt-3 text-3xl font-black tracking-tight">
@@ -1427,7 +1348,7 @@ export default function ContentPage() {
 
                 {showForm && (
 
-                  <div className="mt-7 border border-white/10 bg-[#080808]">
+                  <div className="mt-7 overflow-hidden rounded-2xl border border-white/10 bg-[#080808]">
 
                     <div className="flex items-center justify-between border-b border-white/10 px-5 py-5 md:px-7">
 
@@ -1451,7 +1372,7 @@ export default function ContentPage() {
                         onClick={
                           resetForm
                         }
-                        className="flex h-8 w-8 items-center justify-center border border-white/10 text-lg text-white/30 transition hover:border-white/30 hover:text-white"
+                        className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-lg text-white/30 transition hover:border-white/30 hover:bg-white hover:text-black"
                       >
                         ×
                       </button>
@@ -1476,7 +1397,7 @@ export default function ContentPage() {
                               )
                             }
                             placeholder="THE LAST DANCE"
-                            className="mt-2 w-full border border-white/10 bg-black px-4 py-3.5 text-xs outline-none focus:border-white/30"
+                            className={inputClass}
                           />
 
                         </div>
@@ -1495,7 +1416,7 @@ export default function ContentPage() {
                               )
                             }
                             placeholder="LIMITED EDITION"
-                            className="mt-2 w-full border border-white/10 bg-black px-4 py-3.5 text-xs outline-none focus:border-white/30"
+                            className={inputClass}
                           />
 
                         </div>
@@ -1514,7 +1435,7 @@ export default function ContentPage() {
                               )
                             }
                             placeholder="https://..."
-                            className="mt-2 w-full border border-white/10 bg-black px-4 py-3.5 text-xs outline-none focus:border-white/30"
+                            className={inputClass}
                           />
 
                         </div>
@@ -1532,8 +1453,8 @@ export default function ContentPage() {
                                 e.target.value
                               )
                             }
-                            placeholder="VER DROP"
-                            className="mt-2 w-full border border-white/10 bg-black px-4 py-3.5 text-xs outline-none focus:border-white/30"
+                            placeholder="VER PRODUCTOS"
+                            className={inputClass}
                           />
 
                         </div>
@@ -1552,7 +1473,7 @@ export default function ContentPage() {
                                   .value as ContentItem["type"]
                               )
                             }
-                            className="mt-2 w-full border border-white/10 bg-black px-4 py-3.5 text-xs outline-none focus:border-white/30"
+                            className={inputClass}
                           >
 
                             <option value="HERO">
@@ -1563,19 +1484,11 @@ export default function ContentPage() {
                               BANNER
                             </option>
 
-                            <option value="CAMPAÑA">
-                              CAMPAÑA
-                            </option>
-
-                            <option value="DROP">
-                              DROP
-                            </option>
-
                           </select>
 
                         </div>
 
-                        <div className="flex items-center gap-3 md:col-span-2">
+                        <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] px-4 py-4 md:col-span-2">
 
                           <input
                             id="content-active"
@@ -1589,7 +1502,7 @@ export default function ContentPage() {
                                   .checked
                               )
                             }
-                            className="h-4 w-4"
+                            className="h-4 w-4 rounded"
                           />
 
                           <label
@@ -1610,7 +1523,7 @@ export default function ContentPage() {
                           onClick={
                             resetForm
                           }
-                          className="border border-white/10 px-6 py-3 text-[8px] font-black tracking-[0.18em] text-white/40 transition hover:border-white/30 hover:text-white"
+                          className={buttonSecondaryClass}
                         >
                           CANCELAR
                         </button>
@@ -1619,7 +1532,7 @@ export default function ContentPage() {
                           onClick={
                             saveContent
                           }
-                          className="bg-white px-7 py-3 text-[8px] font-black tracking-[0.18em] text-black transition hover:bg-white/85"
+                          className="rounded-xl bg-white px-7 py-3 text-[8px] font-black tracking-[0.18em] text-black transition hover:bg-white/85"
                         >
                           GUARDAR CONTENIDO
                         </button>
@@ -1634,7 +1547,7 @@ export default function ContentPage() {
 
                 {/* CONTENT LIST */}
 
-                <div className="mt-7 border border-white/10 bg-[#080808]">
+                <div className="mt-7 overflow-hidden rounded-2xl border border-white/10 bg-[#080808]">
 
                   <div className="flex items-center justify-between border-b border-white/10 px-5 py-5 md:px-7">
 
@@ -1647,7 +1560,9 @@ export default function ContentPage() {
                       <h3 className="mt-2 text-lg font-black">
                         {activeTab === "ALL"
                           ? "Todos los contenidos"
-                          : activeTab}
+                          : activeTab === "HERO"
+                          ? "Hero principal"
+                          : "Banners"}
                       </h3>
 
                     </div>
@@ -1693,7 +1608,7 @@ export default function ContentPage() {
 
                             {/* IMAGE */}
 
-                            <div className="h-40 w-full shrink-0 overflow-hidden border border-white/10 bg-[#050505] md:h-24 md:w-40">
+                            <div className="h-40 w-full shrink-0 overflow-hidden rounded-xl border border-white/10 bg-[#050505] md:h-24 md:w-40">
 
                               {item.image ? (
 
@@ -1733,14 +1648,14 @@ export default function ContentPage() {
                                   }
                                 </h3>
 
-                                <span className="border border-white/10 px-2 py-1 text-[7px] font-black tracking-[0.15em] text-white/35">
+                                <span className="rounded-full border border-white/10 px-2 py-1 text-[7px] font-black tracking-[0.15em] text-white/35">
                                   {
                                     item.type
                                   }
                                 </span>
 
                                 <span
-                                  className={`border px-2 py-1 text-[7px] font-black tracking-[0.15em] ${
+                                  className={`rounded-full border px-2 py-1 text-[7px] font-black tracking-[0.15em] ${
                                     item.active
                                       ? "border-white/20 text-white/60"
                                       : "border-white/10 text-white/20"
@@ -1777,7 +1692,7 @@ export default function ContentPage() {
                                     item.id
                                   )
                                 }
-                                className="border border-white/10 px-4 py-2.5 text-[7px] font-black tracking-[0.15em] text-white/40 transition hover:border-white/30 hover:text-white"
+                                className={buttonSecondaryClass}
                               >
                                 {item.active
                                   ? "OCULTAR"
@@ -1790,7 +1705,7 @@ export default function ContentPage() {
                                     item
                                   )
                                 }
-                                className="border border-white/10 px-4 py-2.5 text-[7px] font-black tracking-[0.15em] text-white/40 transition hover:border-white/30 hover:text-white"
+                                className={buttonSecondaryClass}
                               >
                                 EDITAR
                               </button>
@@ -1801,7 +1716,7 @@ export default function ContentPage() {
                                     item.id
                                   )
                                 }
-                                className="border border-white/10 px-4 py-2.5 text-[7px] font-black tracking-[0.15em] text-white/40 transition hover:border-white/30 hover:text-white"
+                                className={buttonSecondaryClass}
                               >
                                 ELIMINAR
                               </button>
