@@ -29,11 +29,7 @@ type AboutContent = {
   active: boolean;
 };
 
-type ContentTab =
-  | "ALL"
-  | "HERO"
-  | "BANNER"
-  | "ABOUT";
+type ContentTab = "ALL" | "HERO" | "BANNER" | "ABOUT";
 
 const initialContent: ContentItem[] = [
   {
@@ -61,8 +57,7 @@ const defaultAbout: AboutContent = {
   image_url: null,
   eyebrow: "QUIÉNES SOMOS",
   title: "VISTE TU IDENTIDAD.",
-  intro:
-    "ROPA STREETWEAR TOTALMENTE PREMIUM. HECHA PARA TI.",
+  intro: "ROPA STREETWEAR TOTALMENTE PREMIUM. HECHA PARA TI.",
   description:
     "En NEWCLOTHES creamos y seleccionamos prendas streetwear premium para quienes buscan vestir diferente. Nos enfocamos en diseños con carácter, calidad y una estética que se adapta a cada persona.",
   custom_description:
@@ -70,40 +65,38 @@ const defaultAbout: AboutContent = {
   active: true,
 };
 
+const supabase = createClient();
+
 export default function ContentPage() {
-  const supabase = useMemo(() => createClient(), []);
-
-  /*
-  |--------------------------------------------------------------------------
-  | CONTENT STATE
-  |--------------------------------------------------------------------------
-  */
-
   const [content, setContent] =
     useState<ContentItem[]>(initialContent);
 
   const [activeTab, setActiveTab] =
     useState<ContentTab>("ALL");
 
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] =
+    useState(false);
+
   const [editingId, setEditingId] =
     useState<number | null>(null);
 
-  const [title, setTitle] = useState("");
-  const [subtitle, setSubtitle] = useState("");
-  const [image, setImage] = useState("");
-  const [buttonText, setButtonText] = useState("");
+  const [title, setTitle] =
+    useState("");
+
+  const [subtitle, setSubtitle] =
+    useState("");
+
+  const [image, setImage] =
+    useState("");
+
+  const [buttonText, setButtonText] =
+    useState("");
 
   const [type, setType] =
     useState<ContentItem["type"]>("BANNER");
 
-  const [active, setActive] = useState(true);
-
-  /*
-  |--------------------------------------------------------------------------
-  | ABOUT STATE
-  |--------------------------------------------------------------------------
-  */
+  const [active, setActive] =
+    useState(true);
 
   const [about, setAbout] =
     useState<AboutContent>(defaultAbout);
@@ -120,12 +113,6 @@ export default function ContentPage() {
   const [aboutMessage, setAboutMessage] =
     useState("");
 
-  /*
-  |--------------------------------------------------------------------------
-  | LOAD ABOUT
-  |--------------------------------------------------------------------------
-  */
-
   useEffect(() => {
     const loadAbout = async () => {
       setAboutLoading(true);
@@ -133,16 +120,18 @@ export default function ContentPage() {
 
       const { data, error } = await supabase
         .from("about_content")
-        .select(`
-          id,
-          image_url,
-          eyebrow,
-          title,
-          intro,
-          description,
-          custom_description,
-          active
-        `)
+        .select(
+          `
+            id,
+            image_url,
+            eyebrow,
+            title,
+            intro,
+            description,
+            custom_description,
+            active
+          `
+        )
         .order("updated_at", {
           ascending: false,
         })
@@ -181,13 +170,7 @@ export default function ContentPage() {
     };
 
     loadAbout();
-  }, [supabase]);
-
-  /*
-  |--------------------------------------------------------------------------
-  | CONTENT FUNCTIONS
-  |--------------------------------------------------------------------------
-  */
+  }, []);
 
   const resetForm = () => {
     setTitle("");
@@ -230,10 +213,12 @@ export default function ContentPage() {
           item.id === editingId
             ? {
                 ...item,
-                title,
-                subtitle,
-                image,
-                buttonText,
+                title: title.trim(),
+                subtitle:
+                  subtitle.trim(),
+                image: image.trim(),
+                buttonText:
+                  buttonText.trim(),
                 type,
                 active,
               }
@@ -243,10 +228,11 @@ export default function ContentPage() {
     } else {
       const newItem: ContentItem = {
         id: Date.now(),
-        title,
-        subtitle,
-        image,
-        buttonText,
+        title: title.trim(),
+        subtitle: subtitle.trim(),
+        image: image.trim(),
+        buttonText:
+          buttonText.trim(),
         type,
         active,
       };
@@ -260,7 +246,9 @@ export default function ContentPage() {
     resetForm();
   };
 
-  const deleteContent = (id: number) => {
+  const deleteContent = (
+    id: number
+  ) => {
     if (
       !window.confirm(
         "¿Eliminar este contenido?"
@@ -276,7 +264,9 @@ export default function ContentPage() {
     );
   };
 
-  const toggleActive = (id: number) => {
+  const toggleActive = (
+    id: number
+  ) => {
     setContent((current) =>
       current.map((item) =>
         item.id === id
@@ -289,14 +279,8 @@ export default function ContentPage() {
     );
   };
 
-  /*
-  |--------------------------------------------------------------------------
-  | FILTERED CONTENT
-  |--------------------------------------------------------------------------
-  */
-
-  const filteredContent = content.filter(
-    (item) => {
+  const filteredContent =
+    content.filter((item) => {
       if (activeTab === "ALL") {
         return true;
       }
@@ -306,14 +290,7 @@ export default function ContentPage() {
       }
 
       return item.type === activeTab;
-    }
-  );
-
-  /*
-  |--------------------------------------------------------------------------
-  | ABOUT FUNCTIONS
-  |--------------------------------------------------------------------------
-  */
+    });
 
   const updateAboutField = (
     field: keyof AboutContent,
@@ -328,185 +305,178 @@ export default function ContentPage() {
     }));
   };
 
-  /*
-  |--------------------------------------------------------------------------
-  | UPLOAD ABOUT IMAGE
-  |--------------------------------------------------------------------------
-  */
+  const handleAboutImageUpload =
+    async (
+      event: ChangeEvent<HTMLInputElement>
+    ) => {
+      const file =
+        event.target.files?.[0];
 
-  const handleAboutImageUpload = async (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
-    const file =
-      event.target.files?.[0];
-
-    if (!file) {
-      return;
-    }
-
-    setAboutUploading(true);
-    setAboutMessage("");
-
-    try {
-      if (
-        !file.type.startsWith("image/")
-      ) {
-        throw new Error(
-          "Selecciona un archivo de imagen válido."
-        );
+      if (!file) {
+        return;
       }
 
-      const maxSize =
-        10 * 1024 * 1024;
+      setAboutUploading(true);
+      setAboutMessage("");
 
-      if (file.size > maxSize) {
-        throw new Error(
-          "La imagen no puede superar los 10 MB."
-        );
-      }
+      try {
+        if (
+          !file.type.startsWith(
+            "image/"
+          )
+        ) {
+          throw new Error(
+            "Selecciona un archivo de imagen válido."
+          );
+        }
 
-      const extension =
-        file.name
-          .split(".")
-          .pop()
-          ?.toLowerCase() || "jpg";
+        const maxSize =
+          10 * 1024 * 1024;
 
-      const fileName =
-        `about-${Date.now()}.${extension}`;
+        if (file.size > maxSize) {
+          throw new Error(
+            "La imagen no puede superar los 10 MB."
+          );
+        }
 
-      const { error: uploadError } =
-        await supabase.storage
+        const extension =
+          file.name
+            .split(".")
+            .pop()
+            ?.toLowerCase() ||
+          "jpg";
+
+        const fileName =
+          `about-${Date.now()}.${extension}`;
+
+        const {
+          error: uploadError,
+        } = await supabase.storage
           .from("about")
           .upload(
             fileName,
             file,
             {
-              cacheControl: "3600",
+              cacheControl:
+                "3600",
               upsert: true,
             }
           );
 
-      if (uploadError) {
-        throw new Error(
-          uploadError.message
-        );
-      }
+        if (uploadError) {
+          throw new Error(
+            uploadError.message
+          );
+        }
 
-      const {
-        data: publicUrlData,
-      } = supabase.storage
-        .from("about")
-        .getPublicUrl(fileName);
-
-      const publicUrl =
-        publicUrlData.publicUrl;
-
-      setAbout((current) => ({
-        ...current,
-        image_url: publicUrl,
-      }));
-
-      setAboutMessage(
-        "Imagen cargada correctamente. Presiona GUARDAR ABOUT."
-      );
-    } catch (error) {
-      console.error(
-        "Error subiendo imagen:",
-        error
-      );
-
-      setAboutMessage(
-        error instanceof Error
-          ? error.message
-          : "No se pudo subir la imagen."
-      );
-    } finally {
-      setAboutUploading(false);
-      event.target.value = "";
-    }
-  };
-
-  /*
-  |--------------------------------------------------------------------------
-  | REMOVE ABOUT IMAGE
-  |--------------------------------------------------------------------------
-  */
-
-  const removeAboutImage = async () => {
-    if (!about.image_url) {
-      return;
-    }
-
-    const confirmed =
-      window.confirm(
-        "¿Quieres eliminar la imagen de About?"
-      );
-
-    if (!confirmed) {
-      return;
-    }
-
-    setAboutUploading(true);
-    setAboutMessage("");
-
-    try {
-      const url =
-        about.image_url;
-
-      const marker =
-        "/storage/v1/object/public/about/";
-
-      const markerIndex =
-        url.indexOf(marker);
-
-      if (markerIndex !== -1) {
-        const filePath =
-          url.substring(
-            markerIndex +
-              marker.length
+        const {
+          data: publicUrlData,
+        } = supabase.storage
+          .from("about")
+          .getPublicUrl(
+            fileName
           );
 
-        if (filePath) {
-          const { error } =
-            await supabase.storage
+        const publicUrl =
+          publicUrlData.publicUrl;
+
+        setAbout((current) => ({
+          ...current,
+          image_url:
+            publicUrl,
+        }));
+
+        setAboutMessage(
+          "Imagen cargada correctamente. Presiona GUARDAR ABOUT."
+        );
+      } catch (error) {
+        console.error(
+          "Error subiendo imagen:",
+          error
+        );
+
+        setAboutMessage(
+          error instanceof Error
+            ? error.message
+            : "No se pudo subir la imagen."
+        );
+      } finally {
+        setAboutUploading(false);
+        event.target.value = "";
+      }
+    };
+
+  const removeAboutImage =
+    async () => {
+      if (!about.image_url) {
+        return;
+      }
+
+      const confirmed =
+        window.confirm(
+          "¿Quieres eliminar la imagen de About?"
+        );
+
+      if (!confirmed) {
+        return;
+      }
+
+      setAboutUploading(true);
+      setAboutMessage("");
+
+      try {
+        const url =
+          about.image_url;
+
+        const marker =
+          "/storage/v1/object/public/about/";
+
+        const markerIndex =
+          url.indexOf(marker);
+
+        if (markerIndex !== -1) {
+          const filePath =
+            url.substring(
+              markerIndex +
+                marker.length
+            );
+
+          if (filePath) {
+            const {
+              error,
+            } = await supabase.storage
               .from("about")
               .remove([
                 filePath,
               ]);
 
-          if (error) {
-            console.warn(
-              "No se pudo eliminar físicamente la imagen:",
-              error
-            );
+            if (error) {
+              console.warn(
+                "No se pudo eliminar físicamente la imagen:",
+                error
+              );
+            }
           }
         }
+
+        setAbout((current) => ({
+          ...current,
+          image_url: null,
+        }));
+
+        setAboutMessage(
+          "Imagen eliminada. Presiona GUARDAR ABOUT para confirmar."
+        );
+      } catch (error) {
+        console.error(error);
+
+        setAboutMessage(
+          "No se pudo eliminar la imagen."
+        );
+      } finally {
+        setAboutUploading(false);
       }
-
-      setAbout((current) => ({
-        ...current,
-        image_url: null,
-      }));
-
-      setAboutMessage(
-        "Imagen eliminada. Presiona GUARDAR ABOUT para confirmar."
-      );
-    } catch (error) {
-      console.error(error);
-
-      setAboutMessage(
-        "No se pudo eliminar la imagen."
-      );
-    } finally {
-      setAboutUploading(false);
-    }
-  };
-
-  /*
-  |--------------------------------------------------------------------------
-  | SAVE ABOUT
-  |--------------------------------------------------------------------------
-  */
+    };
 
   const saveAbout = async () => {
     setAboutSaving(true);
@@ -537,7 +507,9 @@ export default function ContentPage() {
       if (about.id) {
         const response =
           await supabase
-            .from("about_content")
+            .from(
+              "about_content"
+            )
             .update(payload)
             .eq(
               "id",
@@ -549,10 +521,10 @@ export default function ContentPage() {
       } else {
         const response =
           await supabase
-            .from("about_content")
-            .insert(
-              payload
+            .from(
+              "about_content"
             )
+            .insert(payload)
             .select()
             .single();
 
@@ -563,8 +535,8 @@ export default function ContentPage() {
           setAbout(
             (current) => ({
               ...current,
-              id:
-                response.data.id,
+              id: response
+                .data.id,
             })
           );
         }
@@ -595,12 +567,6 @@ export default function ContentPage() {
     }
   };
 
-  /*
-  |--------------------------------------------------------------------------
-  | STATS
-  |--------------------------------------------------------------------------
-  */
-
   const activeCount =
     content.filter(
       (item) => item.active
@@ -608,1142 +574,922 @@ export default function ContentPage() {
 
   const featuredCount =
     content.filter(
-      (item) => item.type === "HERO"
+      (item) =>
+        item.type === "HERO"
     ).length;
-
-  /*
-  |--------------------------------------------------------------------------
-  | TAB BUTTON
-  |--------------------------------------------------------------------------
-  */
 
   const tabClass = (
     tab: ContentTab
   ) =>
-    `whitespace-nowrap rounded-full border px-5 py-2.5 text-[9px] font-black tracking-[0.18em] transition ${
+    `whitespace-nowrap rounded-full border px-5 py-2.5 text-[9px] font-bold uppercase tracking-[0.18em] transition ${
       activeTab === tab
         ? "border-white bg-white text-black"
-        : "border-white/10 bg-black text-white/40 hover:border-white/30 hover:text-white"
+        : "border-white/[0.08] bg-white/[0.025] text-zinc-500 hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
     }`;
 
-  /*
-  |--------------------------------------------------------------------------
-  | INPUT CLASS
-  |--------------------------------------------------------------------------
-  */
-
   const inputClass =
-    "mt-2 w-full rounded-xl border border-white/10 bg-[#090909] px-4 py-3.5 text-xs text-white outline-none transition placeholder:text-white/15 focus:border-white/30";
+    "mt-2 w-full rounded-xl border border-white/[0.08] bg-white/[0.025] px-4 py-3.5 text-xs text-white outline-none transition placeholder:text-zinc-700 focus:border-white/20 focus:bg-white/[0.04]";
 
-  const buttonSecondaryClass =
-    "rounded-xl border border-white/10 px-5 py-3 text-[8px] font-black tracking-[0.18em] text-white/40 transition hover:border-white/30 hover:bg-white/[0.04] hover:text-white";
+  const secondaryButton =
+    "rounded-xl border border-white/[0.08] bg-white/[0.025] px-5 py-3 text-[8px] font-bold uppercase tracking-[0.18em] text-zinc-500 transition hover:border-white/20 hover:bg-white/[0.05] hover:text-white";
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white">
+    <main className="min-h-screen bg-[#080808] text-white">
+      <div className="px-5 py-7 sm:px-8 lg:px-10 lg:py-9">
 
-      {/* HEADER */}
+        {/* =====================================================
+            HEADER
+        ====================================================== */}
 
-      <header className="sticky top-0 z-40 flex min-h-[76px] items-center justify-between border-b border-white/10 bg-black/95 px-5 backdrop-blur-xl md:px-8">
+        <div className="mb-8 flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+          <div>
+            <div className="mb-3 flex items-center gap-3">
+              <div className="h-px w-8 bg-white/30" />
 
-        <div>
-          <h1 className="text-lg font-black tracking-[0.25em] md:text-xl">
-            NEWCLOTHES
-          </h1>
+              <span className="text-[9px] font-medium uppercase tracking-[0.35em] text-zinc-500">
+                NEWCLOTHES CONTROL
+              </span>
+            </div>
 
-          <p className="mt-1 text-[8px] font-bold tracking-[0.35em] text-white/30">
-            ADMINISTRATION
+            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+              Contenidos
+            </h1>
+
+            <p className="mt-2 max-w-xl text-sm leading-6 text-zinc-500">
+              Gestión de los elementos visuales
+              y secciones editables de la tienda.
+            </p>
+          </div>
+
+          {activeTab !==
+            "ABOUT" && (
+            <button
+              type="button"
+              onClick={openNew}
+              className="inline-flex h-11 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.025] px-5 text-[9px] font-bold uppercase tracking-[0.18em] text-zinc-400 transition hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
+            >
+              + Nuevo contenido
+            </button>
+          )}
+        </div>
+
+        {/* =====================================================
+            TABS
+        ====================================================== */}
+
+        <div className="mb-5">
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            <button
+              type="button"
+              onClick={() =>
+                setActiveTab("ALL")
+              }
+              className={tabClass(
+                "ALL"
+              )}
+            >
+              Todo
+            </button>
+
+            <button
+              type="button"
+              onClick={() =>
+                setActiveTab("HERO")
+              }
+              className={tabClass(
+                "HERO"
+              )}
+            >
+              Hero
+            </button>
+
+            <button
+              type="button"
+              onClick={() =>
+                setActiveTab("BANNER")
+              }
+              className={tabClass(
+                "BANNER"
+              )}
+            >
+              Banners
+            </button>
+
+            <button
+              type="button"
+              onClick={() =>
+                setActiveTab("ABOUT")
+              }
+              className={tabClass(
+                "ABOUT"
+              )}
+            >
+              About
+            </button>
+          </div>
+        </div>
+
+        {/* =====================================================
+            ABOUT
+        ====================================================== */}
+
+        {activeTab ===
+        "ABOUT" ? (
+          <section className="rounded-[28px] border border-white/[0.07] bg-white/[0.025] p-5 sm:p-6">
+
+            <div className="mb-7 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-[8px] uppercase tracking-[0.25em] text-zinc-700">
+                  Content Management
+                </p>
+
+                <h2 className="mt-2 text-lg font-semibold">
+                  About / Quiénes somos
+                </h2>
+
+                <p className="mt-2 max-w-2xl text-[8px] leading-5 text-zinc-700">
+                  Edita la sección que aparece
+                  actualmente en la página principal.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 text-[8px] uppercase tracking-[0.15em] text-zinc-600">
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    about.active
+                      ? "bg-green-500/70"
+                      : "bg-zinc-700"
+                  }`}
+                />
+
+                {about.active
+                  ? "Visible"
+                  : "Oculto"}
+              </div>
+            </div>
+
+            {aboutLoading ? (
+              <div className="flex min-h-[420px] items-center justify-center">
+                <div className="text-center">
+                  <div className="mx-auto h-8 w-8 animate-spin rounded-full border border-white/10 border-t-white" />
+
+                  <p className="mt-5 text-[8px] font-bold uppercase tracking-[0.25em] text-zinc-700">
+                    Cargando About
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="grid gap-5 xl:grid-cols-[0.8fr_1.2fr]">
+
+                  {/* IMAGE */}
+
+                  <div className="rounded-[24px] border border-white/[0.07] bg-black/20 p-4 sm:p-5">
+                    <div className="mb-4 flex items-center justify-between">
+                      <p className="text-[8px] uppercase tracking-[0.25em] text-zinc-700">
+                        Imagen principal
+                      </p>
+
+                      <span className="text-[7px] uppercase tracking-[0.15em] text-zinc-800">
+                        4 : 5
+                      </span>
+                    </div>
+
+                    <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/[0.06] bg-black">
+                      {about.image_url ? (
+                        <img
+                          src={
+                            about.image_url
+                          }
+                          alt="About NEWCLOTHES"
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center">
+                          <div className="text-center">
+                            <p className="text-[11px] font-black tracking-[0.5em] text-zinc-800">
+                              NEWCLOTHES
+                            </p>
+
+                            <p className="mt-3 text-[8px] uppercase tracking-[0.3em] text-zinc-800">
+                              Sin imagen
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {aboutUploading && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+                          <div className="text-center">
+                            <div className="mx-auto h-8 w-8 animate-spin rounded-full border border-white/10 border-t-white" />
+
+                            <p className="mt-4 text-[8px] font-bold uppercase tracking-[0.25em] text-zinc-500">
+                              Subiendo imagen
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                      <label className="flex h-11 flex-1 cursor-pointer items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.025] text-[8px] font-bold uppercase tracking-[0.18em] text-zinc-500 transition hover:border-white/20 hover:bg-white/[0.05] hover:text-white">
+                        {about.image_url
+                          ? "Cambiar imagen"
+                          : "Subir imagen"}
+
+                        <input
+                          type="file"
+                          accept="image/png,image/jpeg,image/webp"
+                          onChange={
+                            handleAboutImageUpload
+                          }
+                          disabled={
+                            aboutUploading
+                          }
+                          className="hidden"
+                        />
+                      </label>
+
+                      {about.image_url && (
+                        <button
+                          type="button"
+                          onClick={
+                            removeAboutImage
+                          }
+                          disabled={
+                            aboutUploading
+                          }
+                          className={secondaryButton}
+                        >
+                          Eliminar
+                        </button>
+                      )}
+                    </div>
+
+                    <p className="mt-3 text-[7px] uppercase tracking-[0.12em] text-zinc-800">
+                      JPG · PNG · WEBP · Máximo 10 MB
+                    </p>
+                  </div>
+
+                  {/* TEXT CONTENT */}
+
+                  <div className="rounded-[24px] border border-white/[0.07] bg-black/20 p-4 sm:p-5">
+                    <div className="space-y-5">
+
+                      <div>
+                        <label className="text-[8px] uppercase tracking-[0.25em] text-zinc-700">
+                          Etiqueta
+                        </label>
+
+                        <input
+                          value={
+                            about.eyebrow
+                          }
+                          onChange={(e) =>
+                            updateAboutField(
+                              "eyebrow",
+                              e.target.value
+                            )
+                          }
+                          className={inputClass}
+                          placeholder="QUIÉNES SOMOS"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[8px] uppercase tracking-[0.25em] text-zinc-700">
+                          Título principal
+                        </label>
+
+                        <input
+                          value={
+                            about.title
+                          }
+                          onChange={(e) =>
+                            updateAboutField(
+                              "title",
+                              e.target.value
+                            )
+                          }
+                          className={`${inputClass} font-semibold`}
+                          placeholder="VISTE TU IDENTIDAD."
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[8px] uppercase tracking-[0.25em] text-zinc-700">
+                          Frase destacada
+                        </label>
+
+                        <textarea
+                          value={
+                            about.intro
+                          }
+                          onChange={(e) =>
+                            updateAboutField(
+                              "intro",
+                              e.target.value
+                            )
+                          }
+                          rows={3}
+                          className={`${inputClass} resize-none leading-6`}
+                          placeholder="ROPA STREETWEAR TOTALMENTE PREMIUM. HECHA PARA TI."
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[8px] uppercase tracking-[0.25em] text-zinc-700">
+                          Descripción de NEWCLOTHES
+                        </label>
+
+                        <textarea
+                          value={
+                            about.description
+                          }
+                          onChange={(e) =>
+                            updateAboutField(
+                              "description",
+                              e.target.value
+                            )
+                          }
+                          rows={6}
+                          className={`${inputClass} resize-none leading-6`}
+                          placeholder="Describe quiénes son..."
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[8px] uppercase tracking-[0.25em] text-zinc-700">
+                          Ropa personalizada
+                        </label>
+
+                        <textarea
+                          value={
+                            about.custom_description
+                          }
+                          onChange={(e) =>
+                            updateAboutField(
+                              "custom_description",
+                              e.target.value
+                            )
+                          }
+                          rows={6}
+                          className={`${inputClass} resize-none leading-6`}
+                          placeholder="Explica el servicio de ropa personalizada..."
+                        />
+                      </div>
+
+                      <div className="flex items-center justify-between rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
+                        <div>
+                          <p className="text-[9px] font-medium text-zinc-400">
+                            Publicación
+                          </p>
+
+                          <p className="mt-1 text-[7px] uppercase tracking-[0.12em] text-zinc-700">
+                            Controla la visibilidad de About
+                          </p>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            updateAboutField(
+                              "active",
+                              !about.active
+                            )
+                          }
+                          className={`relative h-6 w-11 rounded-full border transition ${
+                            about.active
+                              ? "border-white bg-white"
+                              : "border-white/10 bg-black"
+                          }`}
+                        >
+                          <span
+                            className={`absolute top-1 h-4 w-4 rounded-full transition ${
+                              about.active
+                                ? "left-6 bg-black"
+                                : "left-1 bg-zinc-700"
+                            }`}
+                          />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-5 flex flex-col gap-4 border-t border-white/[0.05] pt-5 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-h-[18px]">
+                    {aboutMessage && (
+                      <p className="text-[8px] font-medium text-zinc-500">
+                        {aboutMessage}
+                      </p>
+                    )}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={
+                      saveAbout
+                    }
+                    disabled={
+                      aboutSaving ||
+                      aboutUploading
+                    }
+                    className="inline-flex h-11 items-center justify-center rounded-xl border border-white/[0.08] bg-white px-6 text-[9px] font-bold uppercase tracking-[0.18em] text-black transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    {aboutSaving
+                      ? "Guardando..."
+                      : "Guardar About"}
+                  </button>
+                </div>
+              </>
+            )}
+          </section>
+        ) : (
+          <>
+            {/* ===================================================
+                ANALYTICS
+            ==================================================== */}
+
+            <section className="mb-5">
+              <div className="mb-4 flex items-center gap-3">
+                <span className="text-[8px] uppercase tracking-[0.25em] text-zinc-700">
+                  Content Analytics
+                </span>
+
+                <div className="h-px flex-1 bg-white/[0.05]" />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+
+                <ContentStat
+                  label="Contenidos"
+                  value={
+                    content.length
+                  }
+                  detail="Elementos creados"
+                  icon="◇"
+                />
+
+                <ContentStat
+                  label="Activos"
+                  value={
+                    activeCount
+                  }
+                  detail="Visibles actualmente"
+                  icon="●"
+                />
+
+                <ContentStat
+                  label="Hero"
+                  value={
+                    featuredCount
+                  }
+                  detail="Slides principales"
+                  icon="▧"
+                />
+
+                <ContentStat
+                  label="Banners"
+                  value={
+                    content.filter(
+                      (item) =>
+                        item.type ===
+                        "BANNER"
+                    ).length
+                  }
+                  detail="Banners disponibles"
+                  icon="▤"
+                />
+
+              </div>
+            </section>
+
+            {/* ===================================================
+                FORM
+            ==================================================== */}
+
+            {showForm && (
+              <section className="mb-5 rounded-[28px] border border-white/[0.07] bg-white/[0.025] p-5 sm:p-6">
+
+                <div className="mb-6 flex items-center justify-between">
+                  <div>
+                    <p className="text-[8px] uppercase tracking-[0.25em] text-zinc-700">
+                      Content Editor
+                    </p>
+
+                    <h2 className="mt-2 text-lg font-semibold">
+                      {editingId !== null
+                        ? "Editar contenido"
+                        : "Nuevo contenido"}
+                    </h2>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={
+                      resetForm
+                    }
+                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.025] text-lg text-zinc-600 transition hover:border-white/20 hover:text-white"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <div className="grid gap-5 md:grid-cols-2">
+
+                  <div>
+                    <label className="text-[8px] uppercase tracking-[0.25em] text-zinc-700">
+                      Título
+                    </label>
+
+                    <input
+                      value={title}
+                      onChange={(e) =>
+                        setTitle(
+                          e.target.value
+                        )
+                      }
+                      className={inputClass}
+                      placeholder="THE LAST DANCE"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[8px] uppercase tracking-[0.25em] text-zinc-700">
+                      Subtítulo
+                    </label>
+
+                    <input
+                      value={
+                        subtitle
+                      }
+                      onChange={(e) =>
+                        setSubtitle(
+                          e.target.value
+                        )
+                      }
+                      className={inputClass}
+                      placeholder="LIMITED EDITION"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="text-[8px] uppercase tracking-[0.25em] text-zinc-700">
+                      URL de imagen
+                    </label>
+
+                    <input
+                      value={image}
+                      onChange={(e) =>
+                        setImage(
+                          e.target.value
+                        )
+                      }
+                      className={inputClass}
+                      placeholder="https://..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[8px] uppercase tracking-[0.25em] text-zinc-700">
+                      Texto del botón
+                    </label>
+
+                    <input
+                      value={
+                        buttonText
+                      }
+                      onChange={(e) =>
+                        setButtonText(
+                          e.target.value
+                        )
+                      }
+                      className={inputClass}
+                      placeholder="VER PRODUCTOS"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[8px] uppercase tracking-[0.25em] text-zinc-700">
+                      Tipo
+                    </label>
+
+                    <select
+                      value={type}
+                      onChange={(e) =>
+                        setType(
+                          e.target
+                            .value as ContentItem["type"]
+                        )
+                      }
+                      className={inputClass}
+                    >
+                      <option value="HERO">
+                        HERO PRINCIPAL
+                      </option>
+
+                      <option value="BANNER">
+                        BANNER
+                      </option>
+                    </select>
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="flex cursor-pointer items-center gap-3 rounded-2xl border border-white/[0.06] bg-black/20 p-4">
+                      <input
+                        type="checkbox"
+                        checked={
+                          active
+                        }
+                        onChange={(e) =>
+                          setActive(
+                            e.target
+                              .checked
+                          )
+                        }
+                        className="h-4 w-4"
+                      />
+
+                      <span className="text-[9px] font-medium text-zinc-500">
+                        Mostrar este contenido en la web
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="mt-6 flex flex-col justify-end gap-2 border-t border-white/[0.05] pt-5 sm:flex-row">
+                  <button
+                    type="button"
+                    onClick={
+                      resetForm
+                    }
+                    className={secondaryButton}
+                  >
+                    Cancelar
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={
+                      saveContent
+                    }
+                    className="rounded-xl bg-white px-7 py-3 text-[8px] font-bold uppercase tracking-[0.18em] text-black transition hover:bg-zinc-200"
+                  >
+                    Guardar contenido
+                  </button>
+                </div>
+              </section>
+            )}
+
+            {/* ===================================================
+                CONTENT LIST
+            ==================================================== */}
+
+            <section className="rounded-[28px] border border-white/[0.07] bg-white/[0.025] p-5 sm:p-6">
+
+              <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-[8px] uppercase tracking-[0.25em] text-zinc-700">
+                    Content Library
+                  </p>
+
+                  <h2 className="mt-2 text-lg font-semibold">
+                    {activeTab ===
+                    "ALL"
+                      ? "Todos los contenidos"
+                      : activeTab ===
+                        "HERO"
+                      ? "Hero principal"
+                      : "Banners"}
+                  </h2>
+                </div>
+
+                <span className="text-[8px] uppercase tracking-[0.15em] text-zinc-700">
+                  {
+                    filteredContent.length
+                  } elementos
+                </span>
+              </div>
+
+              {filteredContent.length ===
+              0 ? (
+                <div className="rounded-2xl border border-dashed border-white/[0.07] bg-black/20 px-5 py-12 text-center">
+                  <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl border border-white/[0.07] text-sm text-zinc-700">
+                    ◇
+                  </div>
+
+                  <p className="text-[10px] font-medium text-zinc-500">
+                    Sin contenido
+                  </p>
+
+                  <p className="mx-auto mt-2 max-w-xs text-[8px] leading-5 text-zinc-700">
+                    No hay elementos en esta categoría.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {filteredContent.map(
+                    (item) => (
+                      <ContentRow
+                        key={
+                          item.id
+                        }
+                        item={
+                          item
+                        }
+                        onToggle={() =>
+                          toggleActive(
+                            item.id
+                          )
+                        }
+                        onEdit={() =>
+                          editContent(
+                            item
+                          )
+                        }
+                        onDelete={() =>
+                          deleteContent(
+                            item.id
+                          )
+                        }
+                      />
+                    )
+                  )}
+                </div>
+              )}
+            </section>
+
+            {/* ===================================================
+                FOOTER
+            ==================================================== */}
+
+            <div className="mt-10 flex flex-col gap-2 border-t border-white/[0.05] pt-5 text-[8px] uppercase tracking-[0.25em] text-zinc-700 sm:flex-row sm:items-center sm:justify-between">
+              <span>
+                NEWCLOTHES® ADMIN SYSTEM
+              </span>
+
+              <span className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-green-500/70" />
+                Content Management
+              </span>
+            </div>
+          </>
+        )}
+      </div>
+    </main>
+  );
+}
+
+/* =========================================================
+   CONTENT STAT
+========================================================= */
+
+function ContentStat({
+  label,
+  value,
+  detail,
+  icon,
+}: {
+  label: string;
+  value: number;
+  detail: string;
+  icon: string;
+}) {
+  return (
+    <div className="group rounded-[24px] border border-white/[0.07] bg-white/[0.025] p-5 transition hover:border-white/[0.13] hover:bg-white/[0.035]">
+      <div className="flex items-start justify-between">
+        <p className="text-[8px] font-medium uppercase tracking-[0.25em] text-zinc-600">
+          {label}
+        </p>
+
+        <span className="text-xs text-zinc-700 transition group-hover:text-zinc-400">
+          {icon}
+        </span>
+      </div>
+
+      <div className="mt-4">
+        <span className="text-2xl font-semibold tracking-tight">
+          {value}
+        </span>
+
+        <p className="mt-2 text-[8px] uppercase tracking-[0.12em] text-zinc-700">
+          {detail}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================
+   CONTENT ROW
+========================================================= */
+
+function ContentRow({
+  item,
+  onToggle,
+  onEdit,
+  onDelete,
+}: {
+  item: ContentItem;
+  onToggle: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
+  return (
+    <div className="rounded-2xl border border-white/[0.05] bg-black/20 p-3 transition hover:border-white/[0.09] hover:bg-white/[0.02]">
+
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
+
+        {/* IMAGE */}
+
+        <div className="h-28 w-full shrink-0 overflow-hidden rounded-xl border border-white/[0.06] bg-black sm:h-32 lg:h-20 lg:w-32">
+          {item.image ? (
+            <img
+              src={item.image}
+              alt={item.title}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <span className="text-[8px] uppercase tracking-[0.15em] text-zinc-800">
+                Sin imagen
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* INFO */}
+
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="truncate text-[10px] font-medium text-zinc-300">
+              {item.title}
+            </p>
+
+            <span className="rounded-full border border-white/[0.06] px-2 py-1 text-[6px] font-semibold uppercase tracking-[0.1em] text-zinc-700">
+              {item.type}
+            </span>
+
+            <span className="flex items-center gap-1 rounded-full border border-white/[0.06] px-2 py-1 text-[6px] font-semibold uppercase tracking-[0.1em] text-zinc-700">
+              <span
+                className={`h-1 w-1 rounded-full ${
+                  item.active
+                    ? "bg-green-500/70"
+                    : "bg-zinc-700"
+                }`}
+              />
+
+              {item.active
+                ? "Activo"
+                : "Oculto"}
+            </span>
+          </div>
+
+          <p className="mt-1 text-[8px] text-zinc-700">
+            {item.subtitle ||
+              "Sin subtítulo"}
+          </p>
+
+          <p className="mt-2 text-[7px] uppercase tracking-[0.12em] text-zinc-800">
+            Botón:{" "}
+            {item.buttonText ||
+              "Sin botón"}
           </p>
         </div>
 
-        <button
-          onClick={() =>
-            (window.location.href =
-              "/admin/login")
-          }
-          className="rounded-xl border border-white/10 px-4 py-2.5 text-[8px] font-black tracking-[0.18em] text-white/50 transition hover:border-white/30 hover:bg-white hover:text-black md:px-5"
-        >
-          CERRAR SESIÓN
-        </button>
-
-      </header>
-
-      <div className="flex min-h-[calc(100vh-76px)]">
-
-        {/* SIDEBAR */}
-
-        <aside className="hidden w-60 shrink-0 border-r border-white/10 bg-[#080808] p-5 lg:block">
-
-          <div className="mb-7 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
-
-            <p className="text-[8px] font-black tracking-[0.35em] text-white/25">
-              CONTROL PANEL
-            </p>
-
-            <p className="mt-2 text-xs font-semibold text-white/70">
-              Gestión de tienda
-            </p>
-
-          </div>
-
-          <p className="mb-4 px-3 text-[8px] font-black tracking-[0.3em] text-white/25">
-            ADMIN
-          </p>
-
-          <nav className="space-y-1.5">
-
-            <a
-              href="/admin/dashboard"
-              className="block rounded-xl border border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
-            >
-              Dashboard
-            </a>
-
-            <a
-              href="/admin/products"
-              className="block rounded-xl border border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
-            >
-              Productos
-            </a>
-
-            <a
-              href="/admin/inventory"
-              className="block rounded-xl border border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
-            >
-              Inventario
-            </a>
-
-            <a
-              href="/admin/content"
-              className="block rounded-xl border border-white/10 bg-white/[0.07] px-3 py-3 text-xs font-semibold text-white"
-            >
-              Contenido
-            </a>
-
-            <a
-              href="/admin/drops"
-              className="block rounded-xl border border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
-            >
-              Drops
-            </a>
-
-            <a
-              href="/admin/offers"
-              className="block rounded-xl border border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
-            >
-              Ofertas
-            </a>
-
-            <a
-              href="/admin/sales"
-              className="block rounded-xl border border-transparent px-3 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
-            >
-              Ventas
-            </a>
-
-          </nav>
-
-          <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
-
-            <p className="px-1 text-[8px] font-black tracking-[0.3em] text-white/20">
-              WEB
-            </p>
-
-            <a
-              href="/"
-              target="_blank"
-              rel="noreferrer"
-              className="mt-2 block rounded-xl px-2 py-3 text-xs font-medium text-white/45 transition hover:bg-white/5 hover:text-white"
-            >
-              Ver tienda ↗
-            </a>
-
-          </div>
-
-        </aside>
-
-        {/* MAIN */}
-
-        <section className="min-w-0 flex-1">
-
-          <div className="mx-auto max-w-[1600px] px-5 py-7 md:px-8 md:py-10">
-
-            {/* PAGE HEADER */}
-
-            <div className="flex flex-col gap-6 border-b border-white/10 pb-7 xl:flex-row xl:items-end xl:justify-between">
-
-              <div>
-
-                <p className="text-[8px] font-black tracking-[0.4em] text-white/25">
-                  01 / CONTENIDO
-                </p>
-
-                <h2 className="mt-3 text-3xl font-black tracking-[-0.04em] md:text-5xl">
-                  Contenido
-                </h2>
-
-                <p className="mt-3 max-w-xl text-xs leading-6 text-white/35 md:text-sm">
-                  Administra los elementos
-                  visuales y las secciones
-                  editables de NEWCLOTHES.
-                </p>
-
-              </div>
-
-              {activeTab !== "ABOUT" && (
-                <button
-                  onClick={openNew}
-                  className="w-full rounded-xl bg-white px-6 py-3.5 text-[9px] font-black tracking-[0.18em] text-black transition hover:bg-white/85 sm:w-auto"
-                >
-                  + NUEVO CONTENIDO
-                </button>
-              )}
-
-            </div>
-
-            {/* MOBILE NAV */}
-
-            <div className="mt-6 overflow-x-auto pb-1 lg:hidden">
-
-              <div className="flex min-w-max gap-2">
-
-                <a
-                  href="/admin/dashboard"
-                  className="rounded-full border border-white/10 px-4 py-2.5 text-[9px] font-black tracking-[0.15em] text-white/40"
-                >
-                  DASHBOARD
-                </a>
-
-                <a
-                  href="/admin/products"
-                  className="rounded-full border border-white/10 px-4 py-2.5 text-[9px] font-black tracking-[0.15em] text-white/40"
-                >
-                  PRODUCTOS
-                </a>
-
-                <a
-                  href="/admin/inventory"
-                  className="rounded-full border border-white/10 px-4 py-2.5 text-[9px] font-black tracking-[0.15em] text-white/40"
-                >
-                  INVENTARIO
-                </a>
-
-                <a
-                  href="/admin/drops"
-                  className="rounded-full border border-white/10 px-4 py-2.5 text-[9px] font-black tracking-[0.15em] text-white/40"
-                >
-                  DROPS
-                </a>
-
-              </div>
-
-            </div>
-
-            {/* CONTENT TABS */}
-
-            <div className="mt-8">
-
-              <div className="flex gap-2 overflow-x-auto pb-2">
-
-                <button
-                  onClick={() =>
-                    setActiveTab("ALL")
-                  }
-                  className={tabClass("ALL")}
-                >
-                  TODO
-                </button>
-
-                <button
-                  onClick={() =>
-                    setActiveTab("HERO")
-                  }
-                  className={tabClass("HERO")}
-                >
-                  HERO
-                </button>
-
-                <button
-                  onClick={() =>
-                    setActiveTab("BANNER")
-                  }
-                  className={tabClass("BANNER")}
-                >
-                  BANNERS
-                </button>
-
-                <button
-                  onClick={() =>
-                    setActiveTab("ABOUT")
-                  }
-                  className={tabClass("ABOUT")}
-                >
-                  ABOUT
-                </button>
-
-              </div>
-
-            </div>
-
-            {/* ABOUT */}
-
-            {activeTab === "ABOUT" ? (
-
-              <div className="mt-7 rounded-2xl border border-white/10 bg-[#080808] p-5 md:p-7">
-
-                <div className="border-b border-white/10 pb-6">
-
-                  <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-
-                    <div>
-
-                      <p className="text-[8px] font-black tracking-[0.4em] text-white/25">
-                        SECCIÓN EDITABLE
-                      </p>
-
-                      <h3 className="mt-3 text-2xl font-black tracking-[-0.03em] md:text-4xl">
-                        About / Quiénes somos
-                      </h3>
-
-                      <p className="mt-2 max-w-2xl text-xs leading-6 text-white/35">
-                        Edita la imagen y el contenido
-                        que aparece en la sección
-                        About de la página principal.
-                      </p>
-
-                    </div>
-
-                    <div
-                      className={`inline-flex w-fit items-center gap-2 rounded-full border px-3 py-2 text-[8px] font-black tracking-[0.18em] ${
-                        about.active
-                          ? "border-white/20 text-white/60"
-                          : "border-white/10 text-white/25"
-                      }`}
-                    >
-
-                      <span
-                        className={`h-1.5 w-1.5 rounded-full ${
-                          about.active
-                            ? "bg-white"
-                            : "bg-white/20"
-                        }`}
-                      />
-
-                      {about.active
-                        ? "VISIBLE EN LA WEB"
-                        : "OCULTO"}
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-                {aboutLoading ? (
-
-                  <div className="flex min-h-[500px] items-center justify-center">
-
-                    <div className="text-center">
-
-                      <div className="mx-auto h-8 w-8 animate-spin rounded-full border border-white/10 border-t-white" />
-
-                      <p className="mt-5 text-[8px] font-black tracking-[0.3em] text-white/25">
-                        CARGANDO ABOUT
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                ) : (
-
-                  <div className="mt-7">
-
-                    <div className="grid gap-8 xl:grid-cols-[0.85fr_1.15fr]">
-
-                      {/* IMAGE */}
-
-                      <div>
-
-                        <div className="mb-3 flex items-center justify-between">
-
-                          <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
-                            IMAGEN PRINCIPAL
-                          </label>
-
-                          <span className="text-[8px] tracking-[0.15em] text-white/20">
-                            4 : 5
-                          </span>
-
-                        </div>
-
-                        <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 bg-[#090909]">
-
-                          {about.image_url ? (
-
-                            <img
-                              src={
-                                about.image_url
-                              }
-                              alt="About NEWCLOTHES"
-                              className="h-full w-full object-cover"
-                            />
-
-                          ) : (
-
-                            <div className="absolute inset-0 flex items-center justify-center">
-
-                              <div className="text-center">
-
-                                <p className="text-[11px] font-black tracking-[0.5em] text-white/15">
-                                  NEWCLOTHES
-                                </p>
-
-                                <p className="mt-3 text-[8px] font-bold tracking-[0.3em] text-white/10">
-                                  SIN IMAGEN
-                                </p>
-
-                              </div>
-
-                            </div>
-
-                          )}
-
-                          {aboutUploading && (
-
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-
-                              <div className="text-center">
-
-                                <div className="mx-auto h-8 w-8 animate-spin rounded-full border border-white/10 border-t-white" />
-
-                                <p className="mt-4 text-[8px] font-black tracking-[0.25em] text-white/60">
-                                  SUBIENDO IMAGEN
-                                </p>
-
-                              </div>
-
-                            </div>
-
-                          )}
-
-                        </div>
-
-                        <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-
-                          <label className="flex cursor-pointer items-center justify-center rounded-xl bg-white px-5 py-3 text-[8px] font-black tracking-[0.18em] text-black transition hover:bg-white/85">
-
-                            {about.image_url
-                              ? "CAMBIAR IMAGEN"
-                              : "SUBIR IMAGEN"}
-
-                            <input
-                              type="file"
-                              accept="image/png,image/jpeg,image/webp"
-                              onChange={
-                                handleAboutImageUpload
-                              }
-                              disabled={
-                                aboutUploading
-                              }
-                              className="hidden"
-                            />
-
-                          </label>
-
-                          {about.image_url && (
-
-                            <button
-                              type="button"
-                              onClick={
-                                removeAboutImage
-                              }
-                              disabled={
-                                aboutUploading
-                              }
-                              className={buttonSecondaryClass}
-                            >
-                              ELIMINAR
-                            </button>
-
-                          )}
-
-                        </div>
-
-                        <p className="mt-3 text-[8px] leading-5 text-white/20">
-                          JPG, PNG o WEBP · Máximo
-                          10 MB
-                        </p>
-
-                      </div>
-
-                      {/* TEXT */}
-
-                      <div className="min-w-0">
-
-                        <div className="grid gap-6">
-
-                          <div>
-
-                            <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
-                              ETIQUETA
-                            </label>
-
-                            <input
-                              value={
-                                about.eyebrow
-                              }
-                              onChange={(e) =>
-                                updateAboutField(
-                                  "eyebrow",
-                                  e.target.value
-                                )
-                              }
-                              placeholder="QUIÉNES SOMOS"
-                              className={inputClass}
-                            />
-
-                          </div>
-
-                          <div>
-
-                            <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
-                              TÍTULO PRINCIPAL
-                            </label>
-
-                            <input
-                              value={
-                                about.title
-                              }
-                              onChange={(e) =>
-                                updateAboutField(
-                                  "title",
-                                  e.target.value
-                                )
-                              }
-                              placeholder="VISTE TU IDENTIDAD."
-                              className={`${inputClass} font-bold`}
-                            />
-
-                          </div>
-
-                          <div>
-
-                            <div className="flex items-center justify-between">
-
-                              <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
-                                FRASE DESTACADA
-                              </label>
-
-                              <span className="text-[8px] text-white/15">
-                                TEXTO CORTO
-                              </span>
-
-                            </div>
-
-                            <textarea
-                              value={
-                                about.intro
-                              }
-                              onChange={(e) =>
-                                updateAboutField(
-                                  "intro",
-                                  e.target.value
-                                )
-                              }
-                              rows={3}
-                              placeholder="ROPA STREETWEAR TOTALMENTE PREMIUM. HECHA PARA TI."
-                              className={`${inputClass} resize-none leading-6`}
-                            />
-
-                          </div>
-
-                          <div>
-
-                            <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
-                              DESCRIPCIÓN DE NEWCLOTHES
-                            </label>
-
-                            <textarea
-                              value={
-                                about.description
-                              }
-                              onChange={(e) =>
-                                updateAboutField(
-                                  "description",
-                                  e.target.value
-                                )
-                              }
-                              rows={6}
-                              placeholder="Describe quiénes son..."
-                              className={`${inputClass} resize-none leading-6`}
-                            />
-
-                          </div>
-
-                          <div>
-
-                            <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
-                              ROPA PERSONALIZADA
-                            </label>
-
-                            <textarea
-                              value={
-                                about.custom_description
-                              }
-                              onChange={(e) =>
-                                updateAboutField(
-                                  "custom_description",
-                                  e.target.value
-                                )
-                              }
-                              rows={6}
-                              placeholder="Explica el servicio de ropa personalizada..."
-                              className={`${inputClass} resize-none leading-6`}
-                            />
-
-                          </div>
-
-                          <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4">
-
-                            <div>
-
-                              <p className="text-[9px] font-black tracking-[0.18em] text-white/70">
-                                PUBLICACIÓN
-                              </p>
-
-                              <p className="mt-1 text-[8px] text-white/25">
-                                Controla si About aparece
-                                en la página.
-                              </p>
-
-                            </div>
-
-                            <button
-                              type="button"
-                              onClick={() =>
-                                updateAboutField(
-                                  "active",
-                                  !about.active
-                                )
-                              }
-                              className={`relative h-6 w-11 rounded-full border transition ${
-                                about.active
-                                  ? "border-white bg-white"
-                                  : "border-white/20 bg-black"
-                              }`}
-                              aria-label="Cambiar visibilidad de About"
-                            >
-
-                              <span
-                                className={`absolute top-1 h-4 w-4 rounded-full transition ${
-                                  about.active
-                                    ? "left-6 bg-black"
-                                    : "left-1 bg-white/30"
-                                }`}
-                              />
-
-                            </button>
-
-                          </div>
-
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                    <div className="mt-8 flex flex-col gap-5 border-t border-white/10 pt-6 md:flex-row md:items-center md:justify-between">
-
-                      <div className="min-h-[18px]">
-
-                        {aboutMessage && (
-
-                          <p
-                            className={`text-[8px] font-bold tracking-[0.12em] ${
-                              aboutMessage.startsWith(
-                                "✓"
-                              )
-                                ? "text-white/70"
-                                : "text-white/40"
-                            }`}
-                          >
-                            {aboutMessage}
-                          </p>
-
-                        )}
-
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={saveAbout}
-                        disabled={
-                          aboutSaving ||
-                          aboutUploading
-                        }
-                        className="rounded-xl bg-white px-8 py-3.5 text-[8px] font-black tracking-[0.2em] text-black transition hover:bg-white/85 disabled:cursor-not-allowed disabled:opacity-40"
-                      >
-                        {aboutSaving
-                          ? "GUARDANDO..."
-                          : "GUARDAR ABOUT"}
-                      </button>
-
-                    </div>
-
-                  </div>
-
-                )}
-
-              </div>
-
-            ) : (
-
-              /* CONTENT AREA */
-
-              <div className="mt-7">
-
-                {/* STATS */}
-
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-
-                  <div className="rounded-2xl border border-white/10 bg-[#080808] p-5 md:p-6">
-
-                    <p className="text-[8px] font-black tracking-[0.25em] text-white/25">
-                      CONTENIDOS
-                    </p>
-
-                    <p className="mt-3 text-3xl font-black tracking-tight">
-                      {content.length}
-                    </p>
-
-                  </div>
-
-                  <div className="rounded-2xl border border-white/10 bg-[#080808] p-5 md:p-6">
-
-                    <p className="text-[8px] font-black tracking-[0.25em] text-white/25">
-                      ACTIVOS
-                    </p>
-
-                    <p className="mt-3 text-3xl font-black tracking-tight">
-                      {activeCount}
-                    </p>
-
-                  </div>
-
-                  <div className="rounded-2xl border border-white/10 bg-[#080808] p-5 md:p-6">
-
-                    <p className="text-[8px] font-black tracking-[0.25em] text-white/25">
-                      HERO
-                    </p>
-
-                    <p className="mt-3 text-3xl font-black tracking-tight">
-                      {featuredCount}
-                    </p>
-
-                  </div>
-
-                </div>
-
-                {/* FORM */}
-
-                {showForm && (
-
-                  <div className="mt-7 overflow-hidden rounded-2xl border border-white/10 bg-[#080808]">
-
-                    <div className="flex items-center justify-between border-b border-white/10 px-5 py-5 md:px-7">
-
-                      <div>
-
-                        <p className="text-[8px] font-black tracking-[0.3em] text-white/25">
-                          {editingId !== null
-                            ? "EDITAR CONTENIDO"
-                            : "NUEVO CONTENIDO"}
-                        </p>
-
-                        <h3 className="mt-2 text-xl font-black">
-                          {editingId !== null
-                            ? "Editar elemento"
-                            : "Crear elemento"}
-                        </h3>
-
-                      </div>
-
-                      <button
-                        onClick={
-                          resetForm
-                        }
-                        className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-lg text-white/30 transition hover:border-white/30 hover:bg-white hover:text-black"
-                      >
-                        ×
-                      </button>
-
-                    </div>
-
-                    <div className="p-5 md:p-7">
-
-                      <div className="grid gap-5 md:grid-cols-2">
-
-                        <div>
-
-                          <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
-                            TÍTULO
-                          </label>
-
-                          <input
-                            value={title}
-                            onChange={(e) =>
-                              setTitle(
-                                e.target.value
-                              )
-                            }
-                            placeholder="THE LAST DANCE"
-                            className={inputClass}
-                          />
-
-                        </div>
-
-                        <div>
-
-                          <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
-                            SUBTÍTULO
-                          </label>
-
-                          <input
-                            value={subtitle}
-                            onChange={(e) =>
-                              setSubtitle(
-                                e.target.value
-                              )
-                            }
-                            placeholder="LIMITED EDITION"
-                            className={inputClass}
-                          />
-
-                        </div>
-
-                        <div className="md:col-span-2">
-
-                          <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
-                            URL DE IMAGEN
-                          </label>
-
-                          <input
-                            value={image}
-                            onChange={(e) =>
-                              setImage(
-                                e.target.value
-                              )
-                            }
-                            placeholder="https://..."
-                            className={inputClass}
-                          />
-
-                        </div>
-
-                        <div>
-
-                          <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
-                            TEXTO DEL BOTÓN
-                          </label>
-
-                          <input
-                            value={buttonText}
-                            onChange={(e) =>
-                              setButtonText(
-                                e.target.value
-                              )
-                            }
-                            placeholder="VER PRODUCTOS"
-                            className={inputClass}
-                          />
-
-                        </div>
-
-                        <div>
-
-                          <label className="text-[8px] font-black tracking-[0.25em] text-white/35">
-                            TIPO
-                          </label>
-
-                          <select
-                            value={type}
-                            onChange={(e) =>
-                              setType(
-                                e.target
-                                  .value as ContentItem["type"]
-                              )
-                            }
-                            className={inputClass}
-                          >
-
-                            <option value="HERO">
-                              HERO PRINCIPAL
-                            </option>
-
-                            <option value="BANNER">
-                              BANNER
-                            </option>
-
-                          </select>
-
-                        </div>
-
-                        <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] px-4 py-4 md:col-span-2">
-
-                          <input
-                            id="content-active"
-                            type="checkbox"
-                            checked={
-                              active
-                            }
-                            onChange={(e) =>
-                              setActive(
-                                e.target
-                                  .checked
-                              )
-                            }
-                            className="h-4 w-4 rounded"
-                          />
-
-                          <label
-                            htmlFor="content-active"
-                            className="text-xs text-white/60"
-                          >
-                            Mostrar este contenido
-                            en la web
-                          </label>
-
-                        </div>
-
-                      </div>
-
-                      <div className="mt-7 flex flex-col justify-end gap-2 border-t border-white/10 pt-6 sm:flex-row">
-
-                        <button
-                          onClick={
-                            resetForm
-                          }
-                          className={buttonSecondaryClass}
-                        >
-                          CANCELAR
-                        </button>
-
-                        <button
-                          onClick={
-                            saveContent
-                          }
-                          className="rounded-xl bg-white px-7 py-3 text-[8px] font-black tracking-[0.18em] text-black transition hover:bg-white/85"
-                        >
-                          GUARDAR CONTENIDO
-                        </button>
-
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                )}
-
-                {/* CONTENT LIST */}
-
-                <div className="mt-7 overflow-hidden rounded-2xl border border-white/10 bg-[#080808]">
-
-                  <div className="flex items-center justify-between border-b border-white/10 px-5 py-5 md:px-7">
-
-                    <div>
-
-                      <p className="text-[8px] font-black tracking-[0.3em] text-white/25">
-                        ELEMENTOS VISUALES
-                      </p>
-
-                      <h3 className="mt-2 text-lg font-black">
-                        {activeTab === "ALL"
-                          ? "Todos los contenidos"
-                          : activeTab === "HERO"
-                          ? "Hero principal"
-                          : "Banners"}
-                      </h3>
-
-                    </div>
-
-                    <span className="text-[8px] font-black tracking-[0.15em] text-white/20">
-                      {filteredContent.length}{" "}
-                      ELEMENTOS
-                    </span>
-
-                  </div>
-
-                  {filteredContent.length ===
-                  0 ? (
-
-                    <div className="flex min-h-[250px] items-center justify-center">
-
-                      <div className="text-center">
-
-                        <p className="text-[9px] font-black tracking-[0.3em] text-white/20">
-                          SIN CONTENIDO
-                        </p>
-
-                        <p className="mt-3 text-xs text-white/20">
-                          No hay elementos en
-                          esta categoría.
-                        </p>
-
-                      </div>
-
-                    </div>
-
-                  ) : (
-
-                    <div className="divide-y divide-white/10">
-
-                      {filteredContent.map(
-                        (item) => (
-
-                          <div
-                            key={item.id}
-                            className="flex flex-col gap-5 p-5 md:flex-row md:items-center md:p-7"
-                          >
-
-                            {/* IMAGE */}
-
-                            <div className="h-40 w-full shrink-0 overflow-hidden rounded-xl border border-white/10 bg-[#050505] md:h-24 md:w-40">
-
-                              {item.image ? (
-
-                                <img
-                                  src={
-                                    item.image
-                                  }
-                                  alt={
-                                    item.title
-                                  }
-                                  className="h-full w-full object-cover"
-                                />
-
-                              ) : (
-
-                                <div className="flex h-full items-center justify-center">
-
-                                  <span className="text-[8px] font-black tracking-[0.2em] text-white/15">
-                                    SIN IMAGEN
-                                  </span>
-
-                                </div>
-
-                              )}
-
-                            </div>
-
-                            {/* INFO */}
-
-                            <div className="min-w-0 flex-1">
-
-                              <div className="flex flex-wrap items-center gap-2">
-
-                                <h3 className="text-sm font-black tracking-wide">
-                                  {
-                                    item.title
-                                  }
-                                </h3>
-
-                                <span className="rounded-full border border-white/10 px-2 py-1 text-[7px] font-black tracking-[0.15em] text-white/35">
-                                  {
-                                    item.type
-                                  }
-                                </span>
-
-                                <span
-                                  className={`rounded-full border px-2 py-1 text-[7px] font-black tracking-[0.15em] ${
-                                    item.active
-                                      ? "border-white/20 text-white/60"
-                                      : "border-white/10 text-white/20"
-                                  }`}
-                                >
-                                  {item.active
-                                    ? "ACTIVO"
-                                    : "OCULTO"}
-                                </span>
-
-                              </div>
-
-                              <p className="mt-2 text-xs text-white/35">
-                                {
-                                  item.subtitle
-                                }
-                              </p>
-
-                              <p className="mt-3 text-[8px] tracking-[0.15em] text-white/20">
-                                BOTÓN:{" "}
-                                {item.buttonText ||
-                                  "SIN BOTÓN"}
-                              </p>
-
-                            </div>
-
-                            {/* ACTIONS */}
-
-                            <div className="flex flex-wrap gap-2">
-
-                              <button
-                                onClick={() =>
-                                  toggleActive(
-                                    item.id
-                                  )
-                                }
-                                className={buttonSecondaryClass}
-                              >
-                                {item.active
-                                  ? "OCULTAR"
-                                  : "MOSTRAR"}
-                              </button>
-
-                              <button
-                                onClick={() =>
-                                  editContent(
-                                    item
-                                  )
-                                }
-                                className={buttonSecondaryClass}
-                              >
-                                EDITAR
-                              </button>
-
-                              <button
-                                onClick={() =>
-                                  deleteContent(
-                                    item.id
-                                  )
-                                }
-                                className={buttonSecondaryClass}
-                              >
-                                ELIMINAR
-                              </button>
-
-                            </div>
-
-                          </div>
-
-                        )
-                      )}
-
-                    </div>
-
-                  )}
-
-                </div>
-
-              </div>
-
-            )}
-
-          </div>
-
-        </section>
-
+        {/* ACTIONS */}
+
+        <div className="grid grid-cols-3 gap-2 lg:flex lg:shrink-0">
+          <button
+            type="button"
+            onClick={
+              onToggle
+            }
+            className="rounded-xl border border-white/[0.07] bg-white/[0.02] px-3 py-2.5 text-[7px] font-semibold uppercase tracking-[0.1em] text-zinc-600 transition hover:border-white/15 hover:text-white"
+          >
+            {item.active
+              ? "Ocultar"
+              : "Mostrar"}
+          </button>
+
+          <button
+            type="button"
+            onClick={onEdit}
+            className="rounded-xl border border-white/[0.07] bg-white/[0.02] px-3 py-2.5 text-[7px] font-semibold uppercase tracking-[0.1em] text-zinc-600 transition hover:border-white/15 hover:text-white"
+          >
+            Editar
+          </button>
+
+          <button
+            type="button"
+            onClick={onDelete}
+            className="rounded-xl border border-white/[0.07] bg-white/[0.02] px-3 py-2.5 text-[7px] font-semibold uppercase tracking-[0.1em] text-zinc-600 transition hover:border-white/15 hover:text-white"
+          >
+            Eliminar
+          </button>
+        </div>
       </div>
-
-    </main>
+    </div>
   );
 }
