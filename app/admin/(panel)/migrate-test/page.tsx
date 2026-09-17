@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+
 import { createClient } from "@/lib/supabase/client";
 
 const supabase = createClient();
 
 const PRODUCTS = ["test", "test2"];
 
-function dataUrlToBlob(dataUrl: string) {
+function dataUrlToBlob(dataUrl: string): Blob {
   const parts = dataUrl.split(",");
   const metadata = parts[0];
   const base64 = parts[1];
@@ -20,21 +21,20 @@ function dataUrlToBlob(dataUrl: string) {
   const contentType = match?.[1] || "image/png";
 
   const byteCharacters = atob(base64);
-  const byteArrays: Uint8Array[] = [];
+  const byteNumbers = new Array<number>(byteCharacters.length);
 
-  for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
-    const slice = byteCharacters.slice(offset, offset + 1024);
-
-    const byteNumbers = new Array(slice.length);
-
-    for (let i = 0; i < slice.length; i++) {
-      byteNumbers[i] = slice.charCodeAt(i);
-    }
-
-    byteArrays.push(new Uint8Array(byteNumbers));
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
   }
 
-  return new Blob(byteArrays, {
+  const bytes = new Uint8Array(byteNumbers);
+
+  // Copia el contenido a un ArrayBuffer normal para evitar
+  // el conflicto ArrayBufferLike / ArrayBuffer de TypeScript.
+  const buffer = new ArrayBuffer(bytes.byteLength);
+  new Uint8Array(buffer).set(bytes);
+
+  return new Blob([buffer], {
     type: contentType,
   });
 }
@@ -108,8 +108,7 @@ export default function MigrateTestPage() {
         const oldImages = Array.isArray(product.images)
           ? product.images.filter(
               (image): image is string =>
-                typeof image === "string" &&
-                image.length > 0
+                typeof image === "string" && image.length > 0
             )
           : [];
 
@@ -125,9 +124,8 @@ export default function MigrateTestPage() {
           continue;
         }
 
-        const alreadyMigrated = fallbackImages.every(
-          (image) =>
-            image.includes("/storage/v1/object/public/products/")
+        const alreadyMigrated = fallbackImages.every((image) =>
+          image.includes("/storage/v1/object/public/products/")
         );
 
         if (alreadyMigrated) {
@@ -142,9 +140,7 @@ export default function MigrateTestPage() {
         for (let index = 0; index < fallbackImages.length; index++) {
           const image = fallbackImages[index];
 
-          if (
-            !image.startsWith("data:image/")
-          ) {
+          if (!image.startsWith("data:image/")) {
             addLog(
               `⚠️ Imagen ${index + 1} no es Base64. Se conserva.`
             );
@@ -160,8 +156,7 @@ export default function MigrateTestPage() {
           const blob = dataUrlToBlob(image);
           const extension = getExtension(image);
 
-          const filePath =
-            `migrated/${product.id}/${crypto.randomUUID()}.${extension}`;
+          const filePath = `migrated/${product.id}/${crypto.randomUUID()}.${extension}`;
 
           const { error: uploadError } = await supabase.storage
             .from("products")
@@ -211,14 +206,10 @@ export default function MigrateTestPage() {
           );
         }
 
-        addLog(
-          `✓ ${product.name} migrado correctamente.`
-        );
+        addLog(`✓ ${product.name} migrado correctamente.`);
       }
 
-      setMessage(
-        "Migración completada correctamente."
-      );
+      setMessage("Migración completada correctamente.");
     } catch (error) {
       console.error(error);
 
@@ -246,8 +237,8 @@ export default function MigrateTestPage() {
           </h1>
 
           <p className="mt-3 max-w-2xl text-sm leading-6 text-white/50">
-            Esta prueba migrará únicamente las imágenes de TEST y
-            TEST2 desde Base64 hacia Supabase Storage.
+            Esta prueba migrará únicamente las imágenes de TEST y TEST2
+            desde Base64 hacia Supabase Storage.
           </p>
         </div>
 
@@ -258,9 +249,7 @@ export default function MigrateTestPage() {
                 Producto
               </p>
 
-              <p className="mt-2 font-medium">
-                TEST
-              </p>
+              <p className="mt-2 font-medium">TEST</p>
             </div>
 
             <div className="rounded-xl border border-white/10 bg-black p-4">
@@ -268,9 +257,7 @@ export default function MigrateTestPage() {
                 Producto
               </p>
 
-              <p className="mt-2 font-medium">
-                TEST2
-              </p>
+              <p className="mt-2 font-medium">TEST2</p>
             </div>
           </div>
 
@@ -280,9 +267,7 @@ export default function MigrateTestPage() {
             disabled={running}
             className="w-full rounded-xl bg-white px-5 py-4 text-sm font-semibold text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {running
-              ? "MIGRANDO..."
-              : "MIGRAR TEST Y TEST2"}
+            {running ? "MIGRANDO..." : "MIGRAR TEST Y TEST2"}
           </button>
 
           {message && (
@@ -305,9 +290,7 @@ export default function MigrateTestPage() {
 
               <div className="space-y-2 font-mono text-xs text-white/60">
                 {logs.map((log, index) => (
-                  <div key={index}>
-                    {log || "\u00A0"}
-                  </div>
+                  <div key={index}>{log || "\u00A0"}</div>
                 ))}
               </div>
             </div>

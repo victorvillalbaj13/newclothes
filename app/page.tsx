@@ -260,7 +260,15 @@ export default function Home() {
             id: offer.id,
             name: offer.name,
             description: offer.description,
-            type: offer.type === "fixed" ? "fixed" : "percentage",
+
+            // Corrección TypeScript:
+            // mantenemos el tipo como unión literal
+            // "fixed" | "percentage".
+            type:
+              offer.type === "fixed"
+                ? ("fixed" as const)
+                : ("percentage" as const),
+
             value: Number(offer.value),
             start_date: offer.start_date,
             end_date: offer.end_date,
@@ -535,8 +543,6 @@ export default function Home() {
 
           <>
 
-            {/* HERO IMAGE */}
-
             <div className="absolute inset-0">
 
               <img
@@ -553,11 +559,7 @@ export default function Home() {
 
             </div>
 
-            {/* HERO CONTENT WRAPPER */}
-
             <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1500px] flex-col justify-between px-6 pb-8 pt-32 sm:px-8 md:px-12 lg:px-16 md:pb-10">
-
-              {/* HERO TOP */}
 
               <div className="flex items-start justify-between">
 
@@ -582,8 +584,6 @@ export default function Home() {
                 </div>
 
               </div>
-
-              {/* HERO CONTENT */}
 
               <div className="w-full max-w-4xl -translate-x-2 sm:-translate-x-3 md:-translate-x-5 lg:-translate-x-7">
 
@@ -616,8 +616,6 @@ export default function Home() {
                 </div>
 
               </div>
-
-              {/* HERO BOTTOM */}
 
               <div className="flex items-end justify-between border-t border-white/20 pt-5">
 
@@ -1281,8 +1279,6 @@ export default function Home() {
 
                   </div>
 
-                  {/* OFFER LABEL */}
-
                   <div className="absolute left-4 top-4">
 
                     <span className="rounded-full bg-white px-3 py-1.5 text-[8px] font-black tracking-[0.18em] text-black">
@@ -1291,8 +1287,6 @@ export default function Home() {
 
                   </div>
 
-                  {/* DISCOUNT */}
-
                   <div className="absolute right-4 top-4">
 
                     <span className="rounded-full border border-white/25 bg-black/60 px-3 py-1.5 text-[8px] font-black tracking-[0.18em] backdrop-blur-md">
@@ -1300,8 +1294,6 @@ export default function Home() {
                     </span>
 
                   </div>
-
-                  {/* PRODUCT INFO */}
 
                   <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
 
