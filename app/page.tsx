@@ -84,6 +84,30 @@ export default function Home() {
 
   /*
   |--------------------------------------------------------------------------
+  | NAVBAR / SCROLL
+  |--------------------------------------------------------------------------
+  */
+
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 30);
+    };
+
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  /*
+  |--------------------------------------------------------------------------
   | SMOOTH SCROLL
   |--------------------------------------------------------------------------
   */
@@ -93,9 +117,16 @@ export default function Home() {
 
     if (!section) return;
 
-    section.scrollIntoView({
+    const headerOffset = scrolled ? 64 : 80;
+
+    const sectionPosition =
+      section.getBoundingClientRect().top + window.scrollY;
+
+    const offsetPosition = sectionPosition - headerOffset;
+
+    window.scrollTo({
+      top: offsetPosition,
       behavior: "smooth",
-      block: "start",
     });
   };
 
@@ -564,13 +595,23 @@ export default function Home() {
           NAVBAR
       ================================================================= */}
 
-      <header className="fixed left-0 top-0 z-50 w-full border-b border-white/10 bg-black/80 backdrop-blur-xl">
-
-        <div className="mx-auto flex h-20 max-w-[1500px] items-center justify-between px-5 md:px-8">
-
+      <header
+        className={`fixed left-0 top-0 z-50 w-full border-b transition-all duration-500 ease-out ${
+          scrolled
+            ? "border-white/[0.07] bg-black/95 py-1 backdrop-blur-2xl"
+            : "border-white/10 bg-black/80 py-2 backdrop-blur-xl"
+        }`}
+      >
+        <div
+          className={`mx-auto flex max-w-[1500px] items-center justify-between px-5 transition-all duration-500 ease-out md:px-8 ${
+            scrolled ? "h-16" : "h-20"
+          }`}
+        >
           <a
             href="/"
-            className="text-xl font-black tracking-[-0.08em]"
+            className={`font-black tracking-[-0.08em] transition-all duration-500 ease-out ${
+              scrolled ? "text-lg" : "text-xl"
+            }`}
           >
             NEWCLOTHES
           </a>
@@ -586,7 +627,9 @@ export default function Home() {
 
             <a
               href="#shop"
-              onClick={(event) => handleAnchorClick(event, "#shop")}
+              onClick={(event) =>
+                handleAnchorClick(event, "#shop")
+              }
               className="text-[10px] font-black tracking-[0.25em] text-white/60 transition hover:text-white"
             >
               SHOP
@@ -594,7 +637,9 @@ export default function Home() {
 
             <a
               href="#drops"
-              onClick={(event) => handleAnchorClick(event, "#drops")}
+              onClick={(event) =>
+                handleAnchorClick(event, "#drops")
+              }
               className="text-[10px] font-black tracking-[0.25em] text-white/60 transition hover:text-white"
             >
               DROPS
@@ -602,7 +647,9 @@ export default function Home() {
 
             <a
               href="#about"
-              onClick={(event) => handleAnchorClick(event, "#about")}
+              onClick={(event) =>
+                handleAnchorClick(event, "#about")
+              }
               className="text-[10px] font-black tracking-[0.25em] text-white/60 transition hover:text-white"
             >
               ABOUT
@@ -613,9 +660,7 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <CartButton />
           </div>
-
         </div>
-
       </header>
 
       {/* ================================================================
@@ -627,9 +672,7 @@ export default function Home() {
         {loadingSlides ? (
 
           <div className="flex min-h-screen items-center justify-center">
-
             <div className="h-8 w-8 animate-spin rounded-full border border-white/20 border-t-white" />
-
           </div>
 
         ) : activeSlide ? (
@@ -657,11 +700,9 @@ export default function Home() {
               <div className="flex items-start justify-between">
 
                 <div>
-
                   <p className="text-[9px] font-black tracking-[0.4em] text-white/60">
                     {activeSlide.eyebrow}
                   </p>
-
                 </div>
 
                 <div className="text-right">
@@ -685,11 +726,9 @@ export default function Home() {
                 </h1>
 
                 {activeSlide.description && (
-
                   <p className="mt-7 max-w-md text-sm leading-6 text-white/65 md:text-base">
                     {activeSlide.description}
                   </p>
-
                 )}
 
                 <div className="mt-8">
@@ -697,7 +736,10 @@ export default function Home() {
                   <a
                     href={activeSlide.link}
                     onClick={(event) =>
-                      handleAnchorClick(event, activeSlide.link)
+                      handleAnchorClick(
+                        event,
+                        activeSlide.link
+                      )
                     }
                     className="inline-flex items-center gap-4 rounded-full bg-white px-7 py-4 text-[10px] font-black tracking-[0.2em] text-black transition hover:scale-[1.03] hover:bg-white/90"
                   >
@@ -718,7 +760,6 @@ export default function Home() {
                 <div className="flex gap-8">
 
                   <div>
-
                     <p className="text-[8px] font-black tracking-[0.3em] text-white/30">
                       LOCATION
                     </p>
@@ -726,11 +767,9 @@ export default function Home() {
                     <p className="mt-1 text-[9px] font-black tracking-[0.2em]">
                       VALENCIA
                     </p>
-
                   </div>
 
                   <div>
-
                     <p className="text-[8px] font-black tracking-[0.3em] text-white/30">
                       CATEGORY
                     </p>
@@ -738,11 +777,9 @@ export default function Home() {
                     <p className="mt-1 text-[9px] font-black tracking-[0.2em]">
                       STREETWEAR
                     </p>
-
                   </div>
 
                   <div>
-
                     <p className="text-[8px] font-black tracking-[0.3em] text-white/30">
                       RELEASE
                     </p>
@@ -750,7 +787,6 @@ export default function Home() {
                     <p className="mt-1 text-[9px] font-black tracking-[0.2em]">
                       001
                     </p>
-
                   </div>
 
                 </div>
@@ -764,7 +800,9 @@ export default function Home() {
                       <button
                         key={slide.id}
                         type="button"
-                        onClick={() => setCurrentSlide(index)}
+                        onClick={() =>
+                          setCurrentSlide(index)
+                        }
                         className={`h-1 transition-all ${
                           index === currentSlide
                             ? "w-10 bg-white"
@@ -801,7 +839,9 @@ export default function Home() {
 
               <a
                 href="#shop"
-                onClick={(event) => handleAnchorClick(event, "#shop")}
+                onClick={(event) =>
+                  handleAnchorClick(event, "#shop")
+                }
                 className="mt-8 inline-flex rounded-full bg-white px-7 py-4 text-[10px] font-black tracking-[0.2em] text-black"
               >
                 TIENDA ONLINE →
@@ -824,10 +864,8 @@ export default function Home() {
         <div className="whitespace-nowrap">
 
           <div className="animate-[marquee_22s_linear_infinite] text-xl font-black tracking-[-0.04em] sm:text-2xl md:text-3xl">
-
             NEWCLOTHES — STREETWEAR — NEWCLOTHES — STREETWEAR — NEWCLOTHES —
             STREETWEAR — NEWCLOTHES — STREETWEAR —
-
           </div>
 
         </div>
@@ -894,7 +932,8 @@ export default function Home() {
 
               {products.map((product, index) => {
 
-                const productOffer = getOfferForProduct(product.id);
+                const productOffer =
+                  getOfferForProduct(product.id);
 
                 return (
 
@@ -967,7 +1006,9 @@ export default function Home() {
                             </div>
 
                             <div className="text-xs font-black text-white">
-                              {formatPrice(productOffer.finalPrice)}
+                              {formatPrice(
+                                productOffer.finalPrice
+                              )}
                             </div>
 
                           </div>
@@ -986,7 +1027,9 @@ export default function Home() {
 
                         <span className="text-[8px] font-black tracking-[0.2em] text-white/35">
                           {productOffer
-                            ? getDiscountLabel(productOffer.offer)
+                            ? getDiscountLabel(
+                                productOffer.offer
+                              )
                             : "VIEW PRODUCT"}
                         </span>
 
@@ -1026,7 +1069,9 @@ export default function Home() {
 
             <a
               href="#shop"
-              onClick={(event) => handleAnchorClick(event, "#shop")}
+              onClick={(event) =>
+                handleAnchorClick(event, "#shop")
+              }
               className="group inline-flex items-center gap-4 border-b border-white/30 pb-2 text-[9px] font-black tracking-[0.25em] transition hover:border-white"
             >
               VER PRODUCTOS
@@ -1201,7 +1246,8 @@ export default function Home() {
                     <div className="min-w-0">
 
                       <p className="truncate text-[8px] font-black tracking-[0.18em] text-white/35">
-                        {drop.description || "EXCLUSIVO DROP - NEWCLOTHES"}
+                        {drop.description ||
+                          "EXCLUSIVO DROP - NEWCLOTHES"}
                       </p>
 
                       <p className="mt-2 text-[7px] font-black tracking-[0.25em] text-white/20">
@@ -1408,7 +1454,9 @@ export default function Home() {
                       <div>
 
                         <p className="text-[9px] font-bold text-white/35 line-through">
-                          {formatPrice(item.product.originalPrice)}
+                          {formatPrice(
+                            item.product.originalPrice
+                          )}
                         </p>
 
                         <p className="text-lg font-black md:text-xl">
@@ -1506,7 +1554,9 @@ export default function Home() {
               <a
                 key={category.title}
                 href="#shop"
-                onClick={(event) => handleAnchorClick(event, "#shop")}
+                onClick={(event) =>
+                  handleAnchorClick(event, "#shop")
+                }
                 className="group relative flex min-h-[260px] items-end overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#0a0a0a] p-6 transition hover:bg-white hover:text-black md:min-h-[360px]"
               >
 
@@ -1659,7 +1709,7 @@ export default function Home() {
 
               {about?.intro ? (
 
-                <p className="mt-8 max-w-lg text-lg font-bold uppercase leading-[1.2] tracking-[-0.03em] md:text-2xl whitespace-pre-line">
+                <p className="mt-8 max-w-lg whitespace-pre-line text-lg font-bold uppercase leading-[1.2] tracking-[-0.03em] md:text-2xl">
                   {about.intro}
                 </p>
 
@@ -1677,7 +1727,7 @@ export default function Home() {
 
               {about?.description ? (
 
-                <p className="mt-7 max-w-lg text-sm leading-7 text-black/50 whitespace-pre-line">
+                <p className="mt-7 max-w-lg whitespace-pre-line text-sm leading-7 text-black/50">
                   {about.description}
                 </p>
 
@@ -1694,7 +1744,7 @@ export default function Home() {
 
               {about?.custom_description ? (
 
-                <p className="mt-5 max-w-lg text-sm leading-7 text-black/50 whitespace-pre-line">
+                <p className="mt-5 max-w-lg whitespace-pre-line text-sm leading-7 text-black/50">
                   {about.custom_description}
                 </p>
 
@@ -1711,10 +1761,11 @@ export default function Home() {
 
               <a
                 href="#shop"
-                onClick={(event) => handleAnchorClick(event, "#shop")}
+                onClick={(event) =>
+                  handleAnchorClick(event, "#shop")
+                }
                 className="group mt-9 inline-flex items-center gap-4 rounded-full bg-black px-7 py-4 text-[9px] font-black tracking-[0.2em] text-white transition duration-300 hover:scale-[1.03] hover:bg-black/85"
               >
-
                 DESCUBRIR NEWCLOTHES
 
                 <span className="transition-transform duration-300 group-hover:translate-x-1">
@@ -1772,7 +1823,9 @@ export default function Home() {
 
           <form
             className="mx-auto mt-10 flex max-w-lg flex-col gap-3 sm:flex-row"
-            onSubmit={(event) => event.preventDefault()}
+            onSubmit={(event) =>
+              event.preventDefault()
+            }
           >
 
             <input
@@ -1825,7 +1878,9 @@ export default function Home() {
 
             <a
               href="#shop"
-              onClick={(event) => handleAnchorClick(event, "#shop")}
+              onClick={(event) =>
+                handleAnchorClick(event, "#shop")
+              }
               className="text-[8px] font-black tracking-[0.2em] text-white/40 transition hover:text-white"
             >
               SHOP
@@ -1833,7 +1888,9 @@ export default function Home() {
 
             <a
               href="#drops"
-              onClick={(event) => handleAnchorClick(event, "#drops")}
+              onClick={(event) =>
+                handleAnchorClick(event, "#drops")
+              }
               className="text-[8px] font-black tracking-[0.2em] text-white/40 transition hover:text-white"
             >
               DROPS
@@ -1841,7 +1898,9 @@ export default function Home() {
 
             <a
               href="#about"
-              onClick={(event) => handleAnchorClick(event, "#about")}
+              onClick={(event) =>
+                handleAnchorClick(event, "#about")
+              }
               className="text-[8px] font-black tracking-[0.2em] text-white/40 transition hover:text-white"
             >
               ABOUT
