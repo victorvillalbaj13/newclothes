@@ -84,6 +84,45 @@ export default function Home() {
 
   /*
   |--------------------------------------------------------------------------
+  | SMOOTH SCROLL
+  |--------------------------------------------------------------------------
+  */
+
+  const scrollToSection = (id: string) => {
+    const section = document.getElementById(id);
+
+    if (!section) return;
+
+    section.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  const handleAnchorClick = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
+    if (!href.startsWith("#")) return;
+
+    event.preventDefault();
+
+    const id = href.substring(1);
+
+    if (!id) {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+
+      return;
+    }
+
+    scrollToSection(id);
+  };
+
+  /*
+  |--------------------------------------------------------------------------
   | HERO / SLIDES
   |--------------------------------------------------------------------------
   */
@@ -547,6 +586,7 @@ export default function Home() {
 
             <a
               href="#shop"
+              onClick={(event) => handleAnchorClick(event, "#shop")}
               className="text-[10px] font-black tracking-[0.25em] text-white/60 transition hover:text-white"
             >
               SHOP
@@ -554,6 +594,7 @@ export default function Home() {
 
             <a
               href="#drops"
+              onClick={(event) => handleAnchorClick(event, "#drops")}
               className="text-[10px] font-black tracking-[0.25em] text-white/60 transition hover:text-white"
             >
               DROPS
@@ -561,6 +602,7 @@ export default function Home() {
 
             <a
               href="#about"
+              onClick={(event) => handleAnchorClick(event, "#about")}
               className="text-[10px] font-black tracking-[0.25em] text-white/60 transition hover:text-white"
             >
               ABOUT
@@ -654,6 +696,9 @@ export default function Home() {
 
                   <a
                     href={activeSlide.link}
+                    onClick={(event) =>
+                      handleAnchorClick(event, activeSlide.link)
+                    }
                     className="inline-flex items-center gap-4 rounded-full bg-white px-7 py-4 text-[10px] font-black tracking-[0.2em] text-black transition hover:scale-[1.03] hover:bg-white/90"
                   >
                     {activeSlide.button}
@@ -756,6 +801,7 @@ export default function Home() {
 
               <a
                 href="#shop"
+                onClick={(event) => handleAnchorClick(event, "#shop")}
                 className="mt-8 inline-flex rounded-full bg-white px-7 py-4 text-[10px] font-black tracking-[0.2em] text-black"
               >
                 TIENDA ONLINE →
@@ -794,7 +840,7 @@ export default function Home() {
 
       <section
         id="shop"
-        className="bg-black px-5 py-20 md:px-8 md:py-28"
+        className="scroll-mt-20 bg-black px-5 py-20 md:px-8 md:py-28"
       >
 
         <div className="mx-auto max-w-[1500px]">
@@ -980,6 +1026,7 @@ export default function Home() {
 
             <a
               href="#shop"
+              onClick={(event) => handleAnchorClick(event, "#shop")}
               className="group inline-flex items-center gap-4 border-b border-white/30 pb-2 text-[9px] font-black tracking-[0.25em] transition hover:border-white"
             >
               VER PRODUCTOS
@@ -1002,7 +1049,7 @@ export default function Home() {
 
       <section
         id="drops"
-        className="border-t border-white/10 bg-[#080808] px-5 py-20 md:px-8 md:py-28"
+        className="scroll-mt-20 border-t border-white/10 bg-[#080808] px-5 py-20 md:px-8 md:py-28"
       >
 
         <div className="mx-auto max-w-[1500px]">
@@ -1459,6 +1506,7 @@ export default function Home() {
               <a
                 key={category.title}
                 href="#shop"
+                onClick={(event) => handleAnchorClick(event, "#shop")}
                 className="group relative flex min-h-[260px] items-end overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#0a0a0a] p-6 transition hover:bg-white hover:text-black md:min-h-[360px]"
               >
 
@@ -1503,10 +1551,8 @@ export default function Home() {
 
       <section
         id="about"
-        className="relative overflow-hidden border-t border-black/10 bg-white text-black"
+        className="scroll-mt-20 relative overflow-hidden border-t border-black/10 bg-white text-black"
       >
-
-        {/* Decorative background number */}
 
         <div
           aria-hidden="true"
@@ -1516,8 +1562,6 @@ export default function Home() {
         </div>
 
         <div className="relative mx-auto max-w-[1500px] px-5 py-24 md:px-8 md:py-32">
-
-          {/* Header */}
 
           <div className="mb-16 flex items-start justify-between border-b border-black/10 pb-5 md:mb-20">
 
@@ -1531,13 +1575,7 @@ export default function Home() {
 
           </div>
 
-          {/* Main content */}
-
           <div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20 lg:items-center">
-
-            {/* ==========================================================
-                ABOUT IMAGE
-            ========================================================== */}
 
             <div className="group relative aspect-[4/5] overflow-hidden rounded-[2rem] bg-[#e9e9e9]">
 
@@ -1598,10 +1636,6 @@ export default function Home() {
               </div>
 
             </div>
-
-            {/* ==========================================================
-                ABOUT TEXT
-            ========================================================== */}
 
             <div>
 
@@ -1677,6 +1711,7 @@ export default function Home() {
 
               <a
                 href="#shop"
+                onClick={(event) => handleAnchorClick(event, "#shop")}
                 className="group mt-9 inline-flex items-center gap-4 rounded-full bg-black px-7 py-4 text-[9px] font-black tracking-[0.2em] text-white transition duration-300 hover:scale-[1.03] hover:bg-black/85"
               >
 
@@ -1691,8 +1726,6 @@ export default function Home() {
             </div>
 
           </div>
-
-          {/* Bottom statement */}
 
           <div className="mt-20 border-t border-black/10 pt-6 md:mt-28">
 
@@ -1792,6 +1825,7 @@ export default function Home() {
 
             <a
               href="#shop"
+              onClick={(event) => handleAnchorClick(event, "#shop")}
               className="text-[8px] font-black tracking-[0.2em] text-white/40 transition hover:text-white"
             >
               SHOP
@@ -1799,6 +1833,7 @@ export default function Home() {
 
             <a
               href="#drops"
+              onClick={(event) => handleAnchorClick(event, "#drops")}
               className="text-[8px] font-black tracking-[0.2em] text-white/40 transition hover:text-white"
             >
               DROPS
@@ -1806,6 +1841,7 @@ export default function Home() {
 
             <a
               href="#about"
+              onClick={(event) => handleAnchorClick(event, "#about")}
               className="text-[8px] font-black tracking-[0.2em] text-white/40 transition hover:text-white"
             >
               ABOUT
@@ -1830,6 +1866,10 @@ export default function Home() {
       ================================================================= */}
 
       <style jsx global>{`
+        html {
+          scroll-behavior: smooth;
+        }
+
         @keyframes marquee {
           0% {
             transform: translateX(0);
