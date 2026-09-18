@@ -2,7 +2,7 @@
 
 import CartButton from "./components/CartButton";
 import { createClient } from "@/lib/supabase/client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Product = {
   id: string;
@@ -79,6 +79,9 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [navbarVisible, setNavbarVisible] = useState(true);
 
+  const lastScrollY = useRef(0);
+  const ticking = useRef(false);
+
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [loadingSlides, setLoadingSlides] = useState(true);
   const [loadingDrops, setLoadingDrops] = useState(true);
@@ -92,44 +95,56 @@ export default function Home() {
   */
 
   useEffect(() => {
-    let lastScrollY = window.scrollY;
-
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      if (ticking.current) return;
 
-      /*
-      |--------------------------------------------------------------------------
-      | Tamaño / apariencia
-      |--------------------------------------------------------------------------
-      */
+      ticking.current = true;
 
-      setScrolled(currentScrollY > 30);
+      window.requestAnimationFrame(() => {
+        const currentScrollY = window.scrollY;
+        const previousScrollY = lastScrollY.current;
 
-      /*
-      |--------------------------------------------------------------------------
-      | Mostrar / ocultar navbar
-      |--------------------------------------------------------------------------
-      */
+        setScrolled(currentScrollY > 30);
 
-      // Siempre visible cuando estamos prácticamente arriba.
-      if (currentScrollY <= 20) {
-        setNavbarVisible(true);
-        lastScrollY = currentScrollY;
-        return;
-      }
+        /*
+        |--------------------------------------------------------------------------
+        | ARRIBA DEL TODO
+        |--------------------------------------------------------------------------
+        */
 
-      // Scroll hacia abajo → ocultar navbar.
-      if (currentScrollY > lastScrollY + 5) {
-        setNavbarVisible(false);
-      }
+        if (currentScrollY <= 20) {
+          setNavbarVisible(true);
+          lastScrollY.current = currentScrollY;
+          ticking.current = false;
+          return;
+        }
 
-      // Scroll hacia arriba → mostrar navbar.
-      if (currentScrollY < lastScrollY - 5) {
-        setNavbarVisible(true);
-      }
+        /*
+        |--------------------------------------------------------------------------
+        | BAJANDO
+        |--------------------------------------------------------------------------
+        */
 
-      lastScrollY = currentScrollY;
+        if (currentScrollY > previousScrollY + 8) {
+          setNavbarVisible(false);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SUBIENDO
+        |--------------------------------------------------------------------------
+        */
+
+        else if (currentScrollY < previousScrollY - 8) {
+          setNavbarVisible(true);
+        }
+
+        lastScrollY.current = currentScrollY;
+        ticking.current = false;
+      });
     };
+
+    lastScrollY.current = window.scrollY;
 
     handleScroll();
 
@@ -634,26 +649,40 @@ export default function Home() {
       ================================================================= */}
 
       <header
-        className={`fixed left-0 right-0 top-0 z-[99999] w-full pointer-events-auto border-b transition-all duration-500 ease-in-out ${
+        className={`fixed left-0 right-0 top-0 z-[99999] w-full border-b transform-gpu will-change-transform pointer-events-auto ${
           navbarVisible
             ? "translate-y-0"
-            : "-translate-y-[110%]"
+            : "-translate-y-full"
         } ${
           scrolled
             ? "border-white/[0.07] bg-black/95 shadow-2xl shadow-black/30 backdrop-blur-2xl"
             : "border-white/10 bg-black/80 backdrop-blur-xl"
         }`}
+        style={{
+          transitionProperty:
+            "transform, background-color, border-color, box-shadow, backdrop-filter",
+          transitionDuration: "350ms",
+          transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+        }}
       >
         <div
-          className={`mx-auto flex w-full max-w-[1500px] items-center justify-between px-5 transition-all duration-500 ease-out md:px-8 ${
+          className={`mx-auto flex w-full max-w-[1500px] items-center justify-between px-5 md:px-8 ${
             scrolled ? "h-16" : "h-20"
           }`}
+          style={{
+            transition:
+              "height 350ms cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
         >
           <a
             href="/"
-            className={`shrink-0 font-black tracking-[-0.08em] text-white transition-all duration-500 ease-out ${
+            className={`shrink-0 font-black tracking-[-0.08em] text-white ${
               scrolled ? "text-lg" : "text-xl"
             }`}
+            style={{
+              transition:
+                "font-size 350ms cubic-bezier(0.22, 1, 0.36, 1)",
+            }}
           >
             NEWCLOTHES
           </a>
