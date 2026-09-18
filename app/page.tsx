@@ -75,6 +75,7 @@ export default function Home() {
   const [about, setAbout] = useState<AboutContent | null>(null);
 
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [scrolled, setScrolled] = useState(false);
 
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [loadingSlides, setLoadingSlides] = useState(true);
@@ -87,8 +88,6 @@ export default function Home() {
   | NAVBAR / SCROLL
   |--------------------------------------------------------------------------
   */
-
-  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -117,12 +116,15 @@ export default function Home() {
 
     if (!section) return;
 
-    const headerOffset = scrolled ? 64 : 80;
+    const headerHeight = 80;
 
     const sectionPosition =
       section.getBoundingClientRect().top + window.scrollY;
 
-    const offsetPosition = sectionPosition - headerOffset;
+    const offsetPosition = Math.max(
+      0,
+      sectionPosition - headerHeight
+    );
 
     window.scrollTo({
       top: offsetPosition,
@@ -596,20 +598,20 @@ export default function Home() {
       ================================================================= */}
 
       <header
-        className={`fixed left-0 top-0 z-50 w-full border-b transition-all duration-500 ease-out ${
+        className={`fixed inset-x-0 top-0 z-[9999] border-b transition-all duration-500 ease-out ${
           scrolled
-            ? "border-white/[0.07] bg-black/95 py-1 backdrop-blur-2xl"
+            ? "border-white/[0.07] bg-black/95 py-1 shadow-2xl shadow-black/20 backdrop-blur-2xl"
             : "border-white/10 bg-black/80 py-2 backdrop-blur-xl"
         }`}
       >
         <div
-          className={`mx-auto flex max-w-[1500px] items-center justify-between px-5 transition-all duration-500 ease-out md:px-8 ${
+          className={`mx-auto flex w-full max-w-[1500px] items-center justify-between px-5 transition-all duration-500 ease-out md:px-8 ${
             scrolled ? "h-16" : "h-20"
           }`}
         >
           <a
             href="/"
-            className={`font-black tracking-[-0.08em] transition-all duration-500 ease-out ${
+            className={`shrink-0 font-black tracking-[-0.08em] text-white transition-all duration-500 ease-out ${
               scrolled ? "text-lg" : "text-xl"
             }`}
           >
@@ -657,7 +659,7 @@ export default function Home() {
 
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-3">
             <CartButton />
           </div>
         </div>
@@ -672,7 +674,9 @@ export default function Home() {
         {loadingSlides ? (
 
           <div className="flex min-h-screen items-center justify-center">
+
             <div className="h-8 w-8 animate-spin rounded-full border border-white/20 border-t-white" />
+
           </div>
 
         ) : activeSlide ? (
@@ -700,9 +704,11 @@ export default function Home() {
               <div className="flex items-start justify-between">
 
                 <div>
+
                   <p className="text-[9px] font-black tracking-[0.4em] text-white/60">
                     {activeSlide.eyebrow}
                   </p>
+
                 </div>
 
                 <div className="text-right">
@@ -726,9 +732,11 @@ export default function Home() {
                 </h1>
 
                 {activeSlide.description && (
+
                   <p className="mt-7 max-w-md text-sm leading-6 text-white/65 md:text-base">
                     {activeSlide.description}
                   </p>
+
                 )}
 
                 <div className="mt-8">
@@ -760,6 +768,7 @@ export default function Home() {
                 <div className="flex gap-8">
 
                   <div>
+
                     <p className="text-[8px] font-black tracking-[0.3em] text-white/30">
                       LOCATION
                     </p>
@@ -767,9 +776,11 @@ export default function Home() {
                     <p className="mt-1 text-[9px] font-black tracking-[0.2em]">
                       VALENCIA
                     </p>
+
                   </div>
 
                   <div>
+
                     <p className="text-[8px] font-black tracking-[0.3em] text-white/30">
                       CATEGORY
                     </p>
@@ -777,9 +788,11 @@ export default function Home() {
                     <p className="mt-1 text-[9px] font-black tracking-[0.2em]">
                       STREETWEAR
                     </p>
+
                   </div>
 
                   <div>
+
                     <p className="text-[8px] font-black tracking-[0.3em] text-white/30">
                       RELEASE
                     </p>
@@ -787,6 +800,7 @@ export default function Home() {
                     <p className="mt-1 text-[9px] font-black tracking-[0.2em]">
                       001
                     </p>
+
                   </div>
 
                 </div>
@@ -864,8 +878,10 @@ export default function Home() {
         <div className="whitespace-nowrap">
 
           <div className="animate-[marquee_22s_linear_infinite] text-xl font-black tracking-[-0.04em] sm:text-2xl md:text-3xl">
+
             NEWCLOTHES — STREETWEAR — NEWCLOTHES — STREETWEAR — NEWCLOTHES —
             STREETWEAR — NEWCLOTHES — STREETWEAR —
+
           </div>
 
         </div>
