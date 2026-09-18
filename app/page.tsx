@@ -1028,21 +1028,18 @@ export default function Home() {
               </div>
             )}
 
-            <div className="mt-10 flex justify-end">
-              <a
-                href="#shop"
-                onClick={(event) =>
-                  handleAnchorClick(event, "#shop")
-                }
-                className="group inline-flex items-center gap-4 border-b border-white/30 pb-2 text-[9px] font-black tracking-[0.25em] transition hover:border-white"
-              >
-                VER PRODUCTOS
+            <div className="mt-10 flex justify-center md:justify-end">
+  <a
+    href="/shop"
+    className="group inline-flex items-center gap-5 rounded-full bg-white px-7 py-4 text-[9px] font-black tracking-[0.2em] text-black transition duration-300 hover:scale-[1.03] hover:bg-white/90"
+  >
+    VER TIENDA COMPLETA
 
-                <span className="transition-transform duration-300 group-hover:translate-x-1">
-                  →
-                </span>
-              </a>
-            </div>
+    <span className="text-sm transition-transform duration-300 group-hover:translate-x-1">
+      →
+    </span>
+  </a>
+</div>
           </div>
         </section>
 
