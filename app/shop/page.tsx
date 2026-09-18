@@ -191,9 +191,9 @@ export default function ShopPage() {
           <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
             <div>
               <h1 className="text-6xl font-black uppercase leading-[0.82] tracking-[-0.08em] md:text-8xl">
-                TIENDA
+                CATÁLOGO
                 <br />
-                COMPLETA.
+                NEWCLOTHES
               </h1>
             </div>
 
