@@ -106,12 +106,6 @@ export default function Home() {
 
         setScrolled(currentScrollY > 30);
 
-        /*
-        |--------------------------------------------------------------------------
-        | ARRIBA DEL TODO
-        |--------------------------------------------------------------------------
-        */
-
         if (currentScrollY <= 20) {
           setNavbarVisible(true);
           lastScrollY.current = currentScrollY;
@@ -119,23 +113,9 @@ export default function Home() {
           return;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | BAJANDO
-        |--------------------------------------------------------------------------
-        */
-
         if (currentScrollY > previousScrollY + 8) {
           setNavbarVisible(false);
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | SUBIENDO
-        |--------------------------------------------------------------------------
-        */
-
-        else if (currentScrollY < previousScrollY - 8) {
+        } else if (currentScrollY < previousScrollY - 8) {
           setNavbarVisible(true);
         }
 
@@ -650,19 +630,19 @@ export default function Home() {
 
       <header
         className={`fixed left-0 right-0 top-0 z-[99999] w-full border-b transform-gpu will-change-transform pointer-events-auto ${
-          navbarVisible
-            ? "translate-y-0"
-            : "-translate-y-full"
-        } ${
           scrolled
             ? "border-white/[0.07] bg-black/95 shadow-2xl shadow-black/30 backdrop-blur-2xl"
             : "border-white/10 bg-black/80 backdrop-blur-xl"
         }`}
         style={{
+          transform: navbarVisible
+            ? "translateY(0)"
+            : "translateY(-100%)",
           transitionProperty:
             "transform, background-color, border-color, box-shadow, backdrop-filter",
           transitionDuration: "350ms",
-          transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+          transitionTimingFunction:
+            "cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
         <div
