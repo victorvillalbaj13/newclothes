@@ -593,74 +593,90 @@ export default function Home() {
   return (
     <>
       {/* ================================================================
-          NAVBAR
+          NAVBAR — FIXED / INDEPENDIENTE DEL CONTENIDO
       ================================================================= */}
 
-      <header
-        className={`fixed left-0 right-0 top-0 z-[99999] isolate pointer-events-auto border-b transition-all duration-500 ease-out ${
-          scrolled
-            ? "border-white/[0.07] bg-black/95 shadow-2xl shadow-black/30 backdrop-blur-2xl"
-            : "border-white/10 bg-black/80 backdrop-blur-xl"
-        }`}
+      <div
+        className="fixed inset-x-0 top-0 z-[99999] w-full"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          width: "100%",
+          zIndex: 99999,
+        }}
       >
-        <div
-          className={`mx-auto flex w-full max-w-[1500px] items-center justify-between px-5 transition-all duration-500 ease-out md:px-8 ${
-            scrolled ? "h-16" : "h-20"
+        <header
+          className={`w-full border-b transition-all duration-500 ease-out ${
+            scrolled
+              ? "border-white/[0.07] bg-black/95 shadow-2xl shadow-black/30 backdrop-blur-2xl"
+              : "border-white/10 bg-black/80 backdrop-blur-xl"
           }`}
+          style={{
+            position: "relative",
+            width: "100%",
+          }}
         >
-          <a
-            href="/"
-            className={`shrink-0 font-black tracking-[-0.08em] text-white transition-all duration-500 ease-out ${
-              scrolled ? "text-lg" : "text-xl"
+          <div
+            className={`mx-auto flex w-full max-w-[1500px] items-center justify-between px-5 transition-all duration-500 ease-out md:px-8 ${
+              scrolled ? "h-16" : "h-20"
             }`}
           >
-            NEWCLOTHES
-          </a>
-
-          <nav className="hidden items-center gap-8 md:flex">
             <a
               href="/"
-              className="text-[10px] font-black tracking-[0.25em] text-white transition hover:text-white/50"
+              className={`shrink-0 font-black tracking-[-0.08em] text-white transition-all duration-500 ease-out ${
+                scrolled ? "text-lg" : "text-xl"
+              }`}
             >
-              HOME
+              NEWCLOTHES
             </a>
 
-            <a
-              href="#shop"
-              onClick={(event) =>
-                handleAnchorClick(event, "#shop")
-              }
-              className="text-[10px] font-black tracking-[0.25em] text-white/60 transition hover:text-white"
-            >
-              SHOP
-            </a>
+            <nav className="hidden items-center gap-8 md:flex">
+              <a
+                href="/"
+                className="text-[10px] font-black tracking-[0.25em] text-white transition hover:text-white/50"
+              >
+                HOME
+              </a>
 
-            <a
-              href="#drops"
-              onClick={(event) =>
-                handleAnchorClick(event, "#drops")
-              }
-              className="text-[10px] font-black tracking-[0.25em] text-white/60 transition hover:text-white"
-            >
-              DROPS
-            </a>
+              <a
+                href="#shop"
+                onClick={(event) =>
+                  handleAnchorClick(event, "#shop")
+                }
+                className="text-[10px] font-black tracking-[0.25em] text-white/60 transition hover:text-white"
+              >
+                SHOP
+              </a>
 
-            <a
-              href="#about"
-              onClick={(event) =>
-                handleAnchorClick(event, "#about")
-              }
-              className="text-[10px] font-black tracking-[0.25em] text-white/60 transition hover:text-white"
-            >
-              ABOUT
-            </a>
-          </nav>
+              <a
+                href="#drops"
+                onClick={(event) =>
+                  handleAnchorClick(event, "#drops")
+                }
+                className="text-[10px] font-black tracking-[0.25em] text-white/60 transition hover:text-white"
+              >
+                DROPS
+              </a>
 
-          <div className="flex shrink-0 items-center gap-3">
-            <CartButton />
+              <a
+                href="#about"
+                onClick={(event) =>
+                  handleAnchorClick(event, "#about")
+                }
+                className="text-[10px] font-black tracking-[0.25em] text-white/60 transition hover:text-white"
+              >
+                ABOUT
+              </a>
+            </nav>
+
+            <div className="flex shrink-0 items-center gap-3">
+              <CartButton />
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
+      </div>
 
       {/* ================================================================
           CONTENIDO PRINCIPAL
@@ -1648,6 +1664,11 @@ export default function Home() {
       <style jsx global>{`
         html {
           scroll-behavior: smooth;
+        }
+
+        body {
+          margin: 0;
+          padding: 0;
         }
 
         @keyframes marquee {
