@@ -75,7 +75,9 @@ export default function Home() {
   const [about, setAbout] = useState<AboutContent | null>(null);
 
   const [currentSlide, setCurrentSlide] = useState(0);
+
   const [scrolled, setScrolled] = useState(false);
+  const [navbarVisible, setNavbarVisible] = useState(true);
 
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [loadingSlides, setLoadingSlides] = useState(true);
@@ -90,8 +92,43 @@ export default function Home() {
   */
 
   useEffect(() => {
+    let lastScrollY = window.scrollY;
+
     const handleScroll = () => {
-      setScrolled(window.scrollY > 30);
+      const currentScrollY = window.scrollY;
+
+      /*
+      |--------------------------------------------------------------------------
+      | Tamaño / apariencia
+      |--------------------------------------------------------------------------
+      */
+
+      setScrolled(currentScrollY > 30);
+
+      /*
+      |--------------------------------------------------------------------------
+      | Mostrar / ocultar navbar
+      |--------------------------------------------------------------------------
+      */
+
+      // Siempre visible cuando estamos prácticamente arriba.
+      if (currentScrollY <= 20) {
+        setNavbarVisible(true);
+        lastScrollY = currentScrollY;
+        return;
+      }
+
+      // Scroll hacia abajo → ocultar navbar.
+      if (currentScrollY > lastScrollY + 5) {
+        setNavbarVisible(false);
+      }
+
+      // Scroll hacia arriba → mostrar navbar.
+      if (currentScrollY < lastScrollY - 5) {
+        setNavbarVisible(true);
+      }
+
+      lastScrollY = currentScrollY;
     };
 
     handleScroll();
@@ -593,90 +630,78 @@ export default function Home() {
   return (
     <>
       {/* ================================================================
-          NAVBAR — FIXED / INDEPENDIENTE DEL CONTENIDO
+          NAVBAR
       ================================================================= */}
 
-      <div
-        className="fixed inset-x-0 top-0 z-[99999] w-full"
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          width: "100%",
-          zIndex: 99999,
-        }}
+      <header
+        className={`fixed left-0 right-0 top-0 z-[99999] w-full pointer-events-auto border-b transition-all duration-500 ease-in-out ${
+          navbarVisible
+            ? "translate-y-0"
+            : "-translate-y-[110%]"
+        } ${
+          scrolled
+            ? "border-white/[0.07] bg-black/95 shadow-2xl shadow-black/30 backdrop-blur-2xl"
+            : "border-white/10 bg-black/80 backdrop-blur-xl"
+        }`}
       >
-        <header
-          className={`w-full border-b transition-all duration-500 ease-out ${
-            scrolled
-              ? "border-white/[0.07] bg-black/95 shadow-2xl shadow-black/30 backdrop-blur-2xl"
-              : "border-white/10 bg-black/80 backdrop-blur-xl"
+        <div
+          className={`mx-auto flex w-full max-w-[1500px] items-center justify-between px-5 transition-all duration-500 ease-out md:px-8 ${
+            scrolled ? "h-16" : "h-20"
           }`}
-          style={{
-            position: "relative",
-            width: "100%",
-          }}
         >
-          <div
-            className={`mx-auto flex w-full max-w-[1500px] items-center justify-between px-5 transition-all duration-500 ease-out md:px-8 ${
-              scrolled ? "h-16" : "h-20"
+          <a
+            href="/"
+            className={`shrink-0 font-black tracking-[-0.08em] text-white transition-all duration-500 ease-out ${
+              scrolled ? "text-lg" : "text-xl"
             }`}
           >
+            NEWCLOTHES
+          </a>
+
+          <nav className="hidden items-center gap-8 md:flex">
             <a
               href="/"
-              className={`shrink-0 font-black tracking-[-0.08em] text-white transition-all duration-500 ease-out ${
-                scrolled ? "text-lg" : "text-xl"
-              }`}
+              className="text-[10px] font-black tracking-[0.25em] text-white transition hover:text-white/50"
             >
-              NEWCLOTHES
+              HOME
             </a>
 
-            <nav className="hidden items-center gap-8 md:flex">
-              <a
-                href="/"
-                className="text-[10px] font-black tracking-[0.25em] text-white transition hover:text-white/50"
-              >
-                HOME
-              </a>
+            <a
+              href="#shop"
+              onClick={(event) =>
+                handleAnchorClick(event, "#shop")
+              }
+              className="text-[10px] font-black tracking-[0.25em] text-white/60 transition hover:text-white"
+            >
+              SHOP
+            </a>
 
-              <a
-                href="#shop"
-                onClick={(event) =>
-                  handleAnchorClick(event, "#shop")
-                }
-                className="text-[10px] font-black tracking-[0.25em] text-white/60 transition hover:text-white"
-              >
-                SHOP
-              </a>
+            <a
+              href="#drops"
+              onClick={(event) =>
+                handleAnchorClick(event, "#drops")
+              }
+              className="text-[10px] font-black tracking-[0.25em] text-white/60 transition hover:text-white"
+            >
+              DROPS
+            </a>
 
-              <a
-                href="#drops"
-                onClick={(event) =>
-                  handleAnchorClick(event, "#drops")
-                }
-                className="text-[10px] font-black tracking-[0.25em] text-white/60 transition hover:text-white"
-              >
-                DROPS
-              </a>
+            <a
+              href="#about"
+              onClick={(event) =>
+                handleAnchorClick(event, "#about")
+              }
+              className="text-[10px] font-black tracking-[0.25em] text-white/60 transition hover:text-white"
+            >
+              ABOUT
+            </a>
+          </nav>
 
-              <a
-                href="#about"
-                onClick={(event) =>
-                  handleAnchorClick(event, "#about")
-                }
-                className="text-[10px] font-black tracking-[0.25em] text-white/60 transition hover:text-white"
-              >
-                ABOUT
-              </a>
-            </nav>
-
-            <div className="flex shrink-0 items-center gap-3">
-              <CartButton />
-            </div>
+          <div className="flex shrink-0 items-center gap-3">
+            <CartButton />
           </div>
-        </header>
-      </div>
+        </div>
+      </header>
 
       {/* ================================================================
           CONTENIDO PRINCIPAL
