@@ -116,7 +116,7 @@ export default function Home() {
 
     if (!section) return;
 
-    const headerHeight = 80;
+    const headerHeight = scrolled ? 64 : 80;
 
     const sectionPosition =
       section.getBoundingClientRect().top + window.scrollY;
@@ -591,17 +591,16 @@ export default function Home() {
   */
 
   return (
-    <main className="min-h-screen bg-black text-white">
-
+    <>
       {/* ================================================================
           NAVBAR
       ================================================================= */}
 
       <header
-        className={`fixed inset-x-0 top-0 z-[9999] border-b transition-all duration-500 ease-out ${
+        className={`fixed left-0 right-0 top-0 z-[99999] isolate pointer-events-auto border-b transition-all duration-500 ease-out ${
           scrolled
-            ? "border-white/[0.07] bg-black/95 py-1 shadow-2xl shadow-black/20 backdrop-blur-2xl"
-            : "border-white/10 bg-black/80 py-2 backdrop-blur-xl"
+            ? "border-white/[0.07] bg-black/95 shadow-2xl shadow-black/30 backdrop-blur-2xl"
+            : "border-white/10 bg-black/80 backdrop-blur-xl"
         }`}
       >
         <div
@@ -619,7 +618,6 @@ export default function Home() {
           </a>
 
           <nav className="hidden items-center gap-8 md:flex">
-
             <a
               href="/"
               className="text-[10px] font-black tracking-[0.25em] text-white transition hover:text-white/50"
@@ -656,7 +654,6 @@ export default function Home() {
             >
               ABOUT
             </a>
-
           </nav>
 
           <div className="flex shrink-0 items-center gap-3">
@@ -666,1275 +663,983 @@ export default function Home() {
       </header>
 
       {/* ================================================================
-          HERO
+          CONTENIDO PRINCIPAL
       ================================================================= */}
 
-      <section className="relative min-h-screen overflow-hidden bg-black">
+      <main className="min-h-screen bg-black text-white">
+        {/* ================================================================
+            HERO
+        ================================================================= */}
 
-        {loadingSlides ? (
-
-          <div className="flex min-h-screen items-center justify-center">
-
-            <div className="h-8 w-8 animate-spin rounded-full border border-white/20 border-t-white" />
-
-          </div>
-
-        ) : activeSlide ? (
-
-          <>
-
-            <div className="absolute inset-0">
-
-              <img
-                src={activeSlide.image}
-                alt={activeSlide.title}
-                className="h-full w-full object-cover"
-              />
-
-              <div className="absolute inset-0 bg-black/35" />
-
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/30" />
-
-              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/10 to-transparent" />
-
+        <section className="relative min-h-screen overflow-hidden bg-black">
+          {loadingSlides ? (
+            <div className="flex min-h-screen items-center justify-center">
+              <div className="h-8 w-8 animate-spin rounded-full border border-white/20 border-t-white" />
             </div>
+          ) : activeSlide ? (
+            <>
+              <div className="absolute inset-0">
+                <img
+                  src={activeSlide.image}
+                  alt={activeSlide.title}
+                  className="h-full w-full object-cover"
+                />
 
-            <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1500px] flex-col justify-between px-6 pb-8 pt-32 sm:px-8 md:px-12 lg:px-16 md:pb-10">
+                <div className="absolute inset-0 bg-black/35" />
 
-              <div className="flex items-start justify-between">
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/30" />
 
-                <div>
-
-                  <p className="text-[9px] font-black tracking-[0.4em] text-white/60">
-                    {activeSlide.eyebrow}
-                  </p>
-
-                </div>
-
-                <div className="text-right">
-
-                  <p className="text-[9px] font-black tracking-[0.3em] text-white/50">
-                    NEW DROP
-                  </p>
-
-                  <p className="mt-1 text-[9px] font-black tracking-[0.3em] text-white/30">
-                    001 / 2026
-                  </p>
-
-                </div>
-
+                <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/10 to-transparent" />
               </div>
 
-              <div className="w-full max-w-4xl -translate-x-2 sm:-translate-x-3 md:-translate-x-5 lg:-translate-x-7">
+              <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1500px] flex-col justify-between px-6 pb-8 pt-32 sm:px-8 md:px-12 lg:px-16 md:pb-10">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-[9px] font-black tracking-[0.4em] text-white/60">
+                      {activeSlide.eyebrow}
+                    </p>
+                  </div>
 
-                <h1 className="max-w-5xl text-6xl font-black uppercase leading-[0.84] tracking-[-0.08em] md:text-8xl lg:text-[9rem]">
-                  {activeSlide.title}
+                  <div className="text-right">
+                    <p className="text-[9px] font-black tracking-[0.3em] text-white/50">
+                      NEW DROP
+                    </p>
+
+                    <p className="mt-1 text-[9px] font-black tracking-[0.3em] text-white/30">
+                      001 / 2026
+                    </p>
+                  </div>
+                </div>
+
+                <div className="w-full max-w-4xl -translate-x-2 sm:-translate-x-3 md:-translate-x-5 lg:-translate-x-7">
+                  <h1 className="max-w-5xl text-6xl font-black uppercase leading-[0.84] tracking-[-0.08em] md:text-8xl lg:text-[9rem]">
+                    {activeSlide.title}
+                  </h1>
+
+                  {activeSlide.description && (
+                    <p className="mt-7 max-w-md text-sm leading-6 text-white/65 md:text-base">
+                      {activeSlide.description}
+                    </p>
+                  )}
+
+                  <div className="mt-8">
+                    <a
+                      href={activeSlide.link}
+                      onClick={(event) =>
+                        handleAnchorClick(
+                          event,
+                          activeSlide.link
+                        )
+                      }
+                      className="inline-flex items-center gap-4 rounded-full bg-white px-7 py-4 text-[10px] font-black tracking-[0.2em] text-black transition hover:scale-[1.03] hover:bg-white/90"
+                    >
+                      {activeSlide.button}
+
+                      <span className="text-sm">
+                        →
+                      </span>
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-end justify-between border-t border-white/20 pt-5">
+                  <div className="flex gap-8">
+                    <div>
+                      <p className="text-[8px] font-black tracking-[0.3em] text-white/30">
+                        LOCATION
+                      </p>
+
+                      <p className="mt-1 text-[9px] font-black tracking-[0.2em]">
+                        VALENCIA
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-[8px] font-black tracking-[0.3em] text-white/30">
+                        CATEGORY
+                      </p>
+
+                      <p className="mt-1 text-[9px] font-black tracking-[0.2em]">
+                        STREETWEAR
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-[8px] font-black tracking-[0.3em] text-white/30">
+                        RELEASE
+                      </p>
+
+                      <p className="mt-1 text-[9px] font-black tracking-[0.2em]">
+                        001
+                      </p>
+                    </div>
+                  </div>
+
+                  {slides.length > 1 && (
+                    <div className="flex gap-2">
+                      {slides.map((slide, index) => (
+                        <button
+                          key={slide.id}
+                          type="button"
+                          onClick={() =>
+                            setCurrentSlide(index)
+                          }
+                          className={`h-1 transition-all ${
+                            index === currentSlide
+                              ? "w-10 bg-white"
+                              : "w-4 bg-white/30"
+                          }`}
+                          aria-label={`Ir al slide ${index + 1}`}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-screen items-center justify-center px-5">
+              <div className="text-center">
+                <p className="text-[10px] font-black tracking-[0.4em] text-white/30">
+                  NEWCLOTHES
+                </p>
+
+                <h1 className="mt-5 text-6xl font-black tracking-[-0.08em] md:text-8xl">
+                  STREETWEAR.
                 </h1>
 
-                {activeSlide.description && (
+                <a
+                  href="#shop"
+                  onClick={(event) =>
+                    handleAnchorClick(event, "#shop")
+                  }
+                  className="mt-8 inline-flex rounded-full bg-white px-7 py-4 text-[10px] font-black tracking-[0.2em] text-black"
+                >
+                  TIENDA ONLINE →
+                </a>
+              </div>
+            </div>
+          )}
+        </section>
 
-                  <p className="mt-7 max-w-md text-sm leading-6 text-white/65 md:text-base">
-                    {activeSlide.description}
-                  </p>
+        {/* ================================================================
+            MARQUEE
+        ================================================================= */}
 
-                )}
+        <section className="overflow-hidden border-y border-white/10 bg-white py-3 text-black">
+          <div className="whitespace-nowrap">
+            <div className="animate-[marquee_22s_linear_infinite] text-xl font-black tracking-[-0.04em] sm:text-2xl md:text-3xl">
+              NEWCLOTHES — STREETWEAR — NEWCLOTHES — STREETWEAR — NEWCLOTHES —
+              STREETWEAR — NEWCLOTHES — STREETWEAR —
+            </div>
+          </div>
+        </section>
 
-                <div className="mt-8">
+        {/* ================================================================
+            TIENDA ONLINE
+        ================================================================= */}
 
-                  <a
-                    href={activeSlide.link}
-                    onClick={(event) =>
-                      handleAnchorClick(
-                        event,
-                        activeSlide.link
-                      )
-                    }
-                    className="inline-flex items-center gap-4 rounded-full bg-white px-7 py-4 text-[10px] font-black tracking-[0.2em] text-black transition hover:scale-[1.03] hover:bg-white/90"
-                  >
-                    {activeSlide.button}
+        <section
+          id="shop"
+          className="scroll-mt-20 bg-black px-5 py-20 md:px-8 md:py-28"
+        >
+          <div className="mx-auto max-w-[1500px]">
+            <div className="mb-12 flex flex-col justify-between gap-8 md:flex-row md:items-end">
+              <div>
+                <p className="mb-4 text-[9px] font-black tracking-[0.4em] text-white/30">
+                  001 / ONLINE STORE
+                </p>
 
-                    <span className="text-sm">
-                      →
-                    </span>
-
-                  </a>
-
-                </div>
-
+                <h2 className="text-5xl font-black uppercase leading-[0.86] tracking-[-0.07em] md:text-7xl">
+                  TIENDA
+                  <br />
+                  ONLINE.
+                </h2>
               </div>
 
-              <div className="flex items-end justify-between border-t border-white/20 pt-5">
-
-                <div className="flex gap-8">
-
-                  <div>
-
-                    <p className="text-[8px] font-black tracking-[0.3em] text-white/30">
-                      LOCATION
-                    </p>
-
-                    <p className="mt-1 text-[9px] font-black tracking-[0.2em]">
-                      VALENCIA
-                    </p>
-
-                  </div>
-
-                  <div>
-
-                    <p className="text-[8px] font-black tracking-[0.3em] text-white/30">
-                      CATEGORY
-                    </p>
-
-                    <p className="mt-1 text-[9px] font-black tracking-[0.2em]">
-                      STREETWEAR
-                    </p>
-
-                  </div>
-
-                  <div>
-
-                    <p className="text-[8px] font-black tracking-[0.3em] text-white/30">
-                      RELEASE
-                    </p>
-
-                    <p className="mt-1 text-[9px] font-black tracking-[0.2em]">
-                      001
-                    </p>
-
-                  </div>
-
-                </div>
-
-                {slides.length > 1 && (
-
-                  <div className="flex gap-2">
-
-                    {slides.map((slide, index) => (
-
-                      <button
-                        key={slide.id}
-                        type="button"
-                        onClick={() =>
-                          setCurrentSlide(index)
-                        }
-                        className={`h-1 transition-all ${
-                          index === currentSlide
-                            ? "w-10 bg-white"
-                            : "w-4 bg-white/30"
-                        }`}
-                        aria-label={`Ir al slide ${index + 1}`}
-                      />
-
-                    ))}
-
-                  </div>
-
-                )}
-
+              <div className="max-w-xs">
+                <p className="text-xs leading-6 text-white/40">
+                  Explora las piezas disponibles de NEWCLOTHES.
+                  Diseños exclusivos, identidad urbana y unidades
+                  seleccionadas.
+                </p>
               </div>
-
             </div>
 
-          </>
+            {loadingProducts ? (
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="aspect-[3/4] animate-pulse rounded-[1.5rem] bg-white/5"
+                  />
+                ))}
+              </div>
+            ) : products.length > 0 ? (
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
+                {products.map((product, index) => {
+                  const productOffer =
+                    getOfferForProduct(product.id);
 
-        ) : (
+                  return (
+                    <a
+                      key={product.id}
+                      href={`/product/${product.slug}`}
+                      className="group relative overflow-hidden rounded-[1.5rem] bg-[#0b0b0b]"
+                    >
+                      <div className="aspect-[3/4] overflow-hidden">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
+                        />
 
-          <div className="flex min-h-screen items-center justify-center px-5">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-70" />
+                      </div>
 
-            <div className="text-center">
+                      <div className="absolute left-4 top-4">
+                        <span className="text-[9px] font-black tracking-[0.25em] text-white/60">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                      </div>
 
-              <p className="text-[10px] font-black tracking-[0.4em] text-white/30">
-                NEWCLOTHES
-              </p>
+                      {productOffer ? (
+                        <div className="absolute right-4 top-4">
+                          <span className="rounded-full border border-white/30 bg-white px-3 py-1.5 text-[8px] font-black tracking-[0.18em] text-black backdrop-blur-md">
+                            OFERTA
+                          </span>
+                        </div>
+                      ) : product.tag ? (
+                        <div className="absolute right-4 top-4">
+                          <span className="rounded-full border border-white/20 bg-black/50 px-3 py-1.5 text-[8px] font-black tracking-[0.18em] backdrop-blur-md">
+                            {product.tag}
+                          </span>
+                        </div>
+                      ) : null}
 
-              <h1 className="mt-5 text-6xl font-black tracking-[-0.08em] md:text-8xl">
-                STREETWEAR.
-              </h1>
+                      <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
+                        <p className="mb-1 text-[8px] font-black tracking-[0.25em] text-white/40">
+                          {product.category}
+                        </p>
 
+                        <div className="flex items-end justify-between gap-3">
+                          <h3 className="text-sm font-black uppercase tracking-[-0.02em] md:text-lg">
+                            {product.name}
+                          </h3>
+
+                          {productOffer ? (
+                            <div className="shrink-0 text-right">
+                              <div className="text-[9px] font-bold text-white/35 line-through">
+                                {formatPrice(
+                                  product.originalPrice
+                                )}
+                              </div>
+
+                              <div className="text-xs font-black text-white">
+                                {formatPrice(
+                                  productOffer.finalPrice
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="shrink-0 text-xs font-black">
+                              {product.price}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3">
+                          <span className="text-[8px] font-black tracking-[0.2em] text-white/35">
+                            {productOffer
+                              ? getDiscountLabel(
+                                  productOffer.offer
+                                )
+                              : "VIEW PRODUCT"}
+                          </span>
+
+                          <span className="text-sm transition-transform duration-300 group-hover:translate-x-1">
+                            →
+                          </span>
+                        </div>
+                      </div>
+                    </a>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.02] px-6 py-20 text-center">
+                <p className="text-[10px] font-black tracking-[0.35em] text-white/30">
+                  PRÓXIMAMENTE
+                </p>
+
+                <h3 className="mt-4 text-3xl font-black tracking-[-0.05em]">
+                  NUEVAS PIEZAS.
+                </h3>
+              </div>
+            )}
+
+            <div className="mt-10 flex justify-end">
               <a
                 href="#shop"
                 onClick={(event) =>
                   handleAnchorClick(event, "#shop")
                 }
-                className="mt-8 inline-flex rounded-full bg-white px-7 py-4 text-[10px] font-black tracking-[0.2em] text-black"
+                className="group inline-flex items-center gap-4 border-b border-white/30 pb-2 text-[9px] font-black tracking-[0.25em] transition hover:border-white"
               >
-                TIENDA ONLINE →
-              </a>
+                VER PRODUCTOS
 
+                <span className="transition-transform duration-300 group-hover:translate-x-1">
+                  →
+                </span>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* ================================================================
+            DROPS EXCLUSIVOS
+        ================================================================= */}
+
+        <section
+          id="drops"
+          className="scroll-mt-20 border-t border-white/10 bg-[#080808] px-5 py-20 md:px-8 md:py-28"
+        >
+          <div className="mx-auto max-w-[1500px]">
+            <div className="mb-12 flex flex-col justify-between gap-8 md:flex-row md:items-end">
+              <div>
+                <p className="mb-4 text-[9px] font-black tracking-[0.4em] text-white/30">
+                  002 / EXCLUSIVE RELEASES
+                </p>
+
+                <h2 className="text-5xl font-black uppercase leading-[0.86] tracking-[-0.07em] md:text-7xl">
+                  DROPS
+                  <br />
+                  EXCLUSIVOS.
+                </h2>
+              </div>
+
+              <div className="max-w-sm">
+                <p className="text-xs leading-6 text-white/40">
+                  Lanzamientos especiales, piezas limitadas y colecciones
+                  creadas para representar la identidad de NEWCLOTHES.
+                </p>
+
+                <a
+                  href="/drops"
+                  className="group mt-7 inline-flex items-center gap-4 rounded-full bg-white px-6 py-4 text-[9px] font-black tracking-[0.2em] text-black transition hover:scale-[1.03]"
+                >
+                  VER TODOS LOS DROPS
+
+                  <span className="text-sm transition-transform duration-300 group-hover:translate-x-1">
+                    ↗
+                  </span>
+                </a>
+              </div>
             </div>
 
+            {loadingDrops ? (
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="aspect-[1.15/1] animate-pulse rounded-[2rem] bg-white/5"
+                  />
+                ))}
+              </div>
+            ) : drops.length > 0 ? (
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                {drops.slice(0, 4).map((drop, index) => (
+                  <a
+                    key={drop.id}
+                    href={`/drops/${drop.id}`}
+                    className="group block"
+                  >
+                    <div className="relative overflow-hidden rounded-[2rem] bg-[#0b0b0b]">
+                      <div className="relative aspect-[1.15/1] overflow-hidden">
+                        {drop.cover_image ? (
+                          <img
+                            src={drop.cover_image}
+                            alt={drop.name}
+                            className="h-full w-full object-cover transition duration-1000 ease-out group-hover:scale-[1.045]"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-white/[0.03]">
+                            <span className="text-[10px] font-black tracking-[0.35em] text-white/20">
+                              NEWCLOTHES
+                            </span>
+                          </div>
+                        )}
+
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent" />
+
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" />
+                      </div>
+
+                      <div className="absolute left-5 top-5">
+                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/65 text-[8px] font-black tracking-[0.15em] backdrop-blur-md">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                      </div>
+
+                      {drop.limited && (
+                        <div className="absolute right-5 top-5">
+                          <span className="rounded-full border border-white/20 bg-black/55 px-4 py-2 text-[8px] font-black tracking-[0.2em] backdrop-blur-md">
+                            LIMITED
+                          </span>
+                        </div>
+                      )}
+
+                      <div className="absolute bottom-5 right-5">
+                        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-black transition duration-300 group-hover:scale-110">
+                          <span className="text-base">
+                            ↗
+                          </span>
+                        </span>
+                      </div>
+
+                      <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7">
+                        <p className="mb-2 text-[8px] font-black tracking-[0.3em] text-white/45">
+                          EXCLUSIVE RELEASE
+                        </p>
+
+                        <h3 className="max-w-[82%] text-2xl font-black uppercase leading-[0.92] tracking-[-0.05em] md:text-4xl">
+                          {drop.name}
+                        </h3>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between border-b border-white/10 px-1 py-4">
+                      <div className="min-w-0">
+                        <p className="truncate text-[8px] font-black tracking-[0.18em] text-white/35">
+                          {drop.description ||
+                            "EXCLUSIVO DROP - NEWCLOTHES"}
+                        </p>
+
+                        <p className="mt-2 text-[7px] font-black tracking-[0.25em] text-white/20">
+                          RELEASE {formatDate(drop.launch_date)}
+                        </p>
+                      </div>
+
+                      <span className="ml-4 shrink-0 text-[8px] font-black tracking-[0.2em] text-white/40 transition group-hover:text-white">
+                        EXPLORAR →
+                      </span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.02] px-6 py-24 text-center">
+                <p className="text-[9px] font-black tracking-[0.35em] text-white/30">
+                  EXCLUSIVE RELEASES
+                </p>
+
+                <h3 className="mt-5 text-4xl font-black uppercase tracking-[-0.06em] md:text-6xl">
+                  PRÓXIMAMENTE.
+                </h3>
+
+                <p className="mx-auto mt-5 max-w-md text-xs leading-6 text-white/35">
+                  Nuevos drops exclusivos de NEWCLOTHES estarán
+                  disponibles próximamente.
+                </p>
+              </div>
+            )}
+
+            {drops.length > 4 && (
+              <div className="mt-10 flex justify-end">
+                <a
+                  href="/drops"
+                  className="group inline-flex items-center gap-4 border-b border-white/30 pb-2 text-[9px] font-black tracking-[0.25em] transition hover:border-white"
+                >
+                  VER TODOS LOS DROPS
+
+                  <span className="transition-transform duration-300 group-hover:translate-x-1">
+                    →
+                  </span>
+                </a>
+              </div>
+            )}
           </div>
+        </section>
 
-        )}
+        {/* ================================================================
+            BRAND STATEMENT
+        ================================================================= */}
 
-      </section>
-
-      {/* ================================================================
-          MARQUEE
-      ================================================================= */}
-
-      <section className="overflow-hidden border-y border-white/10 bg-white py-3 text-black">
-
-        <div className="whitespace-nowrap">
-
-          <div className="animate-[marquee_22s_linear_infinite] text-xl font-black tracking-[-0.04em] sm:text-2xl md:text-3xl">
-
-            NEWCLOTHES — STREETWEAR — NEWCLOTHES — STREETWEAR — NEWCLOTHES —
-            STREETWEAR — NEWCLOTHES — STREETWEAR —
-
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* ================================================================
-          TIENDA ONLINE
-      ================================================================= */}
-
-      <section
-        id="shop"
-        className="scroll-mt-20 bg-black px-5 py-20 md:px-8 md:py-28"
-      >
-
-        <div className="mx-auto max-w-[1500px]">
-
-          <div className="mb-12 flex flex-col justify-between gap-8 md:flex-row md:items-end">
-
-            <div>
-
-              <p className="mb-4 text-[9px] font-black tracking-[0.4em] text-white/30">
-                001 / ONLINE STORE
-              </p>
-
-              <h2 className="text-5xl font-black uppercase leading-[0.86] tracking-[-0.07em] md:text-7xl">
-                TIENDA
+        <section className="px-5 py-24 md:px-8 md:py-36">
+          <div className="mx-auto max-w-[1500px]">
+            <div className="grid gap-12 md:grid-cols-[1.2fr_0.8fr] md:items-end">
+              <h2 className="text-4xl font-black uppercase leading-[0.88] tracking-[-0.06em] md:text-7xl">
+                NO SE TRATA
                 <br />
-                ONLINE.
+                DE SEGUIR
+                <br />
+                TENDENCIAS.
               </h2>
 
+              <div>
+                <p className="max-w-md text-sm leading-7 text-white/45">
+                  NEWCLOTHES nace para quienes construyen su propia
+                  identidad. Streetwear, cultura y diseño en una sola
+                  dirección.
+                </p>
+
+                <div className="mt-8 h-px w-20 bg-white/30" />
+              </div>
             </div>
-
-            <div className="max-w-xs">
-
-              <p className="text-xs leading-6 text-white/40">
-                Explora las piezas disponibles de NEWCLOTHES.
-                Diseños exclusivos, identidad urbana y unidades
-                seleccionadas.
-              </p>
-
-            </div>
-
           </div>
+        </section>
 
-          {loadingProducts ? (
+        {/* ================================================================
+            OFERTAS ESPECIALES
+        ================================================================= */}
 
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
+        <section className="border-t border-white/10 bg-[#080808] px-5 py-20 md:px-8 md:py-28">
+          <div className="mx-auto max-w-[1500px]">
+            <div className="mb-12 flex flex-col justify-between gap-8 md:flex-row md:items-end">
+              <div>
+                <p className="mb-4 text-[9px] font-black tracking-[0.4em] text-white/30">
+                  003 / SPECIAL OFFERS
+                </p>
 
-              {Array.from({ length: 6 }).map((_, index) => (
+                <h2 className="text-5xl font-black uppercase leading-[0.86] tracking-[-0.07em] md:text-7xl">
+                  OFERTAS
+                  <br />
+                  ESPECIALES.
+                </h2>
+              </div>
 
-                <div
-                  key={index}
-                  className="aspect-[3/4] animate-pulse rounded-[1.5rem] bg-white/5"
-                />
-
-              ))}
-
+              <div className="max-w-sm">
+                <p className="text-xs leading-6 text-white/40">
+                  Selección especial de piezas NEWCLOTHES con precios
+                  promocionales por tiempo limitado.
+                </p>
+              </div>
             </div>
 
-          ) : products.length > 0 ? (
-
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
-
-              {products.map((product, index) => {
-
-                const productOffer =
-                  getOfferForProduct(product.id);
-
-                return (
-
+            {loadingOffers ? (
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="aspect-[3/4] animate-pulse rounded-[1.5rem] bg-white/5"
+                  />
+                ))}
+              </div>
+            ) : offers.length > 0 ? (
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
+                {offers.slice(0, 6).map((item) => (
                   <a
-                    key={product.id}
-                    href={`/product/${product.slug}`}
+                    key={`${item.offer.id}-${item.product.id}`}
+                    href={`/product/${item.product.slug}`}
                     className="group relative overflow-hidden rounded-[1.5rem] bg-[#0b0b0b]"
                   >
-
                     <div className="aspect-[3/4] overflow-hidden">
-
                       <img
-                        src={product.image}
-                        alt={product.name}
+                        src={item.product.image}
+                        alt={item.product.name}
                         className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
                       />
 
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-70" />
-
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                     </div>
 
                     <div className="absolute left-4 top-4">
-
-                      <span className="text-[9px] font-black tracking-[0.25em] text-white/60">
-                        {String(index + 1).padStart(2, "0")}
+                      <span className="rounded-full bg-white px-3 py-1.5 text-[8px] font-black tracking-[0.18em] text-black">
+                        OFERTA ESPECIAL
                       </span>
-
                     </div>
 
-                    {productOffer ? (
-
-                      <div className="absolute right-4 top-4">
-
-                        <span className="rounded-full border border-white/30 bg-white px-3 py-1.5 text-[8px] font-black tracking-[0.18em] text-black backdrop-blur-md">
-                          OFERTA
-                        </span>
-
-                      </div>
-
-                    ) : product.tag ? (
-
-                      <div className="absolute right-4 top-4">
-
-                        <span className="rounded-full border border-white/20 bg-black/50 px-3 py-1.5 text-[8px] font-black tracking-[0.18em] backdrop-blur-md">
-                          {product.tag}
-                        </span>
-
-                      </div>
-
-                    ) : null}
+                    <div className="absolute right-4 top-4">
+                      <span className="rounded-full border border-white/25 bg-black/60 px-3 py-1.5 text-[8px] font-black tracking-[0.18em] backdrop-blur-md">
+                        {getDiscountLabel(item.offer)}
+                      </span>
+                    </div>
 
                     <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
-
                       <p className="mb-1 text-[8px] font-black tracking-[0.25em] text-white/40">
-                        {product.category}
+                        {item.product.category}
                       </p>
 
-                      <div className="flex items-end justify-between gap-3">
-
-                        <h3 className="text-sm font-black uppercase tracking-[-0.02em] md:text-lg">
-                          {product.name}
-                        </h3>
-
-                        {productOffer ? (
-
-                          <div className="shrink-0 text-right">
-
-                            <div className="text-[9px] font-bold text-white/35 line-through">
-                              {formatPrice(product.originalPrice)}
-                            </div>
-
-                            <div className="text-xs font-black text-white">
-                              {formatPrice(
-                                productOffer.finalPrice
-                              )}
-                            </div>
-
-                          </div>
-
-                        ) : (
-
-                          <span className="shrink-0 text-xs font-black">
-                            {product.price}
-                          </span>
-
-                        )}
-
-                      </div>
-
-                      <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3">
-
-                        <span className="text-[8px] font-black tracking-[0.2em] text-white/35">
-                          {productOffer
-                            ? getDiscountLabel(
-                                productOffer.offer
-                              )
-                            : "VIEW PRODUCT"}
-                        </span>
-
-                        <span className="text-sm transition-transform duration-300 group-hover:translate-x-1">
-                          →
-                        </span>
-
-                      </div>
-
-                    </div>
-
-                  </a>
-
-                );
-
-              })}
-
-            </div>
-
-          ) : (
-
-            <div className="rounded-[2rem] border border-white/10 bg-white/[0.02] px-6 py-20 text-center">
-
-              <p className="text-[10px] font-black tracking-[0.35em] text-white/30">
-                PRÓXIMAMENTE
-              </p>
-
-              <h3 className="mt-4 text-3xl font-black tracking-[-0.05em]">
-                NUEVAS PIEZAS.
-              </h3>
-
-            </div>
-
-          )}
-
-          <div className="mt-10 flex justify-end">
-
-            <a
-              href="#shop"
-              onClick={(event) =>
-                handleAnchorClick(event, "#shop")
-              }
-              className="group inline-flex items-center gap-4 border-b border-white/30 pb-2 text-[9px] font-black tracking-[0.25em] transition hover:border-white"
-            >
-              VER PRODUCTOS
-
-              <span className="transition-transform duration-300 group-hover:translate-x-1">
-                →
-              </span>
-
-            </a>
-
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* ================================================================
-          DROPS EXCLUSIVOS
-      ================================================================= */}
-
-      <section
-        id="drops"
-        className="scroll-mt-20 border-t border-white/10 bg-[#080808] px-5 py-20 md:px-8 md:py-28"
-      >
-
-        <div className="mx-auto max-w-[1500px]">
-
-          <div className="mb-12 flex flex-col justify-between gap-8 md:flex-row md:items-end">
-
-            <div>
-
-              <p className="mb-4 text-[9px] font-black tracking-[0.4em] text-white/30">
-                002 / EXCLUSIVE RELEASES
-              </p>
-
-              <h2 className="text-5xl font-black uppercase leading-[0.86] tracking-[-0.07em] md:text-7xl">
-                DROPS
-                <br />
-                EXCLUSIVOS.
-              </h2>
-
-            </div>
-
-            <div className="max-w-sm">
-
-              <p className="text-xs leading-6 text-white/40">
-                Lanzamientos especiales, piezas limitadas y colecciones
-                creadas para representar la identidad de NEWCLOTHES.
-              </p>
-
-              <a
-                href="/drops"
-                className="group mt-7 inline-flex items-center gap-4 rounded-full bg-white px-6 py-4 text-[9px] font-black tracking-[0.2em] text-black transition hover:scale-[1.03]"
-              >
-                VER TODOS LOS DROPS
-
-                <span className="text-sm transition-transform duration-300 group-hover:translate-x-1">
-                  ↗
-                </span>
-
-              </a>
-
-            </div>
-
-          </div>
-
-          {loadingDrops ? (
-
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-
-              {Array.from({ length: 4 }).map((_, index) => (
-
-                <div
-                  key={index}
-                  className="aspect-[1.15/1] animate-pulse rounded-[2rem] bg-white/5"
-                />
-
-              ))}
-
-            </div>
-
-          ) : drops.length > 0 ? (
-
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-
-              {drops.slice(0, 4).map((drop, index) => (
-
-                <a
-                  key={drop.id}
-                  href={`/drops/${drop.id}`}
-                  className="group block"
-                >
-
-                  <div className="relative overflow-hidden rounded-[2rem] bg-[#0b0b0b]">
-
-                    <div className="relative aspect-[1.15/1] overflow-hidden">
-
-                      {drop.cover_image ? (
-
-                        <img
-                          src={drop.cover_image}
-                          alt={drop.name}
-                          className="h-full w-full object-cover transition duration-1000 ease-out group-hover:scale-[1.045]"
-                        />
-
-                      ) : (
-
-                        <div className="flex h-full w-full items-center justify-center bg-white/[0.03]">
-
-                          <span className="text-[10px] font-black tracking-[0.35em] text-white/20">
-                            NEWCLOTHES
-                          </span>
-
-                        </div>
-
-                      )}
-
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent" />
-
-                      <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" />
-
-                    </div>
-
-                    <div className="absolute left-5 top-5">
-
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/65 text-[8px] font-black tracking-[0.15em] backdrop-blur-md">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-
-                    </div>
-
-                    {drop.limited && (
-
-                      <div className="absolute right-5 top-5">
-
-                        <span className="rounded-full border border-white/20 bg-black/55 px-4 py-2 text-[8px] font-black tracking-[0.2em] backdrop-blur-md">
-                          LIMITED
-                        </span>
-
-                      </div>
-
-                    )}
-
-                    <div className="absolute bottom-5 right-5">
-
-                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-black transition duration-300 group-hover:scale-110">
-
-                        <span className="text-base">
-                          ↗
-                        </span>
-
-                      </span>
-
-                    </div>
-
-                    <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7">
-
-                      <p className="mb-2 text-[8px] font-black tracking-[0.3em] text-white/45">
-                        EXCLUSIVE RELEASE
-                      </p>
-
-                      <h3 className="max-w-[82%] text-2xl font-black uppercase leading-[0.92] tracking-[-0.05em] md:text-4xl">
-                        {drop.name}
+                      <h3 className="text-sm font-black uppercase tracking-[-0.02em] md:text-lg">
+                        {item.product.name}
                       </h3>
 
-                    </div>
-
-                  </div>
-
-                  <div className="flex items-center justify-between border-b border-white/10 px-1 py-4">
-
-                    <div className="min-w-0">
-
-                      <p className="truncate text-[8px] font-black tracking-[0.18em] text-white/35">
-                        {drop.description ||
-                          "EXCLUSIVO DROP - NEWCLOTHES"}
-                      </p>
-
-                      <p className="mt-2 text-[7px] font-black tracking-[0.25em] text-white/20">
-                        RELEASE {formatDate(drop.launch_date)}
-                      </p>
-
-                    </div>
-
-                    <span className="ml-4 shrink-0 text-[8px] font-black tracking-[0.2em] text-white/40 transition group-hover:text-white">
-                      EXPLORAR →
-                    </span>
-
-                  </div>
-
-                </a>
-
-              ))}
-
-            </div>
-
-          ) : (
-
-            <div className="rounded-[2rem] border border-white/10 bg-white/[0.02] px-6 py-24 text-center">
-
-              <p className="text-[9px] font-black tracking-[0.35em] text-white/30">
-                EXCLUSIVE RELEASES
-              </p>
-
-              <h3 className="mt-5 text-4xl font-black uppercase tracking-[-0.06em] md:text-6xl">
-                PRÓXIMAMENTE.
-              </h3>
-
-              <p className="mx-auto mt-5 max-w-md text-xs leading-6 text-white/35">
-                Nuevos drops exclusivos de NEWCLOTHES estarán
-                disponibles próximamente.
-              </p>
-
-            </div>
-
-          )}
-
-          {drops.length > 4 && (
-
-            <div className="mt-10 flex justify-end">
-
-              <a
-                href="/drops"
-                className="group inline-flex items-center gap-4 border-b border-white/30 pb-2 text-[9px] font-black tracking-[0.25em] transition hover:border-white"
-              >
-                VER TODOS LOS DROPS
-
-                <span className="transition-transform duration-300 group-hover:translate-x-1">
-                  →
-                </span>
-
-              </a>
-
-            </div>
-
-          )}
-
-        </div>
-
-      </section>
-
-      {/* ================================================================
-          BRAND STATEMENT
-      ================================================================= */}
-
-      <section className="px-5 py-24 md:px-8 md:py-36">
-
-        <div className="mx-auto max-w-[1500px]">
-
-          <div className="grid gap-12 md:grid-cols-[1.2fr_0.8fr] md:items-end">
-
-            <h2 className="text-4xl font-black uppercase leading-[0.88] tracking-[-0.06em] md:text-7xl">
-              NO SE TRATA
-              <br />
-              DE SEGUIR
-              <br />
-              TENDENCIAS.
-            </h2>
-
-            <div>
-
-              <p className="max-w-md text-sm leading-7 text-white/45">
-                NEWCLOTHES nace para quienes construyen su propia
-                identidad. Streetwear, cultura y diseño en una sola
-                dirección.
-              </p>
-
-              <div className="mt-8 h-px w-20 bg-white/30" />
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* ================================================================
-          OFERTAS ESPECIALES
-      ================================================================= */}
-
-      <section className="border-t border-white/10 bg-[#080808] px-5 py-20 md:px-8 md:py-28">
-
-        <div className="mx-auto max-w-[1500px]">
-
-          <div className="mb-12 flex flex-col justify-between gap-8 md:flex-row md:items-end">
-
-            <div>
-
-              <p className="mb-4 text-[9px] font-black tracking-[0.4em] text-white/30">
-                003 / SPECIAL OFFERS
-              </p>
-
-              <h2 className="text-5xl font-black uppercase leading-[0.86] tracking-[-0.07em] md:text-7xl">
-                OFERTAS
-                <br />
-                ESPECIALES.
-              </h2>
-
-            </div>
-
-            <div className="max-w-sm">
-
-              <p className="text-xs leading-6 text-white/40">
-                Selección especial de piezas NEWCLOTHES con precios
-                promocionales por tiempo limitado.
-              </p>
-
-            </div>
-
-          </div>
-
-          {loadingOffers ? (
-
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
-
-              {Array.from({ length: 3 }).map((_, index) => (
-
-                <div
-                  key={index}
-                  className="aspect-[3/4] animate-pulse rounded-[1.5rem] bg-white/5"
-                />
-
-              ))}
-
-            </div>
-
-          ) : offers.length > 0 ? (
-
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
-
-              {offers.slice(0, 6).map((item) => (
-
-                <a
-                  key={`${item.offer.id}-${item.product.id}`}
-                  href={`/product/${item.product.slug}`}
-                  className="group relative overflow-hidden rounded-[1.5rem] bg-[#0b0b0b]"
-                >
-
-                  <div className="aspect-[3/4] overflow-hidden">
-
-                    <img
-                      src={item.product.image}
-                      alt={item.product.name}
-                      className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
-                    />
-
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-
-                  </div>
-
-                  <div className="absolute left-4 top-4">
-
-                    <span className="rounded-full bg-white px-3 py-1.5 text-[8px] font-black tracking-[0.18em] text-black">
-                      OFERTA ESPECIAL
-                    </span>
-
-                  </div>
-
-                  <div className="absolute right-4 top-4">
-
-                    <span className="rounded-full border border-white/25 bg-black/60 px-3 py-1.5 text-[8px] font-black tracking-[0.18em] backdrop-blur-md">
-                      {getDiscountLabel(item.offer)}
-                    </span>
-
-                  </div>
-
-                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
-
-                    <p className="mb-1 text-[8px] font-black tracking-[0.25em] text-white/40">
-                      {item.product.category}
-                    </p>
-
-                    <h3 className="text-sm font-black uppercase tracking-[-0.02em] md:text-lg">
-                      {item.product.name}
-                    </h3>
-
-                    <div className="mt-3 flex items-end justify-between gap-3">
-
-                      <div>
-
-                        <p className="text-[9px] font-bold text-white/35 line-through">
-                          {formatPrice(
-                            item.product.originalPrice
-                          )}
-                        </p>
-
-                        <p className="text-lg font-black md:text-xl">
-                          {formatPrice(item.finalPrice)}
-                        </p>
-
+                      <div className="mt-3 flex items-end justify-between gap-3">
+                        <div>
+                          <p className="text-[9px] font-bold text-white/35 line-through">
+                            {formatPrice(
+                              item.product.originalPrice
+                            )}
+                          </p>
+
+                          <p className="text-lg font-black md:text-xl">
+                            {formatPrice(item.finalPrice)}
+                          </p>
+                        </div>
+
+                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-black transition duration-300 group-hover:scale-110">
+                          →
+                        </span>
                       </div>
 
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-black transition duration-300 group-hover:scale-110">
-                        →
-                      </span>
-
+                      <div className="mt-4 border-t border-white/10 pt-3">
+                        <span className="text-[8px] font-black tracking-[0.2em] text-white/40">
+                          {item.offer.name}
+                        </span>
+                      </div>
                     </div>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.02] px-6 py-20 text-center">
+                <p className="text-[9px] font-black tracking-[0.35em] text-white/30">
+                  SPECIAL OFFERS
+                </p>
 
-                    <div className="mt-4 border-t border-white/10 pt-3">
+                <h3 className="mt-4 text-3xl font-black tracking-[-0.05em]">
+                  PRÓXIMAMENTE.
+                </h3>
 
-                      <span className="text-[8px] font-black tracking-[0.2em] text-white/40">
-                        {item.offer.name}
-                      </span>
+                <p className="mx-auto mt-4 max-w-md text-xs leading-6 text-white/35">
+                  Las próximas ofertas especiales de NEWCLOTHES
+                  aparecerán aquí.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
 
-                    </div>
+        {/* ================================================================
+            SHOP BY CATEGORY
+        ================================================================= */}
 
-                  </div>
-
-                </a>
-
-              ))}
-
-            </div>
-
-          ) : (
-
-            <div className="rounded-[2rem] border border-white/10 bg-white/[0.02] px-6 py-20 text-center">
-
-              <p className="text-[9px] font-black tracking-[0.35em] text-white/30">
-                SPECIAL OFFERS
+        <section className="border-t border-white/10 px-5 py-20 md:px-8 md:py-28">
+          <div className="mx-auto max-w-[1500px]">
+            <div className="mb-12">
+              <p className="mb-4 text-[9px] font-black tracking-[0.4em] text-white/30">
+                003 / CATEGORIES
               </p>
 
-              <h3 className="mt-4 text-3xl font-black tracking-[-0.05em]">
-                PRÓXIMAMENTE.
-              </h3>
-
-              <p className="mx-auto mt-4 max-w-md text-xs leading-6 text-white/35">
-                Las próximas ofertas especiales de NEWCLOTHES
-                aparecerán aquí.
-              </p>
-
+              <h2 className="text-4xl font-black uppercase leading-[0.9] tracking-[-0.06em] md:text-6xl">
+                SHOP BY
+                <br />
+                CATEGORY.
+              </h2>
             </div>
 
-          )}
-
-        </div>
-
-      </section>
-
-      {/* ================================================================
-          SHOP BY CATEGORY
-      ================================================================= */}
-
-      <section className="border-t border-white/10 px-5 py-20 md:px-8 md:py-28">
-
-        <div className="mx-auto max-w-[1500px]">
-
-          <div className="mb-12">
-
-            <p className="mb-4 text-[9px] font-black tracking-[0.4em] text-white/30">
-              003 / CATEGORIES
-            </p>
-
-            <h2 className="text-4xl font-black uppercase leading-[0.9] tracking-[-0.06em] md:text-6xl">
-              SHOP BY
-              <br />
-              CATEGORY.
-            </h2>
-
-          </div>
-
-          <div className="grid gap-3 md:grid-cols-3">
-
-            {[
-              {
-                title: "T-SHIRTS",
-                number: "01",
-              },
-              {
-                title: "HOODIES",
-                number: "02",
-              },
-              {
-                title: "ESSENTIALS",
-                number: "03",
-              },
-            ].map((category) => (
-
-              <a
-                key={category.title}
-                href="#shop"
-                onClick={(event) =>
-                  handleAnchorClick(event, "#shop")
-                }
-                className="group relative flex min-h-[260px] items-end overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#0a0a0a] p-6 transition hover:bg-white hover:text-black md:min-h-[360px]"
-              >
-
-                <div className="absolute right-5 top-5 text-[9px] font-black tracking-[0.2em] text-white/20 transition group-hover:text-black/30">
-                  {category.number}
-                </div>
-
-                <div>
-
-                  <p className="mb-3 text-[8px] font-black tracking-[0.3em] text-white/30 transition group-hover:text-black/40">
-                    NEWCLOTHES
-                  </p>
-
-                  <h3 className="text-3xl font-black tracking-[-0.05em] md:text-4xl">
-                    {category.title}
-                  </h3>
-
-                  <div className="mt-5 flex items-center gap-3 text-[8px] font-black tracking-[0.2em]">
-                    EXPLORE
-
-                    <span className="transition-transform duration-300 group-hover:translate-x-1">
-                      →
-                    </span>
-
+            <div className="grid gap-3 md:grid-cols-3">
+              {[
+                {
+                  title: "T-SHIRTS",
+                  number: "01",
+                },
+                {
+                  title: "HOODIES",
+                  number: "02",
+                },
+                {
+                  title: "ESSENTIALS",
+                  number: "03",
+                },
+              ].map((category) => (
+                <a
+                  key={category.title}
+                  href="#shop"
+                  onClick={(event) =>
+                    handleAnchorClick(event, "#shop")
+                  }
+                  className="group relative flex min-h-[260px] items-end overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#0a0a0a] p-6 transition hover:bg-white hover:text-black md:min-h-[360px]"
+                >
+                  <div className="absolute right-5 top-5 text-[9px] font-black tracking-[0.2em] text-white/20 transition group-hover:text-black/30">
+                    {category.number}
                   </div>
 
-                </div>
-
-              </a>
-
-            ))}
-
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* ================================================================
-          ABOUT — WHO WE ARE
-      ================================================================= */}
-
-      <section
-        id="about"
-        className="scroll-mt-20 relative overflow-hidden border-t border-black/10 bg-white text-black"
-      >
-
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-10 top-0 select-none text-[32vw] font-black leading-none tracking-[-0.12em] text-black/[0.035] md:-right-20 md:text-[24rem]"
-        >
-          004
-        </div>
-
-        <div className="relative mx-auto max-w-[1500px] px-5 py-24 md:px-8 md:py-32">
-
-          <div className="mb-16 flex items-start justify-between border-b border-black/10 pb-5 md:mb-20">
-
-            <p className="text-[9px] font-black tracking-[0.45em] text-black/35">
-              004 / ABOUT NEWCLOTHES
-            </p>
-
-            <p className="hidden text-[8px] font-black tracking-[0.3em] text-black/30 sm:block">
-              STREETWEAR / VALENCIA / VENEZUELA
-            </p>
-
-          </div>
-
-          <div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20 lg:items-center">
-
-            <div className="group relative aspect-[4/5] overflow-hidden rounded-[2rem] bg-[#e9e9e9]">
-
-              {loadingAbout ? (
-
-                <div className="absolute inset-0 flex items-center justify-center">
-
-                  <div className="h-8 w-8 animate-spin rounded-full border border-black/10 border-t-black" />
-
-                </div>
-
-              ) : about?.image_url ? (
-
-                <img
-                  src={about.image_url}
-                  alt={about.title || "NEWCLOTHES"}
-                  className="h-full w-full object-cover transition duration-1000 ease-out group-hover:scale-[1.03]"
-                />
-
-              ) : (
-
-                <div className="absolute inset-0 flex items-center justify-center">
-
-                  <div className="text-center">
-
-                    <p className="text-[9px] font-black tracking-[0.4em] text-black/25">
+                  <div>
+                    <p className="mb-3 text-[8px] font-black tracking-[0.3em] text-white/30 transition group-hover:text-black/40">
                       NEWCLOTHES
                     </p>
 
-                    <p className="mt-3 text-[8px] font-black tracking-[0.3em] text-black/15">
-                      ABOUT / BRAND
-                    </p>
+                    <h3 className="text-3xl font-black tracking-[-0.05em] md:text-4xl">
+                      {category.title}
+                    </h3>
 
+                    <div className="mt-5 flex items-center gap-3 text-[8px] font-black tracking-[0.2em]">
+                      EXPLORE
+
+                      <span className="transition-transform duration-300 group-hover:translate-x-1">
+                        →
+                      </span>
+                    </div>
                   </div>
-
-                </div>
-
-              )}
-
-              <div className="absolute left-5 top-5">
-
-                <span className="rounded-full border border-black/10 bg-white/70 px-4 py-2 text-[8px] font-black tracking-[0.2em] backdrop-blur-md">
-                  004
-                </span>
-
-              </div>
-
-              <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between">
-
-                <span className="text-[8px] font-black tracking-[0.25em] text-black/30">
-                  PREMIUM STREETWEAR
-                </span>
-
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition duration-500 group-hover:rotate-45">
-                  ↗
-                </span>
-
-              </div>
-
+                </a>
+              ))}
             </div>
+          </div>
+        </section>
 
-            <div>
+        {/* ================================================================
+            ABOUT — WHO WE ARE
+        ================================================================= */}
 
-              <p className="mb-6 text-[9px] font-black tracking-[0.4em] text-black/35">
-                {about?.eyebrow || "QUIÉNES SOMOS"}
+        <section
+          id="about"
+          className="scroll-mt-20 relative overflow-hidden border-t border-black/10 bg-white text-black"
+        >
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-10 top-0 select-none text-[32vw] font-black leading-none tracking-[-0.12em] text-black/[0.035] md:-right-20 md:text-[24rem]"
+          >
+            004
+          </div>
+
+          <div className="relative mx-auto max-w-[1500px] px-5 py-24 md:px-8 md:py-32">
+            <div className="mb-16 flex items-start justify-between border-b border-black/10 pb-5 md:mb-20">
+              <p className="text-[9px] font-black tracking-[0.45em] text-black/35">
+                004 / ABOUT NEWCLOTHES
               </p>
 
-              <h2 className="max-w-3xl text-6xl font-black uppercase leading-[0.8] tracking-[-0.09em] md:text-8xl">
+              <p className="hidden text-[8px] font-black tracking-[0.3em] text-black/30 sm:block">
+                STREETWEAR / VALENCIA / VENEZUELA
+              </p>
+            </div>
 
-                {(about?.title || "VISTE TU IDENTIDAD.")
-                  .split("\n")
-                  .map((line, index) => (
-                    <span key={index} className="block">
-                      {line}
-                    </span>
-                  ))}
+            <div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-20">
+              <div className="group relative aspect-[4/5] overflow-hidden rounded-[2rem] bg-[#e9e9e9]">
+                {loadingAbout ? (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="h-8 w-8 animate-spin rounded-full border border-black/10 border-t-black" />
+                  </div>
+                ) : about?.image_url ? (
+                  <img
+                    src={about.image_url}
+                    alt={about.title || "NEWCLOTHES"}
+                    className="h-full w-full object-cover transition duration-1000 ease-out group-hover:scale-[1.03]"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <p className="text-[9px] font-black tracking-[0.4em] text-black/25">
+                        NEWCLOTHES
+                      </p>
 
-              </h2>
+                      <p className="mt-3 text-[8px] font-black tracking-[0.3em] text-black/15">
+                        ABOUT / BRAND
+                      </p>
+                    </div>
+                  </div>
+                )}
 
-              <div className="mt-10 h-px w-16 bg-black/20" />
+                <div className="absolute left-5 top-5">
+                  <span className="rounded-full border border-black/10 bg-white/70 px-4 py-2 text-[8px] font-black tracking-[0.2em] backdrop-blur-md">
+                    004
+                  </span>
+                </div>
 
-              {about?.intro ? (
+                <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between">
+                  <span className="text-[8px] font-black tracking-[0.25em] text-black/30">
+                    PREMIUM STREETWEAR
+                  </span>
 
-                <p className="mt-8 max-w-lg whitespace-pre-line text-lg font-bold uppercase leading-[1.2] tracking-[-0.03em] md:text-2xl">
-                  {about.intro}
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition duration-500 group-hover:rotate-45">
+                    ↗
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <p className="mb-6 text-[9px] font-black tracking-[0.4em] text-black/35">
+                  {about?.eyebrow || "QUIÉNES SOMOS"}
                 </p>
 
-              ) : (
+                <h2 className="max-w-3xl text-6xl font-black uppercase leading-[0.8] tracking-[-0.09em] md:text-8xl">
+                  {(about?.title || "VISTE TU IDENTIDAD.")
+                    .split("\n")
+                    .map((line, index) => (
+                      <span key={index} className="block">
+                        {line}
+                      </span>
+                    ))}
+                </h2>
 
-                <p className="mt-8 max-w-lg text-lg font-bold uppercase leading-[1.2] tracking-[-0.03em] md:text-2xl">
-                  ROPA STREETWEAR
-                  <br />
-                  TOTALMENTE PREMIUM.
-                  <br />
-                  HECHA PARA TI.
+                <div className="mt-10 h-px w-16 bg-black/20" />
+
+                {about?.intro ? (
+                  <p className="mt-8 max-w-lg whitespace-pre-line text-lg font-bold uppercase leading-[1.2] tracking-[-0.03em] md:text-2xl">
+                    {about.intro}
+                  </p>
+                ) : (
+                  <p className="mt-8 max-w-lg text-lg font-bold uppercase leading-[1.2] tracking-[-0.03em] md:text-2xl">
+                    ROPA STREETWEAR
+                    <br />
+                    TOTALMENTE PREMIUM.
+                    <br />
+                    HECHA PARA TI.
+                  </p>
+                )}
+
+                {about?.description ? (
+                  <p className="mt-7 max-w-lg whitespace-pre-line text-sm leading-7 text-black/50">
+                    {about.description}
+                  </p>
+                ) : (
+                  <p className="mt-7 max-w-lg text-sm leading-7 text-black/50">
+                    En NEWCLOTHES creamos y seleccionamos prendas
+                    streetwear premium para quienes buscan vestir
+                    diferente. Nos enfocamos en diseños con carácter,
+                    calidad y una estética que se adapta a cada persona.
+                  </p>
+                )}
+
+                {about?.custom_description ? (
+                  <p className="mt-5 max-w-lg whitespace-pre-line text-sm leading-7 text-black/50">
+                    {about.custom_description}
+                  </p>
+                ) : (
+                  <p className="mt-5 max-w-lg text-sm leading-7 text-black/50">
+                    También hacemos ropa personalizada, llevando
+                    tus ideas a prendas creadas totalmente a tu estilo.
+                    Tú imaginas el diseño. Nosotros lo convertimos
+                    en una pieza que representa quién eres.
+                  </p>
+                )}
+
+                <a
+                  href="#shop"
+                  onClick={(event) =>
+                    handleAnchorClick(event, "#shop")
+                  }
+                  className="group mt-9 inline-flex items-center gap-4 rounded-full bg-black px-7 py-4 text-[9px] font-black tracking-[0.2em] text-white transition duration-300 hover:scale-[1.03] hover:bg-black/85"
+                >
+                  DESCUBRIR NEWCLOTHES
+
+                  <span className="transition-transform duration-300 group-hover:translate-x-1">
+                    →
+                  </span>
+                </a>
+              </div>
+            </div>
+
+            <div className="mt-20 border-t border-black/10 pt-6 md:mt-28">
+              <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center">
+                <p className="text-[8px] font-black tracking-[0.3em] text-black/30">
+                  PREMIUM STREETWEAR / CUSTOM DESIGN
                 </p>
 
-              )}
-
-              {about?.description ? (
-
-                <p className="mt-7 max-w-lg whitespace-pre-line text-sm leading-7 text-black/50">
-                  {about.description}
+                <p className="text-[8px] font-black tracking-[0.3em] text-black/30 md:text-right">
+                  VISTE TU IDENTIDAD
                 </p>
+              </div>
+            </div>
+          </div>
+        </section>
 
-              ) : (
+        {/* ================================================================
+            NEWSLETTER
+        ================================================================= */}
 
-                <p className="mt-7 max-w-lg text-sm leading-7 text-black/50">
-                  En NEWCLOTHES creamos y seleccionamos prendas
-                  streetwear premium para quienes buscan vestir
-                  diferente. Nos enfocamos en diseños con carácter,
-                  calidad y una estética que se adapta a cada persona.
-                </p>
+        <section className="border-t border-white/10 px-5 py-24 md:px-8 md:py-32">
+          <div className="mx-auto max-w-[900px] text-center">
+            <p className="text-[9px] font-black tracking-[0.4em] text-white/30">
+              STAY UPDATED
+            </p>
 
-              )}
+            <h2 className="mt-5 text-4xl font-black uppercase leading-[0.88] tracking-[-0.06em] md:text-6xl">
+              BE PART OF
+              <br />
+              THE DROP.
+            </h2>
 
-              {about?.custom_description ? (
+            <p className="mx-auto mt-6 max-w-md text-xs leading-6 text-white/40">
+              Mantente al día con nuevos productos, drops exclusivos
+              y novedades de NEWCLOTHES.
+            </p>
 
-                <p className="mt-5 max-w-lg whitespace-pre-line text-sm leading-7 text-black/50">
-                  {about.custom_description}
-                </p>
+            <form
+              className="mx-auto mt-10 flex max-w-lg flex-col gap-3 sm:flex-row"
+              onSubmit={(event) =>
+                event.preventDefault()
+              }
+            >
+              <input
+                type="email"
+                placeholder="TU EMAIL"
+                className="h-14 flex-1 rounded-full border border-white/10 bg-white/[0.03] px-6 text-[10px] font-black tracking-[0.15em] text-white outline-none placeholder:text-white/20 focus:border-white/30"
+              />
 
-              ) : (
+              <button
+                type="submit"
+                className="h-14 rounded-full bg-white px-7 text-[9px] font-black tracking-[0.2em] text-black transition hover:bg-white/90"
+              >
+                SUSCRIBIRME →
+              </button>
+            </form>
+          </div>
+        </section>
 
-                <p className="mt-5 max-w-lg text-sm leading-7 text-black/50">
-                  También hacemos ropa personalizada, llevando
-                  tus ideas a prendas creadas totalmente a tu estilo.
-                  Tú imaginas el diseño. Nosotros lo convertimos
-                  en una pieza que representa quién eres.
-                </p>
+        {/* ================================================================
+            FOOTER
+        ================================================================= */}
 
-              )}
+        <footer className="border-t border-white/10 px-5 py-10 md:px-8">
+          <div className="mx-auto flex max-w-[1500px] flex-col justify-between gap-8 md:flex-row md:items-end">
+            <div>
+              <p className="text-xl font-black tracking-[-0.08em]">
+                NEWCLOTHES
+              </p>
+
+              <p className="mt-3 text-[8px] font-black tracking-[0.25em] text-white/25">
+                STREETWEAR / VALENCIA / VENEZUELA
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-6">
+              <a
+                href="/"
+                className="text-[8px] font-black tracking-[0.2em] text-white/40 transition hover:text-white"
+              >
+                HOME
+              </a>
 
               <a
                 href="#shop"
                 onClick={(event) =>
                   handleAnchorClick(event, "#shop")
                 }
-                className="group mt-9 inline-flex items-center gap-4 rounded-full bg-black px-7 py-4 text-[9px] font-black tracking-[0.2em] text-white transition duration-300 hover:scale-[1.03] hover:bg-black/85"
+                className="text-[8px] font-black tracking-[0.2em] text-white/40 transition hover:text-white"
               >
-                DESCUBRIR NEWCLOTHES
-
-                <span className="transition-transform duration-300 group-hover:translate-x-1">
-                  →
-                </span>
-
+                SHOP
               </a>
 
+              <a
+                href="#drops"
+                onClick={(event) =>
+                  handleAnchorClick(event, "#drops")
+                }
+                className="text-[8px] font-black tracking-[0.2em] text-white/40 transition hover:text-white"
+              >
+                DROPS
+              </a>
+
+              <a
+                href="#about"
+                onClick={(event) =>
+                  handleAnchorClick(event, "#about")
+                }
+                className="text-[8px] font-black tracking-[0.2em] text-white/40 transition hover:text-white"
+              >
+                ABOUT
+              </a>
             </div>
-
           </div>
 
-          <div className="mt-20 border-t border-black/10 pt-6 md:mt-28">
-
-            <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center">
-
-              <p className="text-[8px] font-black tracking-[0.3em] text-black/30">
-                PREMIUM STREETWEAR / CUSTOM DESIGN
-              </p>
-
-              <p className="text-[8px] font-black tracking-[0.3em] text-black/30 md:text-right">
-                VISTE TU IDENTIDAD
-              </p>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* ================================================================
-          NEWSLETTER
-      ================================================================= */}
-
-      <section className="border-t border-white/10 px-5 py-24 md:px-8 md:py-32">
-
-        <div className="mx-auto max-w-[900px] text-center">
-
-          <p className="text-[9px] font-black tracking-[0.4em] text-white/30">
-            STAY UPDATED
-          </p>
-
-          <h2 className="mt-5 text-4xl font-black uppercase leading-[0.88] tracking-[-0.06em] md:text-6xl">
-            BE PART OF
-            <br />
-            THE DROP.
-          </h2>
-
-          <p className="mx-auto mt-6 max-w-md text-xs leading-6 text-white/40">
-            Mantente al día con nuevos productos, drops exclusivos
-            y novedades de NEWCLOTHES.
-          </p>
-
-          <form
-            className="mx-auto mt-10 flex max-w-lg flex-col gap-3 sm:flex-row"
-            onSubmit={(event) =>
-              event.preventDefault()
-            }
-          >
-
-            <input
-              type="email"
-              placeholder="TU EMAIL"
-              className="h-14 flex-1 rounded-full border border-white/10 bg-white/[0.03] px-6 text-[10px] font-black tracking-[0.15em] text-white outline-none placeholder:text-white/20 focus:border-white/30"
-            />
-
-            <button
-              type="submit"
-              className="h-14 rounded-full bg-white px-7 text-[9px] font-black tracking-[0.2em] text-black transition hover:bg-white/90"
-            >
-              SUSCRIBIRME →
-            </button>
-
-          </form>
-
-        </div>
-
-      </section>
-
-      {/* ================================================================
-          FOOTER
-      ================================================================= */}
-
-      <footer className="border-t border-white/10 px-5 py-10 md:px-8">
-
-        <div className="mx-auto flex max-w-[1500px] flex-col justify-between gap-8 md:flex-row md:items-end">
-
-          <div>
-
-            <p className="text-xl font-black tracking-[-0.08em]">
-              NEWCLOTHES
+          <div className="mx-auto mt-10 max-w-[1500px] border-t border-white/10 pt-5">
+            <p className="text-[8px] font-black tracking-[0.2em] text-white/20">
+              © {new Date().getFullYear()} NEWCLOTHES. ALL RIGHTS RESERVED.
             </p>
-
-            <p className="mt-3 text-[8px] font-black tracking-[0.25em] text-white/25">
-              STREETWEAR / VALENCIA / VENEZUELA
-            </p>
-
           </div>
-
-          <div className="flex flex-wrap gap-6">
-
-            <a
-              href="/"
-              className="text-[8px] font-black tracking-[0.2em] text-white/40 transition hover:text-white"
-            >
-              HOME
-            </a>
-
-            <a
-              href="#shop"
-              onClick={(event) =>
-                handleAnchorClick(event, "#shop")
-              }
-              className="text-[8px] font-black tracking-[0.2em] text-white/40 transition hover:text-white"
-            >
-              SHOP
-            </a>
-
-            <a
-              href="#drops"
-              onClick={(event) =>
-                handleAnchorClick(event, "#drops")
-              }
-              className="text-[8px] font-black tracking-[0.2em] text-white/40 transition hover:text-white"
-            >
-              DROPS
-            </a>
-
-            <a
-              href="#about"
-              onClick={(event) =>
-                handleAnchorClick(event, "#about")
-              }
-              className="text-[8px] font-black tracking-[0.2em] text-white/40 transition hover:text-white"
-            >
-              ABOUT
-            </a>
-
-          </div>
-
-        </div>
-
-        <div className="mx-auto mt-10 max-w-[1500px] border-t border-white/10 pt-5">
-
-          <p className="text-[8px] font-black tracking-[0.2em] text-white/20">
-            © {new Date().getFullYear()} NEWCLOTHES. ALL RIGHTS RESERVED.
-          </p>
-
-        </div>
-
-      </footer>
+        </footer>
+      </main>
 
       {/* ================================================================
           MARQUEE ANIMATION
@@ -1955,7 +1660,6 @@ export default function Home() {
           }
         }
       `}</style>
-
-    </main>
+    </>
   );
 }
