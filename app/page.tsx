@@ -717,6 +717,7 @@ export default function Home() {
       ================================================================= */}
 
       <main className="min-h-screen bg-black text-white">
+
         {/* ================================================================
             HERO
         ================================================================= */}
@@ -1029,17 +1030,17 @@ export default function Home() {
             )}
 
             <div className="mt-10 flex justify-center md:justify-end">
-  <a
-    href="/shop"
-    className="group inline-flex items-center gap-5 rounded-full bg-white px-7 py-4 text-[9px] font-black tracking-[0.2em] text-black transition duration-300 hover:scale-[1.03] hover:bg-white/90"
-  >
-    VER TIENDA COMPLETA
+              <a
+                href="/shop"
+                className="group inline-flex items-center gap-5 rounded-full bg-white px-7 py-4 text-[9px] font-black tracking-[0.2em] text-black transition duration-300 hover:scale-[1.03] hover:bg-white/90"
+              >
+                VER TIENDA COMPLETA
 
-    <span className="text-sm transition-transform duration-300 group-hover:translate-x-1">
-      →
-    </span>
-  </a>
-</div>
+                <span className="text-sm transition-transform duration-300 group-hover:translate-x-1">
+                  →
+                </span>
+              </a>
+            </div>
           </div>
         </section>
 
@@ -1358,69 +1359,193 @@ export default function Home() {
         </section>
 
         {/* ================================================================
-            SHOP BY CATEGORY
+            INSTAGRAM
         ================================================================= */}
 
-        <section className="border-t border-white/10 px-5 py-20 md:px-8 md:py-28">
+        <section className="border-t border-white/10 bg-black px-5 py-20 md:px-8 md:py-28">
           <div className="mx-auto max-w-[1500px]">
-            <div className="mb-12">
-              <p className="mb-4 text-[9px] font-black tracking-[0.4em] text-white/30">
-                003 / CATEGORIES
-              </p>
 
-              <h2 className="text-4xl font-black uppercase leading-[0.9] tracking-[-0.06em] md:text-6xl">
-                SHOP BY
-                <br />
-                CATEGORY.
-              </h2>
+            <div className="mb-12 flex flex-col justify-between gap-8 md:flex-row md:items-end">
+              <div>
+                <p className="mb-4 text-[9px] font-black tracking-[0.4em] text-white/30">
+                  004 / INSTAGRAM
+                </p>
+
+                <h2 className="text-5xl font-black uppercase leading-[0.86] tracking-[-0.07em] md:text-7xl">
+                  FOLLOW
+                  <br />
+                  NEWCLOTHES.
+                </h2>
+              </div>
+
+              <div className="max-w-sm">
+                <p className="text-xs leading-6 text-white/40">
+                  Descubre el universo NEWCLOTHES, nuevos diseños,
+                  lanzamientos, outfits y contenido exclusivo directamente
+                  desde Instagram.
+                </p>
+              </div>
             </div>
 
-            <div className="grid gap-3 md:grid-cols-3">
-              {[
-                {
-                  title: "T-SHIRTS",
-                  number: "01",
-                },
-                {
-                  title: "HOODIES",
-                  number: "02",
-                },
-                {
-                  title: "ESSENTIALS",
-                  number: "03",
-                },
-              ].map((category) => (
-                <a
-                  key={category.title}
-                  href="#shop"
-                  onClick={(event) =>
-                    handleAnchorClick(event, "#shop")
-                  }
-                  className="group relative flex min-h-[260px] items-end overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#0a0a0a] p-6 transition hover:bg-white hover:text-black md:min-h-[360px]"
-                >
-                  <div className="absolute right-5 top-5 text-[9px] font-black tracking-[0.2em] text-white/20 transition group-hover:text-black/30">
-                    {category.number}
-                  </div>
+            <a
+              href="https://www.instagram.com/newclothesve/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group block"
+            >
+              <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#080808] transition duration-500 hover:border-white/25">
 
-                  <div>
-                    <p className="mb-3 text-[8px] font-black tracking-[0.3em] text-white/30 transition group-hover:text-black/40">
-                      NEWCLOTHES
-                    </p>
+                <div className="absolute inset-0">
+                  <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-white/[0.035] blur-3xl" />
+                  <div className="absolute -bottom-32 -right-20 h-96 w-96 rounded-full bg-white/[0.025] blur-3xl" />
+                </div>
 
-                    <h3 className="text-3xl font-black tracking-[-0.05em] md:text-4xl">
-                      {category.title}
-                    </h3>
+                <div className="relative grid min-h-[430px] gap-10 p-7 md:grid-cols-[1fr_0.8fr] md:p-12 lg:p-16">
 
-                    <div className="mt-5 flex items-center gap-3 text-[8px] font-black tracking-[0.2em]">
-                      EXPLORE
+                  <div className="flex flex-col justify-between">
 
-                      <span className="transition-transform duration-300 group-hover:translate-x-1">
-                        →
+                    <div>
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full border border-white/15 bg-white text-black">
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6"
+                        >
+                          <rect
+                            x="3"
+                            y="3"
+                            width="18"
+                            height="18"
+                            rx="5"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                          />
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="4"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                          />
+                          <circle
+                            cx="17.5"
+                            cy="6.5"
+                            r="1"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </div>
+
+                      <p className="mt-10 text-[9px] font-black tracking-[0.35em] text-white/30">
+                        INSTAGRAM / OFFICIAL ACCOUNT
+                      </p>
+
+                      <h3 className="mt-4 text-4xl font-black tracking-[-0.07em] md:text-6xl lg:text-7xl">
+                        @NEWCLOTHESVE
+                      </h3>
+
+                      <p className="mt-6 max-w-md text-sm leading-7 text-white/45">
+                        Síguenos para conocer los nuevos drops,
+                        productos, sesiones, outfits y todo lo que
+                        estamos construyendo en NEWCLOTHES.
+                      </p>
+                    </div>
+
+                    <div className="mt-12">
+                      <span className="inline-flex items-center gap-5 rounded-full bg-white px-7 py-4 text-[9px] font-black tracking-[0.2em] text-black transition duration-300 group-hover:scale-[1.03]">
+                        VER INSTAGRAM
+
+                        <span className="text-sm transition-transform duration-300 group-hover:translate-x-1">
+                          ↗
+                        </span>
                       </span>
                     </div>
+
                   </div>
-                </a>
-              ))}
+
+                  <div className="relative flex min-h-[280px] items-center justify-center overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.025]">
+
+                    <div className="absolute inset-0 opacity-20">
+                      <div className="grid h-full w-full grid-cols-6 grid-rows-6">
+                        {Array.from({ length: 36 }).map((_, index) => (
+                          <div
+                            key={index}
+                            className="border-r border-t border-white/[0.04]"
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="relative text-center">
+                      <p className="text-[8px] font-black tracking-[0.4em] text-white/20">
+                        NEWCLOTHES
+                      </p>
+
+                      <p className="mt-4 text-7xl font-black tracking-[-0.1em] text-white/[0.08] md:text-9xl">
+                        IG
+                      </p>
+
+                      <p className="mt-3 text-[8px] font-black tracking-[0.3em] text-white/25">
+                        @NEWCLOTHESVE
+                      </p>
+                    </div>
+
+                    <div className="absolute left-5 top-5">
+                      <span className="text-[8px] font-black tracking-[0.25em] text-white/20">
+                        01
+                      </span>
+                    </div>
+
+                    <div className="absolute bottom-5 right-5">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/60 text-white transition duration-300 group-hover:scale-110">
+                        ↗
+                      </span>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
+
+              <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.02] p-5">
+                <p className="text-[8px] font-black tracking-[0.25em] text-white/25">
+                  CONTENT
+                </p>
+                <p className="mt-3 text-sm font-black uppercase tracking-[-0.02em]">
+                  DROPS
+                </p>
+              </div>
+
+              <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.02] p-5">
+                <p className="text-[8px] font-black tracking-[0.25em] text-white/25">
+                  STYLE
+                </p>
+                <p className="mt-3 text-sm font-black uppercase tracking-[-0.02em]">
+                  STREETWEAR
+                </p>
+              </div>
+
+              <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.02] p-5">
+                <p className="text-[8px] font-black tracking-[0.25em] text-white/25">
+                  BRAND
+                </p>
+                <p className="mt-3 text-sm font-black uppercase tracking-[-0.02em]">
+                  NEWCLOTHES
+                </p>
+              </div>
+
+              <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.02] p-5">
+                <p className="text-[8px] font-black tracking-[0.25em] text-white/25">
+                  SOCIAL
+                </p>
+                <p className="mt-3 text-sm font-black uppercase tracking-[-0.02em]">
+                  @NEWCLOTHESVE
+                </p>
+              </div>
+
             </div>
           </div>
         </section>
@@ -1437,13 +1562,13 @@ export default function Home() {
             aria-hidden="true"
             className="pointer-events-none absolute -right-10 top-0 select-none text-[32vw] font-black leading-none tracking-[-0.12em] text-black/[0.035] md:-right-20 md:text-[24rem]"
           >
-            004
+            005
           </div>
 
           <div className="relative mx-auto max-w-[1500px] px-5 py-24 md:px-8 md:py-32">
             <div className="mb-16 flex items-start justify-between border-b border-black/10 pb-5 md:mb-20">
               <p className="text-[9px] font-black tracking-[0.45em] text-black/35">
-                004 / ABOUT NEWCLOTHES
+                005 / ABOUT NEWCLOTHES
               </p>
 
               <p className="hidden text-[8px] font-black tracking-[0.3em] text-black/30 sm:block">
@@ -1479,7 +1604,7 @@ export default function Home() {
 
                 <div className="absolute left-5 top-5">
                   <span className="rounded-full border border-black/10 bg-white/70 px-4 py-2 text-[8px] font-black tracking-[0.2em] backdrop-blur-md">
-                    004
+                    005
                   </span>
                 </div>
 
@@ -1676,6 +1801,15 @@ export default function Home() {
                 className="text-[8px] font-black tracking-[0.2em] text-white/40 transition hover:text-white"
               >
                 ABOUT
+              </a>
+
+              <a
+                href="https://www.instagram.com/newclothesve/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[8px] font-black tracking-[0.2em] text-white/40 transition hover:text-white"
+              >
+                INSTAGRAM
               </a>
             </div>
           </div>
