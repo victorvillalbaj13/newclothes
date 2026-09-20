@@ -1275,7 +1275,7 @@ Quedo atento para coordinar el pago y la entrega.`;
           </Link>
 
           <div className="text-[9px] font-black tracking-[0.2em]">
-            BAG (
+            CARRITO (
             {String(totalItems).padStart(
               2,
               "0"
@@ -1304,9 +1304,9 @@ Quedo atento para coordinar el pago y la entrega.`;
             <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
 
               <h1 className="text-6xl font-black leading-[0.8] tracking-[-0.09em] md:text-8xl">
-                YOUR
+                TU
                 <br />
-                BAG.
+                CARRITO.
               </h1>
 
               {cart.length > 0 && (
@@ -1340,7 +1340,7 @@ Quedo atento para coordinar el pago y la entrega.`;
               </div>
 
               <p className="text-[10px] font-black tracking-[0.3em] text-white/40">
-                YOUR BAG IS CURRENTLY EMPTY.
+                TU CARRITO ESTÁ VACÍO.
               </p>
 
               <p className="mx-auto mt-4 max-w-sm text-xs leading-6 text-white/25">
@@ -2129,7 +2129,7 @@ Quedo atento para coordinar el pago y la entrega.`;
                           <p className="mt-2 text-[7px] font-black tracking-[0.15em] text-white/30">
                             PRECIO CON 12% DESCUENTO
                           </p>
-                        )}
+                          )}
 
                       </div>
 

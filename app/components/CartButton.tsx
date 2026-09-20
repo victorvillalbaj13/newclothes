@@ -49,7 +49,7 @@ export default function CartButton() {
       className="group flex items-center gap-3 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2.5 text-[9px] font-black tracking-[0.2em] text-white transition-all duration-300 hover:border-white/35 hover:bg-white hover:text-black"
     >
       <span>
-        BAG
+        CARRITO
       </span>
 
       <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1.5 text-[8px] font-black text-black transition-colors duration-300 group-hover:bg-black group-hover:text-white">
