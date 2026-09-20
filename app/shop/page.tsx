@@ -162,6 +162,9 @@ export default function ShopPage() {
 
       <header className="sticky top-0 z-50 border-b border-white/[0.08] bg-black/90 backdrop-blur-2xl">
         <div className="mx-auto flex h-20 max-w-[1500px] items-center justify-between px-5 md:px-8">
+
+          {/* LOGO */}
+
           <Link
             href="/"
             className="text-xl font-black tracking-[-0.08em]"
@@ -169,12 +172,63 @@ export default function ShopPage() {
             NEWCLOTHES
           </Link>
 
-          <Link
-            href="/"
-            className="rounded-full border border-white/10 px-5 py-3 text-[9px] font-black tracking-[0.2em] text-white/60 transition hover:border-white/30 hover:text-white"
-          >
-            ← VOLVER
-          </Link>
+          {/* NAVIGATION DESKTOP */}
+
+          <nav className="hidden items-center gap-8 md:flex">
+            <Link
+              href="/"
+              className="text-[9px] font-black tracking-[0.2em] text-white/45 transition hover:text-white"
+            >
+              HOME
+            </Link>
+
+            <Link
+              href="/shop"
+              className="text-[9px] font-black tracking-[0.2em] text-white transition"
+            >
+              SHOP
+            </Link>
+
+            <Link
+              href="/drops"
+              className="text-[9px] font-black tracking-[0.2em] text-white/45 transition hover:text-white"
+            >
+              DROPS
+            </Link>
+
+            <Link
+              href="/#about"
+              className="text-[9px] font-black tracking-[0.2em] text-white/45 transition hover:text-white"
+            >
+              ABOUT
+            </Link>
+
+            <Link
+              href="/cart"
+              className="rounded-full border border-white/10 px-4 py-2 text-[9px] font-black tracking-[0.2em] text-white/60 transition hover:border-white/30 hover:text-white"
+            >
+              CART
+            </Link>
+          </nav>
+
+          {/* MOBILE */}
+
+          <div className="flex items-center gap-2 md:hidden">
+            <Link
+              href="/"
+              className="rounded-full border border-white/10 px-4 py-2 text-[8px] font-black tracking-[0.18em] text-white/60 transition hover:border-white/30 hover:text-white"
+            >
+              HOME
+            </Link>
+
+            <Link
+              href="/cart"
+              className="rounded-full border border-white/10 px-4 py-2 text-[8px] font-black tracking-[0.18em] text-white/60 transition hover:border-white/30 hover:text-white"
+            >
+              CART
+            </Link>
+          </div>
+
         </div>
       </header>
 
@@ -215,6 +269,7 @@ export default function ShopPage() {
       <section className="border-b border-white/10 bg-[#080808] px-5 py-7 md:px-8">
         <div className="mx-auto max-w-[1500px]">
           <div className="grid gap-3 lg:grid-cols-[1.5fr_1fr_1fr_auto]">
+
             {/* BUSCADOR */}
 
             <div className="relative">
