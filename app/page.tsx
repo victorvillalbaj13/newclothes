@@ -1477,19 +1477,12 @@ export default function Home() {
                       </div>
                     </div>
 
-                    <div className="relative text-center">
-                      <p className="text-[8px] font-black tracking-[0.4em] text-white/20">
-                        NEWCLOTHES
-                      </p>
-
-                      <p className="mt-4 text-7xl font-black tracking-[-0.1em] text-white/[0.08] md:text-9xl">
-                        IG
-                      </p>
-
-                      <p className="mt-3 text-[8px] font-black tracking-[0.3em] text-white/25">
-                        @NEWCLOTHESVE
-                      </p>
-                    </div>
+                    {/* IMAGEN DE INSTAGRAM */}
+                    <img
+                      src="/images/instagram/newnewfotoig.png"
+                      alt="NEWCLOTHES Instagram"
+                      className="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.03]"
+                    />
 
                     <div className="absolute left-5 top-5">
                       <span className="text-[8px] font-black tracking-[0.25em] text-white/20">
