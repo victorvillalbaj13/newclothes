@@ -500,7 +500,7 @@ export default function ProductsAdmin() {
         return false;
       }
 
-      if (file.size > 5 * 1024 * 1024) {
+      if (file.size > 8 * 1024 * 1024) {
         return false;
       }
 
@@ -510,7 +510,7 @@ export default function ProductsAdmin() {
     if (validFiles.length === 0) {
       setMessage({
         type: "error",
-        text: "Selecciona imágenes válidas de máximo 5 MB.",
+        text: "Selecciona imágenes válidas de máximo 8 MB.",
       });
 
       return;
@@ -1471,7 +1471,7 @@ export default function ProductsAdmin() {
                         </p>
 
                         <p className="mt-2 text-[8px] uppercase tracking-[0.15em] text-zinc-800">
-                          Máximo 5 MB por imagen
+                          Máximo 8 MB por imagen
                         </p>
                       </label>
                     </div>
